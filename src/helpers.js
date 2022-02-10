@@ -17,10 +17,6 @@ export function selectString(str) {
   }
 }
 
-export function stringContains(str, text) {
-  return str.indexOf(text) > -1;
-}
-
 // Numbers functions
 
 export function clamp(val, min, max) {
@@ -39,7 +35,7 @@ export function random(min, max) {
 
 export const is = {
   arr: a => Array.isArray(a),
-  obj: a => stringContains(Object.prototype.toString.call(a), 'Object'),
+  obj: a => Object.prototype.toString.call(a).includes('Object'),
   pth: a => is.obj(a) && a.hasOwnProperty('totalLength'),
   svg: a => a instanceof SVGElement,
   inp: a => a instanceof HTMLInputElement,

@@ -8,7 +8,6 @@ import {
 
 import {
   is,
-  stringContains,
   arrayContains,
 } from './helpers.js';
 
@@ -18,8 +17,8 @@ export function getUnit(val) {
 }
 
 export function getTransformUnit(propName) {
-  if (stringContains(propName, 'translate') || propName === 'perspective') return 'px';
-  if (stringContains(propName, 'rotate') || stringContains(propName, 'skew')) return 'deg';
+  if (propName.includes('translate') || propName === 'perspective') return 'px';
+  if (propName.includes('rotate') || propName.includes('skew')) return 'deg';
 }
 
 export function convertPxToUnit(el, value, unit) {

@@ -4,7 +4,6 @@ import {
 
 import {
   is,
-  stringContains,
   arrayContains,
 } from './helpers.js';
 
@@ -60,7 +59,7 @@ export function getElementTransforms(el) {
 }
 
 function getTransformValue(el, propName, animatable, unit) {
-  const defaultVal = stringContains(propName, 'scale') ? 1 : 0 + getTransformUnit(propName);
+  const defaultVal = propName.includes('scale') ? 1 : 0 + getTransformUnit(propName);
   const value = getElementTransforms(el).get(propName) || defaultVal;
   if (animatable) {
     animatable.transforms.list.set(propName, value);
