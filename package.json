@@ -25,16 +25,21 @@
     "canvas"
   ],
   "devDependencies": {
-    "jest": "^25.2.3",
-    "rollup": "^1.0.0",
     "@rollup/plugin-buble": "^0.21.3",
     "@rollup/plugin-replace": "^2.3.3",
+    "jest": "^25.2.3",
+    "prettier": "^2.5.1",
+    "rollup": "^1.0.0",
     "rollup-plugin-notify": "^1.1.0",
     "rollup-plugin-uglify": "^6.0.4"
   },
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
+    "format": "npm run format:prettier",
+    "format:prettier": "prettier . --write",
+    "lint": "npm run lint:prettier",
+    "lint:prettier": "prettier . --check",
     "test": "jest --watch"
   }
 }
