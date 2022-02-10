@@ -1,22 +1,22 @@
-describe('Engine', () => {
-  test('No active instances running', () => {
+describe("Engine", () => {
+  test("No active instances running", () => {
     const animation = anime({
-      targets: '#target-id',
+      targets: "#target-id",
       translateX: 50,
-      autoplay: false
+      autoplay: false,
     });
 
     expect(anime.running.length).toBe(0);
   });
 
-  test('Two active instances running', () => {
+  test("Two active instances running", () => {
     const animation1 = anime({
-      targets: '#target-id',
+      targets: "#target-id",
       translateX: 50,
     });
 
     const animation2 = anime({
-      targets: '#target-id',
+      targets: "#target-id",
       translateY: 50,
     });
 

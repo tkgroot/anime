@@ -1,13 +1,5 @@
-import {
-  rgbExecRgx,
-  hslExecRgx,
-  hslaExecRgx
-} from './consts.js';
-
-import {
-  round,
-  is
-} from './helpers.js';
+import { rgbExecRgx, hslExecRgx, hslaExecRgx } from "./consts.js";
+import { round, is } from "./helpers.js";
 
 // RGB / RGBA -> RGBA
 
@@ -22,11 +14,24 @@ function hexToRgba(hexValue) {
   const hexLength = hexValue.length;
   const isShort = hexLength === 4 || hexLength === 5;
   const isAlpha = hexLength === 5 || hexLength === 9;
-  const hexPrefix = '0x';
+  const hexPrefix = "0x";
   const r = +(hexPrefix + hexValue[1] + hexValue[isShort ? 1 : 2]);
-  const g = +(hexPrefix + hexValue[isShort ? 2 : 3] + hexValue[isShort ? 2 : 4]);
-  const b = +(hexPrefix + hexValue[isShort ? 3 : 5] + hexValue[isShort ? 3 : 6]);
-  const a = isAlpha ? +((hexPrefix + hexValue[isShort ? 4 : 7] + hexValue[isShort ? 4 : 8]) / 255).toFixed(3) : 1;
+  const g = +(
+    hexPrefix +
+    hexValue[isShort ? 2 : 3] +
+    hexValue[isShort ? 2 : 4]
+  );
+  const b = +(
+    hexPrefix +
+    hexValue[isShort ? 3 : 5] +
+    hexValue[isShort ? 3 : 6]
+  );
+  const a = isAlpha
+    ? +(
+        (hexPrefix + hexValue[isShort ? 4 : 7] + hexValue[isShort ? 4 : 8]) /
+        255
+      ).toFixed(3)
+    : 1;
   return `rgba(${r},${g},${b},${a})`;
 }
 
@@ -68,6 +73,4 @@ function normalizeColorToRgba(colorValue) {
   if (is.hsl(colorValue)) return hslToRgba(colorValue);
 }
 
-export {
-  normalizeColorToRgba
-}
+export { normalizeColorToRgba };

@@ -1,7 +1,7 @@
-describe('Units', () => {
-  test('Default transform units', () => {
+describe("Units", () => {
+  test("Default transform units", () => {
     const animation = anime({
-      targets: '#target-id',
+      targets: "#target-id",
       translateX: 100,
       translateY: 100,
       translateZ: 100,
@@ -16,38 +16,38 @@ describe('Units', () => {
     });
 
     // Translate
-    expect(animation.animations[0].tweens[0].from.strings[1]).toBe('px');
-    expect(animation.animations[1].tweens[0].from.strings[1]).toBe('px');
-    expect(animation.animations[2].tweens[0].from.strings[1]).toBe('px');
+    expect(animation.animations[0].tweens[0].from.strings[1]).toBe("px");
+    expect(animation.animations[1].tweens[0].from.strings[1]).toBe("px");
+    expect(animation.animations[2].tweens[0].from.strings[1]).toBe("px");
     // Rotate
-    expect(animation.animations[3].tweens[0].from.strings[1]).toBe('deg');
-    expect(animation.animations[4].tweens[0].from.strings[1]).toBe('deg');
-    expect(animation.animations[5].tweens[0].from.strings[1]).toBe('deg');
-    expect(animation.animations[6].tweens[0].from.strings[1]).toBe('deg');
+    expect(animation.animations[3].tweens[0].from.strings[1]).toBe("deg");
+    expect(animation.animations[4].tweens[0].from.strings[1]).toBe("deg");
+    expect(animation.animations[5].tweens[0].from.strings[1]).toBe("deg");
+    expect(animation.animations[6].tweens[0].from.strings[1]).toBe("deg");
     // Skew
-    expect(animation.animations[7].tweens[0].from.strings[1]).toBe('deg');
-    expect(animation.animations[8].tweens[0].from.strings[1]).toBe('deg');
-    expect(animation.animations[9].tweens[0].from.strings[1]).toBe('deg');
+    expect(animation.animations[7].tweens[0].from.strings[1]).toBe("deg");
+    expect(animation.animations[8].tweens[0].from.strings[1]).toBe("deg");
+    expect(animation.animations[9].tweens[0].from.strings[1]).toBe("deg");
     // Perspective
-    expect(animation.animations[10].tweens[0].from.strings[1]).toBe('px');
+    expect(animation.animations[10].tweens[0].from.strings[1]).toBe("px");
   });
 
-  test('Specified unit on a simple tween', () => {
+  test("Specified unit on a simple tween", () => {
     const animation = anime({
-      targets: '#target-id',
-      translateX: '100%',
+      targets: "#target-id",
+      translateX: "100%",
     });
 
-    expect(animation.animations[0].tweens[0].to.strings[1]).toBe('%');
+    expect(animation.animations[0].tweens[0].to.strings[1]).toBe("%");
   });
 
-  test('Units inheritance on From To Values', () => {
+  test("Units inheritance on From To Values", () => {
     const animation = anime({
-      targets: '#target-id',
-      translateX: [-50, '50%'],
+      targets: "#target-id",
+      translateX: [-50, "50%"],
     });
 
-    expect(animation.animations[0].tweens[0].from.strings[1]).toBe('%');
-    expect(animation.animations[0].tweens[0].to.strings[1]).toBe('%');
+    expect(animation.animations[0].tweens[0].from.strings[1]).toBe("%");
+    expect(animation.animations[0].tweens[0].to.strings[1]).toBe("%");
   });
 });

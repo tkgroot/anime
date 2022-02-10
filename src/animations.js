@@ -1,10 +1,5 @@
-import {
-  getAnimationType,
-} from './values.js';
-
-import {
-  normalizeTweens,
-} from './tweens.js';
+import { getAnimationType } from "./values.js";
+import { normalizeTweens } from "./tweens.js";
 
 function createAnimation(animatable, prop) {
   const animType = getAnimationType(animatable.target, prop.name);
@@ -20,8 +15,8 @@ function createAnimation(animatable, prop) {
       delay: firstTween.delay,
       duration: lastTween.end,
       endDelay: lastTween.endDelay,
-      timelineOffset: 0
-    }
+      timelineOffset: 0,
+    };
   }
 }
 

@@ -1,28 +1,9 @@
-import {
-  defaultInstanceSettings,
-  defaultTweenSettings,
-} from './consts.js';
-
-import {
-  replaceObjectProps,
-  mergeObjects,
-} from './helpers.js';
-
-import {
-  getKeyframesFromProperties,
-} from './keyframes.js';
-
-import {
-  getAnimatables,
-} from './animatables.js';
-
-import {
-  getAnimations,
-} from './animations.js';
-
-import {
-  getTimingsFromAnimations,
-} from './timings.js';
+import { defaultInstanceSettings, defaultTweenSettings } from "./consts.js";
+import { replaceObjectProps, mergeObjects } from "./helpers.js";
+import { getKeyframesFromProperties } from "./keyframes.js";
+import { getAnimatables } from "./animatables.js";
+import { getAnimations } from "./animations.js";
+import { getTimingsFromAnimations } from "./timings.js";
 
 let instancesId = 0;
 

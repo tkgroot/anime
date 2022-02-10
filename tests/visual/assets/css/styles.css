@@ -1,11 +1,13 @@
 :root {
   --black: #252423;
-  --white: #F6F4F2;
-  --red: #F64E4D;
-  --green: #18FF74;
+  --white: #f6f4f2;
+  --red: #f64e4d;
+  --green: #18ff74;
 }
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;

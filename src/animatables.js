@@ -1,21 +1,15 @@
-import {
-  emptyString,
-} from './consts.js';
-
-import {
-  is,
-  flattenArray,
-  filterArray,
-  toArray,
-} from './helpers.js';
-
-import {
-  getElementTransforms,
-} from './values.js';
+import { emptyString } from "./consts.js";
+import { is, flattenArray, filterArray, toArray } from "./helpers.js";
+import { getElementTransforms } from "./values.js";
 
 export function parseTargets(targets) {
-  const targetsArray = targets ? (flattenArray(is.arr(targets) ? targets.map(toArray) : toArray(targets))) : [];
-  return filterArray(targetsArray, (item, pos, self) => self.indexOf(item) === pos);
+  const targetsArray = targets
+    ? flattenArray(is.arr(targets) ? targets.map(toArray) : toArray(targets))
+    : [];
+  return filterArray(
+    targetsArray,
+    (item, pos, self) => self.indexOf(item) === pos
+  );
 }
 
 export function getAnimatables(targets) {
@@ -28,8 +22,8 @@ export function getAnimatables(targets) {
       transforms: {
         list: getElementTransforms(t),
         last: null,
-        string: emptyString
-      }
-    }
+        string: emptyString,
+      },
+    };
   });
 }

@@ -1,21 +1,12 @@
-import {
-  is,
-} from './helpers.js';
-
-import {
-  parseEasings,
-} from './easings.js';
-
+import { is } from "./helpers.js";
+import { parseEasings } from "./easings.js";
 import {
   getFunctionValue,
   getOriginalTargetValue,
   getRelativeValue,
   decomposeValue,
-} from './values.js';
-
-import {
-  getUnit,
-} from './units.js';
+} from "./values.js";
+import { getUnit } from "./units.js";
 
 // Tweens
 
@@ -24,7 +15,7 @@ function normalizeTweenValues(tween, animatable) {
   for (let p in tween) {
     let value = getFunctionValue(tween[p], animatable);
     if (is.arr(value)) {
-      value = value.map(v => getFunctionValue(v, animatable));
+      value = value.map((v) => getFunctionValue(v, animatable));
       if (value.length === 1) {
         value = value[0];
       }
@@ -38,13 +29,20 @@ function normalizeTweenValues(tween, animatable) {
 
 export function normalizeTweens(prop, animatable) {
   let previousTween;
-  return prop.tweens.map(t => {
+  return prop.tweens.map((t) => {
     const tween = normalizeTweenValues(t, animatable);
     const tweenValue = tween.value;
     let to = is.arr(tweenValue) ? tweenValue[1] : tweenValue;
     const toUnit = getUnit(to);
-    const originalValue = getOriginalTargetValue(animatable.target, prop.name, toUnit, animatable);
-    const previousValue = previousTween ? previousTween.to.original : originalValue;
+    const originalValue = getOriginalTargetValue(
+      animatable.target,
+      prop.name,
+      toUnit,
+      animatable
+    );
+    const previousValue = previousTween
+      ? previousTween.to.original
+      : originalValue;
     const from = is.arr(tweenValue) ? tweenValue[0] : previousValue;
     const fromUnit = getUnit(from) || getUnit(originalValue);
     const unit = toUnit || fromUnit;
@@ -53,7 +51,7 @@ export function normalizeTweens(prop, animatable) {
     tween.to = decomposeValue(getRelativeValue(to, from), unit);
     tween.start = previousTween ? previousTween.end : 0;
     tween.end = tween.start + tween.delay + tween.duration + tween.endDelay;
-    // TODO use a map for easings instead of 
+    // TODO use a map for easings instead of
     tween.easing = parseEasings(tween.easing, tween.duration);
     tween.isPath = is.pth(tweenValue);
     tween.isPathTargetInsideSVG = tween.isPath && is.svg(animatable.target);

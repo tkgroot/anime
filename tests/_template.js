@@ -48,10 +48,10 @@ beforeEach(() => {
   // Object
   global.testObject = {
     plainValue: 10,
-    valueWithUnit: '10px',
-    multiplePLainValues: '16 32 64 128',
-    multipleValuesWithUnits: '16px 32em 64% 128ch'
-  }
+    valueWithUnit: "10px",
+    multiplePLainValues: "16 32 64 128",
+    multipleValuesWithUnits: "16px 32em 64% 128ch",
+  };
 
   // Makes anime accessible in global scope
   global.anime = anime;

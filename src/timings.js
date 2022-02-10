@@ -4,10 +4,10 @@ export function getTimingsFromAnimations(animations, tweenSettings) {
 
   if (!animationsLength) {
     return {
-      delay, 
+      delay,
       duration: delay + duration + endDelay,
-      endDelay
-    }
+      endDelay,
+    };
   }
 
   const timings = {};

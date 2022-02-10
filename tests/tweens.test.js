@@ -1,15 +1,15 @@
-describe('Tweens', () => {
-  test('Single tween timings', () => {
+describe("Tweens", () => {
+  test("Single tween timings", () => {
     const delay = 200;
     const duration = 300;
     const endDelay = 400;
 
     const animation = anime({
-      targets: '#target-id',
-      translateX: '100%',
+      targets: "#target-id",
+      translateX: "100%",
       delay: delay,
       duration: duration,
-      endDelay: endDelay
+      endDelay: endDelay,
     });
 
     const tween = animation.animations[0].tweens[0];
@@ -17,7 +17,7 @@ describe('Tweens', () => {
     expect(tween.end).toBe(delay + duration + endDelay);
   });
 
-  test('Keyframes tween timings', () => {
+  test("Keyframes tween timings", () => {
     const delay1 = 200;
     const duration1 = 300;
     const endDelay1 = 400;
@@ -27,10 +27,20 @@ describe('Tweens', () => {
     const endDelay2 = 500;
 
     const animation = anime({
-      targets: '#target-id',
+      targets: "#target-id",
       translateX: [
-        {value: '100%', delay: delay1, duration: duration1, endDelay: endDelay1},
-        {value: '200%', delay: delay2, duration: duration2, endDelay: endDelay2}
+        {
+          value: "100%",
+          delay: delay1,
+          duration: duration1,
+          endDelay: endDelay1,
+        },
+        {
+          value: "200%",
+          delay: delay2,
+          duration: duration2,
+          endDelay: endDelay2,
+        },
       ],
     });
 
@@ -40,18 +50,20 @@ describe('Tweens', () => {
 
     const tween2 = animation.animations[0].tweens[1];
     expect(tween2.start).toBe(delay1 + duration1 + endDelay1);
-    expect(tween2.end).toBe((delay1 + duration1 + endDelay1) + (delay2 + duration2 + endDelay2));
+    expect(tween2.end).toBe(
+      delay1 + duration1 + endDelay1 + (delay2 + duration2 + endDelay2)
+    );
   });
 
-  test('Simple tween easing', () => {
+  test("Simple tween easing", () => {
     const animation = anime({
-      targets: '#target-id',
-      translateX: '100%',
-      easing: 'linear'
+      targets: "#target-id",
+      translateX: "100%",
+      easing: "linear",
     });
 
     const tween = animation.animations[0].tweens[0];
-    expect(tween.easing(.5)).toBe(.5);
+    expect(tween.easing(0.5)).toBe(0.5);
   });
 
   // Can't be tested in Jest...
@@ -66,11 +78,11 @@ describe('Tweens', () => {
   //   expect(tween.isPath).toBe(true);
   // });
 
-  test('Color tween', () => {
+  test("Color tween", () => {
     const animation = anime({
-      targets: '#target-id',
-      translateX: '100%',
-      backgroundColor: '#000',
+      targets: "#target-id",
+      translateX: "100%",
+      backgroundColor: "#000",
     });
 
     const tween1 = animation.animations[0].tweens[0];

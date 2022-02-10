@@ -2,5 +2,5 @@
 
 export const cache = {
   CSS: {},
-  springs: {}
-}
+  springs: {},
+};

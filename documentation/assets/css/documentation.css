@@ -40,7 +40,7 @@ body {
 .logo {
   display: flex;
   justify-content: space-between;
-  opacity: .8;
+  opacity: 0.8;
   width: 100%;
   height: 20px;
   text-decoration: none;
@@ -61,7 +61,7 @@ body {
 }
 
 .version-number {
-  opacity: .6;
+  opacity: 0.6;
   color: currentColor;
 }
 
@@ -76,7 +76,7 @@ header {
   height: 60px;
   padding-left: 20px;
   padding-right: 20px;
-  border-bottom: 1px solid rgba(0,0,0,.65);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.65);
 }
 
 h2 {
@@ -100,7 +100,7 @@ h2 {
   flex-direction: column;
   width: 240px;
   padding-top: 60px;
-  border-right: 1px solid rgba(0,0,0,.65);
+  border-right: 1px solid rgba(0, 0, 0, 0.65);
 }
 
 .sidebar-info {
@@ -119,8 +119,8 @@ h2 {
 .navigation ul {
   height: 30px;
   overflow-y: hidden;
-  -webkit-transition:opacity .4s ease;
-  transition: opacity .4s ease;
+  -webkit-transition: opacity 0.4s ease;
+  transition: opacity 0.4s ease;
 }
 
 .navigation ul li {
@@ -149,7 +149,7 @@ h2 {
   text-decoration: none;
   font-size: 14px;
   line-height: 20px;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
 }
 
@@ -161,15 +161,15 @@ h2 {
 
 .navigation ul li a,
 .navigation ul li:before {
-  opacity: .4;
+  opacity: 0.4;
 }
 
 .navigation ul li a {
-  transition: opacity .4s ease, color .4s ease;
+  transition: opacity 0.4s ease, color 0.4s ease;
 }
 
 .navigation ul.active a {
-  opacity: .7;
+  opacity: 0.7;
 }
 
 .navigation ul li:hover a,
@@ -230,7 +230,7 @@ h2 {
 
 .demo-info p,
 .demo-info td {
-  color: #F6F4F2;
+  color: #f6f4f2;
 }
 
 .demo-info i {
@@ -250,7 +250,7 @@ h2 {
 
 .demo-info a[href^="http"],
 .demo-info a[href^="http"]:visited {
-  color: #F6F4F2;
+  color: #f6f4f2;
 }
 
 .demo-info p.bubble {
@@ -260,11 +260,11 @@ h2 {
 }
 
 .demo-info p.bubble.warning {
-  color: #FBF38C;
+  color: #fbf38c;
 }
 
 .demo-info p.bubble.info {
-  color: #61C3FF;
+  color: #61c3ff;
 }
 
 .demo-info p.bubble:after {
@@ -279,7 +279,7 @@ h2 {
   bottom: 0;
   background-color: currentColor;
   border-radius: 3px;
-  opacity: .05;
+  opacity: 0.05;
 }
 
 .demo-info code.hljs {
@@ -295,8 +295,8 @@ h2 {
   display: inline-block;
   width: 100%;
   padding: 8px 12px;
-  background-color: rgba(0,0,0,.2);
-  border: 1px solid rgba(0,0,0,.2);
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 3px;
 }
 
@@ -304,14 +304,14 @@ h2 {
   position: relative;
   padding: 0 2px;
   height: 20px;
-  background-color: rgba(0,0,0,.2);
-  box-shadow: inset 0 0 1px rgba(0,0,0,.4);
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.4);
   border-radius: 3px;
 }
 
 .demo-info table {
   margin-bottom: 20px;
-  border: 1px solid rgba(255,255,255,.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-spacing: 0;
   border-radius: 3px;
 }
@@ -319,8 +319,8 @@ h2 {
 .demo-info td {
   vertical-align: middle;
   padding: 8px 12px;
-  border-left: 1px solid rgba(255,255,255,.15);
-  border-top: 1px solid rgba(255,255,255,.15);
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .demo-info thead td {
@@ -328,7 +328,7 @@ h2 {
   font-size: 16px;
   line-height: 22px;
   letter-spacing: 1px;
-  color: rgba(255,255,255,.4);
+  color: rgba(255, 255, 255, 0.4);
   border-top: none;
 }
 
@@ -371,7 +371,7 @@ article {
   width: 100%;
   min-height: 200px;
   padding-top: 35px;
-  border-bottom: 1px solid rgba(0,0,0,.65);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.65);
   cursor: pointer;
 }
 
@@ -401,7 +401,7 @@ article {
 }
 
 .demo.active:before {
-  opacity: .05;
+  opacity: 0.05;
 }
 
 .demo-content {
@@ -427,8 +427,8 @@ article {
   font-size: 14px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #F6F4F2;
-  opacity: .9;
+  color: #f6f4f2;
+  opacity: 0.9;
 }
 
 .active .demo-title {
@@ -452,7 +452,7 @@ article {
 }
 
 .controls {
-  opacity: .4;
+  opacity: 0.4;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -481,7 +481,7 @@ article {
 }
 
 .active .controls button:after {
-  content: '';
+  content: "";
   opacity: 0;
   position: absolute;
   left: 0;
@@ -493,12 +493,12 @@ article {
 }
 
 .active .controls button:hover:after {
-  opacity: .2;
+  opacity: 0.2;
 }
 
 .controls button.is-active:after,
 .controls button.is-active:hover:after {
-  opacity: .4;
+  opacity: 0.4;
 }
 
 .controls button:first-child {
@@ -634,7 +634,7 @@ input.progress[value]::-webkit-slider-thumb {
 
 .shadow {
   position: absolute;
-  opacity: .2;
+  opacity: 0.2;
 }
 
 .label {
@@ -647,12 +647,12 @@ input.progress[value]::-webkit-slider-thumb {
   width: 100%;
   height: auto;
   padding-left: 38px;
-  transition: opacity .5s ease;
-  white-space: nowrap
+  transition: opacity 0.5s ease;
+  white-space: nowrap;
 }
 
 .demo.active .label {
-  opacity: .2;
+  opacity: 0.2;
 }
 
 .small.label {
@@ -682,11 +682,11 @@ input.progress[value]::-webkit-slider-thumb {
 }
 
 .add-states-demo .el {
-  border: 1px solid rgba(0,0,0,0);
+  border: 1px solid rgba(0, 0, 0, 0);
 }
 
 #cssProperties .el {
-  transform: translate3d(0,0,0);
+  transform: translate3d(0, 0, 0);
 }
 
 /* Responsive */
@@ -723,15 +723,15 @@ input.progress[value]::-webkit-slider-thumb {
   }
 
   .demos::-webkit-scrollbar-track {
-    background-color: rgba(0,0,0,.65);
+    background-color: rgba(0, 0, 0, 0.65);
   }
 
   .demos::-webkit-scrollbar-thumb {
-    background-color: rgba(255,255,255,.3);
+    background-color: rgba(255, 255, 255, 0.3);
   }
 
   .demos::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255,255,255,.6);
+    background-color: rgba(255, 255, 255, 0.6);
   }
 }
 

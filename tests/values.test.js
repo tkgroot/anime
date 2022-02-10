@@ -1,23 +1,23 @@
-describe('Values', () => {
-  test('Function as values', () => {
+describe("Values", () => {
+  test("Function as values", () => {
     const animation = anime({
-      targets: '.target-class',
+      targets: ".target-class",
       translateX: (el, i, total) => {
         const index = parseFloat(el.dataset.index);
-        return total + ((i + index) * 100);
+        return total + (i + index) * 100;
       },
       duration: (el, i, total) => {
         const index = parseFloat(el.dataset.index);
-        return total + ((i + index) * 100);
+        return total + (i + index) * 100;
       },
       delay: (el, i, total) => {
         const index = parseFloat(el.dataset.index);
-        return total + ((i + index) * 100);
+        return total + (i + index) * 100;
       },
       endDelay: (el, i, total) => {
         const index = parseFloat(el.dataset.index);
-        return total + ((i + index) * 100);
-      }
+        return total + (i + index) * 100;
+      },
     });
 
     // Property value
@@ -45,49 +45,49 @@ describe('Values', () => {
     expect(animation.animations[3].tweens[0].endDelay).toBe(604);
   });
 
-  test('Get CSS computed values', () => {
+  test("Get CSS computed values", () => {
     const animation = anime({
-      targets: '.css-properties',
+      targets: ".css-properties",
       width: 100,
       fontSize: 10,
     });
 
-    expect(animation.animations[0].tweens[0].from.original).toBe('150px');
-    expect(animation.animations[1].tweens[0].from.original).toBe('20px');
+    expect(animation.animations[0].tweens[0].from.original).toBe("150px");
+    expect(animation.animations[1].tweens[0].from.original).toBe("20px");
   });
 
-  test('Get CSS inline values', () => {
+  test("Get CSS inline values", () => {
     const animation = anime({
-      targets: '.with-inline-styles',
+      targets: ".with-inline-styles",
       width: 100,
     });
 
-    expect(animation.animations[0].tweens[0].from.original).toBe('200px');
+    expect(animation.animations[0].tweens[0].from.original).toBe("200px");
   });
 
-  test('Get attribute animation type with SVG attribute values', () => {
+  test("Get attribute animation type with SVG attribute values", () => {
     const animation = anime({
-      targets: '#svg-element path',
-      stroke: '#FFFFFF',
-      d: 'M80 20c-30 0 0 30-30 30'
+      targets: "#svg-element path",
+      stroke: "#FFFFFF",
+      d: "M80 20c-30 0 0 30-30 30",
     });
 
-    expect(animation.animations[0].type).toBe('attribute');
-    expect(animation.animations[1].type).toBe('attribute');
+    expect(animation.animations[0].type).toBe("attribute");
+    expect(animation.animations[1].type).toBe("attribute");
   });
 
-  test('Get attribute animation type with DOM attribute values', () => {
+  test("Get attribute animation type with DOM attribute values", () => {
     const animation = anime({
-      targets: '.with-width-attribute',
+      targets: ".with-width-attribute",
       width: 100,
     });
 
-    expect(animation.animations[0].type).toBe('attribute');
+    expect(animation.animations[0].type).toBe("attribute");
   });
 
-  test('Get transform animation type with mixed transforms values', () => {
+  test("Get transform animation type with mixed transforms values", () => {
     const animation = anime({
-      targets: '#target-id',
+      targets: "#target-id",
       translateX: 100,
       translateY: 100,
       translateZ: 100,
@@ -107,51 +107,51 @@ describe('Values', () => {
       matrix3d: 100,
     });
 
-    animation.animations.forEach( a => {
-      expect(a.type).toBe('transform');
+    animation.animations.forEach((a) => {
+      expect(a.type).toBe("transform");
     });
   });
 
-  test('Get CSS animation type with mixed values', () => {
+  test("Get CSS animation type with mixed values", () => {
     const animation = anime({
-      targets: ['.with-inline-styles'],
+      targets: [".with-inline-styles"],
       width: 50,
       height: 50,
       fontSize: 50,
-      backgroundColor: '#FFF',
+      backgroundColor: "#FFF",
     });
 
-    animation.animations.forEach( a => {
-      expect(a.type).toBe('css');
+    animation.animations.forEach((a) => {
+      expect(a.type).toBe("css");
     });
   });
 
-  test('Get object animation type with input values', () => {
+  test("Get object animation type with input values", () => {
     const animation = anime({
-      targets: '#input-number',
+      targets: "#input-number",
       value: 50,
     });
 
-    expect(animation.animations[0].type).toBe('object');
+    expect(animation.animations[0].type).toBe("object");
   });
 
-  test('Get object animation type with plain JS object values', () => {
+  test("Get object animation type with plain JS object values", () => {
     const animation = anime({
       targets: testObject,
       plainValue: 20,
-      valueWithUnit: '20px',
-      multiplePLainValues: '32 64 128 256',
-      multipleValuesWithUnits: '32px 64em 128% 25§ch'
+      valueWithUnit: "20px",
+      multiplePLainValues: "32 64 128 256",
+      multipleValuesWithUnits: "32px 64em 128% 25§ch",
     });
 
-    animation.animations.forEach( a => {
-      expect(a.type).toBe('object');
+    animation.animations.forEach((a) => {
+      expect(a.type).toBe("object");
     });
   });
 
-  test('Get default transforms values', () => {
+  test("Get default transforms values", () => {
     const animation = anime({
-      targets: '#target-id',
+      targets: "#target-id",
       translateX: 100,
       translateY: 100,
       translateZ: 100,
@@ -170,24 +170,24 @@ describe('Values', () => {
     });
 
     // Translate
-    expect(animation.animations[0].tweens[0].from.original).toBe('0px');
-    expect(animation.animations[1].tweens[0].from.original).toBe('0px');
-    expect(animation.animations[2].tweens[0].from.original).toBe('0px');
+    expect(animation.animations[0].tweens[0].from.original).toBe("0px");
+    expect(animation.animations[1].tweens[0].from.original).toBe("0px");
+    expect(animation.animations[2].tweens[0].from.original).toBe("0px");
     // Rotate
-    expect(animation.animations[3].tweens[0].from.original).toBe('0deg');
-    expect(animation.animations[4].tweens[0].from.original).toBe('0deg');
-    expect(animation.animations[5].tweens[0].from.original).toBe('0deg');
-    expect(animation.animations[6].tweens[0].from.original).toBe('0deg');
+    expect(animation.animations[3].tweens[0].from.original).toBe("0deg");
+    expect(animation.animations[4].tweens[0].from.original).toBe("0deg");
+    expect(animation.animations[5].tweens[0].from.original).toBe("0deg");
+    expect(animation.animations[6].tweens[0].from.original).toBe("0deg");
     // Skew
-    expect(animation.animations[7].tweens[0].from.original).toBe('0deg');
-    expect(animation.animations[8].tweens[0].from.original).toBe('0deg');
-    expect(animation.animations[9].tweens[0].from.original).toBe('0deg');
+    expect(animation.animations[7].tweens[0].from.original).toBe("0deg");
+    expect(animation.animations[8].tweens[0].from.original).toBe("0deg");
+    expect(animation.animations[9].tweens[0].from.original).toBe("0deg");
     // Scale
-    expect(animation.animations[10].tweens[0].from.original).toBe('1');
-    expect(animation.animations[11].tweens[0].from.original).toBe('1');
-    expect(animation.animations[12].tweens[0].from.original).toBe('1');
-    expect(animation.animations[13].tweens[0].from.original).toBe('1');
+    expect(animation.animations[10].tweens[0].from.original).toBe("1");
+    expect(animation.animations[11].tweens[0].from.original).toBe("1");
+    expect(animation.animations[12].tweens[0].from.original).toBe("1");
+    expect(animation.animations[13].tweens[0].from.original).toBe("1");
     // Perspective
-    expect(animation.animations[14].tweens[0].from.original).toBe('0px');
+    expect(animation.animations[14].tweens[0].from.original).toBe("0px");
   });
 });

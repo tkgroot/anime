@@ -1,11 +1,5 @@
-import {
-  settings,
-} from './consts.js';
-
-import {
-  isBrowser,
-  isDocumentHidden,
-} from './helpers.js';
+import { settings } from "./consts.js";
+import { isBrowser, isDocumentHidden } from "./helpers.js";
 
 export const activeInstances = [];
 
@@ -31,11 +25,14 @@ function tick(t) {
 }
 
 export function startEngine() {
-  if (!raf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && activeInstances.length > 0) {
+  if (
+    !raf &&
+    (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) &&
+    activeInstances.length > 0
+  ) {
     raf = requestAnimationFrame(tick);
   }
 }
-
 
 function handleVisibilityChange() {
   if (!settings.suspendWhenDocumentHidden) return;
@@ -46,13 +43,11 @@ function handleVisibilityChange() {
   } else {
     // is back to active tab
     // first adjust animations to consider the time that ticks were suspended
-    activeInstances.forEach(
-      instance => instance ._onDocumentVisibility()
-    );
+    activeInstances.forEach((instance) => instance._onDocumentVisibility());
     startEngine();
   }
 }
 
 if (isBrowser) {
-  document.addEventListener('visibilitychange', handleVisibilityChange);
+  document.addEventListener("visibilitychange", handleVisibilityChange);
 }
