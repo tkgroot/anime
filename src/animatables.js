@@ -8,7 +8,6 @@ import {
 
 import {
   is,
-  flattenArray,
   filterArray,
   arrayContains,
   toArray,
@@ -32,7 +31,7 @@ function registerTarget(target) {
 }
 
 function parseTargets(targets) {
-  const targetsArray = targets ? (flattenArray(is.arr(targets) ? targets.map(toArray) : toArray(targets))) : [];
+  const targetsArray = targets ? (is.arr(targets) ? targets.map(toArray).flat() : toArray(targets).flat()) : [];
   return filterArray(targetsArray, (item, pos, self) => self.indexOf(item) === pos);
 }
 
