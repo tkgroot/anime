@@ -2,7 +2,8 @@ describe('Promises', () => {
   test('Resolve promise on single instance', () => {
     const animation = anime({
       targets: '#target-id',
-      translateX: 100
+      translateX: 100,
+      duration: 10,
     });
 
     let isPromiseResolved = false;
@@ -22,15 +23,18 @@ describe('Promises', () => {
     const animation = anime.timeline()
     .add({
       targets: '#target-id',
-      translateX: 100
+      translateX: 100,
+      duration: 10,
     })
     .add({
       targets: '#target-id',
-      translateX: 50
+      translateX: 50,
+      duration: 10,
     })
     .add({
       targets: '#target-id',
-      translateX: 150
+      translateX: 150,
+      duration: 10,
     });
 
     let isPromiseResolved = false;
