@@ -46,12 +46,16 @@ beforeEach(() => {
     <input type="number" id="input-number" name="Input number test" min="0" max="100" value="0">
   `;
 
-  // Object
+  // Objects
   global.testObject = {
     plainValue: 10,
     valueWithUnit: '10px',
     multiplePLainValues: '16 32 64 128',
     multipleValuesWithUnits: '16px 32em 64% 128ch'
+  }
+
+  global.anOtherTestObject = {
+    plainValue: 20,
   }
 
   // Makes anime accessible in global scope

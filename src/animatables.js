@@ -64,6 +64,11 @@ function removeAnimationsWithTargetsFromIntance(targetsArray, instance) {
   if (!animations.length && !children.length) instance.pause();
 }
 
+export function removeAnimatablesFromInstance(targets, instance) {
+  const targetsArray = parseTargets(targets);
+  removeAnimationsWithTargetsFromIntance(targetsArray, instance);
+}
+
 export function removeAnimatablesFromActiveInstances(targets) {
   const targetsArray = parseTargets(targets);
   for (let i = activeInstances.length; i--;) {

@@ -21,6 +21,10 @@ import {
 } from './engine.js';
 
 import {
+  removeAnimatablesFromInstance,
+} from './animatables.js';
+
+import {
   getPathProgress
 } from './svg.js';
 
@@ -267,8 +271,7 @@ export function animate(params = {}) {
   }
 
   instance.remove = function(targets) {
-    const targetsArray = parseTargets(targets);
-    removeTargetsFromInstance(targetsArray, instance);
+    removeAnimatablesFromInstance(targets, instance);
   }
 
   instance.reset();
