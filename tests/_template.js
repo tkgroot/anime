@@ -21,6 +21,7 @@ beforeEach(() => {
   `;
 
   // Dom elements and SVG
+  // '.target-class' number of elements should be exactly 4 in order to test function based values.
   document.body.innerHTML = `
     <div id="target-id" class="target-class" data-index="0"></div>
     <div class="target-class with-width-attribute" width="200" data-index="1"></div>

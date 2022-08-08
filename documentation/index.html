@@ -2512,32 +2512,33 @@ tl
 /*DEMO*/
 var tl = anime.timeline({
   targets: '.params-inheritance-demo .el',
-  delay: function(el, i) { return i * 200 },
-  duration: 500,
-  easing: 'easeOutExpo',
-  direction: 'alternate',
-  loop: true
+  duration: 500, // Can be inherited
+  delay: function(el, i) { return i * 200 }, // Can be inherited
+  endDelay: function(el, i) { return (i + 1) * 100 }, // Can be inherited
+  easing: 'easeOutExpo', // Can be inherited
+  direction: 'alternate', // Is NOT inherited
+  loop: true // Is NOT inherited
 });
 
 tl
 .add({
   translateX: 250,
-  // override the easing parameter
-  easing: 'spring',
+  easing: 'spring', // override the easing parameter
 })
 .add({
   opacity: .5,
   scale: 2
 })
 .add({
-  // override the targets parameter
-  targets: '.params-inheritance-demo .el.triangle',
+  targets: '.params-inheritance-demo .el.triangle', // override the targets parameter
   rotate: 180
 })
 .add({
   translateX: 0,
   scale: 1
 });
+
+console.log(tl);
 /*DEMO*/
 }
   </script>
