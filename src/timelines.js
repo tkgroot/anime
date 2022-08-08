@@ -1,45 +1,54 @@
 import {
-  defaultInstanceSettings,
   defaultTweenSettings,
 } from './consts.js';
 
 import {
   replaceObjectProps,
   mergeObjects,
+  is,
 } from './helpers.js';
 
 import {
-  getKeyframesFromProperties,
-} from './keyframes.js';
-
-import {
-  getAnimatables,
-} from './animatables.js';
-
-import {
-  getAnimations,
-} from './animations.js';
+  getRelativeValue,
+} from './values.js';
 
 import {
   getTimingsFromAnimations,
 } from './timings.js';
 
-let instancesId = 0;
+import {
+  animate,
+} from './animate.js';
 
-export function createTimeline(params) {
-  const instanceSettings = replaceObjectProps(defaultInstanceSettings, params);
-  const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
-  const properties = getKeyframesFromProperties(tweenSettings, params);
-  const animatables = getAnimatables(params.targets);
-  const animations = getAnimations(animatables, properties);
-  const timings = getTimingsFromAnimations(animations, tweenSettings);
-  return mergeObjects(instanceSettings, {
-    id: instancesId++,
-    children: [],
-    animatables: animatables,
-    animations: animations,
-    delay: timings.delay,
-    duration: timings.duration,
-    endDelay: timings.endDelay,
-  });
+import {
+  activeInstances,
+} from './engine.js';
+
+export function createTimeline(params = {}) {
+  let tl = animate(params);
+  tl.duration = 0;
+  tl.add = function(instanceParams, timelineOffset) {
+    const tlIndex = activeInstances.indexOf(tl);
+    const children = tl.children;
+    if (tlIndex > -1) activeInstances.splice(tlIndex, 1);
+    let insParams = mergeObjects(instanceParams, replaceObjectProps(defaultTweenSettings, params));
+    insParams.targets = insParams.targets || params.targets;
+    const tlDuration = tl.duration;
+    insParams.autoplay = false;
+    insParams.direction = tl.direction;
+    insParams.timelineOffset = is.und(timelineOffset) ? tlDuration : getRelativeValue(timelineOffset, tlDuration);
+    tl.seekSilently(insParams.timelineOffset);
+    const ins = animate(insParams);
+    const totalDuration = ins.duration + insParams.timelineOffset;
+    children.push(ins);
+    const timings = getTimingsFromAnimations(children, params);
+    tl.delay = timings.delay;
+    tl.endDelay = timings.endDelay;
+    tl.duration = timings.duration;
+    tl.seekSilently(0);
+    tl.reset();
+    if (tl.autoplay) tl.play();
+    return tl;
+  }
+  return tl;
 }

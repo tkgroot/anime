@@ -7,54 +7,61 @@
   <link href="assets/css/styles.css" rel="stylesheet">
   <style>
     body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       position: absolute;
       width: 100%;
       height: 100%;
     }
-    .particule {
+    #particles {
+      backface-visibility: hidden;
+    }
+    .particle {
       position: absolute;
       left: 50%;
       top: 50%;
-      width: 40px;
-      height: 40px;
-      margin-left: -20px;
-      margin-top: -20px;
+      width: 10px;
+      height: 10px;
+      margin-left: -5px;
+      margin-top: -5px;
       background-color: currentColor;
-      border-radius: 20px;
+      /*backface-visibility: hidden;*/
     }
   </style>
 </head>
 <body>
-
+  <div id="particles"></div>
 </body>
 <script type="module">
-  import anime from '../../src/anime.js';
+  import anime from '../../lib/anime.esm.js';
+
+  const particles = document.querySelector('#particles')
 
   function createParticule() {
     const el = document.createElement('div');
-    el.classList.add('particule');
+    el.classList.add('particle');
     return el;
   }
 
   const docFrag = document.createDocumentFragment();
 
-  for (let i = 0; i < 1000; i++) {
-    const particuleEl = createParticule();
-    docFrag.appendChild(particuleEl);
-    anime.set(particuleEl, {rotate: anime.random(-360, 360)});
+  for (let i = 0; i < 10000; i++) {
+    const particleEl = createParticule();
+    particles.appendChild(particleEl);
+    anime.set(particleEl, {rotate: anime.random(-360, 360)});
     anime({
-      targets: particuleEl,
+      targets: particleEl,
       translateX: 200,
       translateY: 200,
+      // translateZ: 200,
       scale: [1, 0],
-      loop: true,
+      // loop: true,
       easing: 'linear',
       delay: anime.random(0, 2000),
       duration: anime.random(1000, 2000),
     });
   }
-
-  document.body.appendChild(docFrag);
 
 </script>
 </html>

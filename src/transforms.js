@@ -1,0 +1,35 @@
+import {
+  transformsExecRgx,
+} from './consts.js';
+
+import {
+  is,
+  stringContains,
+} from './helpers.js';
+
+import {
+  convertPxToUnit,
+  getTransformUnit,
+} from './units.js';
+
+export function getElementTransforms(el) {
+  if (!is.dom(el)) return;
+  const str = el.style.transform;
+  const transforms = new Map();
+  if (!str) return transforms;
+  let t;
+  while (t = transformsExecRgx.exec(str)) {
+    transforms.set(t[1], t[2]);
+  }
+  return transforms;
+}
+
+export function getTransformValue(el, propName, animatable, unit) {
+  const defaultVal = stringContains(propName, 'scale') ? 1 : 0 + getTransformUnit(propName);
+  const value = getElementTransforms(el).get(propName) || defaultVal;
+  if (animatable) {
+    animatable.transforms.list.set(propName, value);
+    animatable.transforms.last = propName;
+  }
+  return unit ? convertPxToUnit(el, value, unit) : value;
+}

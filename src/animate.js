@@ -1,15 +1,15 @@
 import {
   settings,
+  defaultInstanceSettings,
+  defaultTweenSettings,
 } from './consts.js';
 
 import {
   clamp,
   filterArray,
+  replaceObjectProps,
+  mergeObjects,
 } from './helpers.js';
-
-import {
-  createTimeline,
-} from './timelines.js';
 
 import {
   setValueByType,
@@ -21,12 +21,48 @@ import {
 } from './engine.js';
 
 import {
+  getAnimatables,
+} from './animatables.js';
+
+import {
+  getAnimations,
+} from './animations.js';
+
+import {
+  getTimingsFromAnimations,
+} from './timings.js';
+
+import {
+  getKeyframesFromProperties,
+} from './keyframes.js';
+
+import {
   removeAnimatablesFromInstance,
 } from './animatables.js';
 
 import {
   getPathProgress
 } from './svg.js';
+
+let instancesId = 0;
+
+export function createInstance(params) {
+  const instanceSettings = replaceObjectProps(defaultInstanceSettings, params);
+  const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
+  const properties = getKeyframesFromProperties(tweenSettings, params);
+  const animatables = getAnimatables(params.targets);
+  const animations = getAnimations(animatables, properties);
+  const timings = getTimingsFromAnimations(animations, tweenSettings);
+  return mergeObjects(instanceSettings, {
+    id: instancesId++,
+    children: [],
+    animatables: animatables,
+    animations: animations,
+    delay: timings.delay,
+    duration: timings.duration,
+    endDelay: timings.endDelay,
+  });
+}
 
 export function animate(params = {}) {
   let startTime = 0, lastTime = 0, now = 0;
@@ -39,7 +75,7 @@ export function animate(params = {}) {
     return promise;
   }
 
-  let instance = createTimeline(params);
+  let instance = createInstance(params);
   let promise = makePromise(instance);
 
   function toggleInstanceDirection() {

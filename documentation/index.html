@@ -2071,11 +2071,10 @@ anime({
 /*DEMO*/
 anime({
   targets: '.staggering-axis-grid-demo .el',
-  translateX: anime.stagger(10, {grid: [5, 3], from: 'center', axis: 'x'}),
-  translateY: anime.stagger(10, {grid: [5, 3], from: 'center', axis: 'y'}),
+  translateX: anime.stagger(30, {grid: [5, 3], from: 'center', axis: 'x'}),
+  translateY: anime.stagger(20, {grid: [5, 3], from: 'center', axis: 'y'}),
   delay: anime.stagger(150, {grid: [5, 3], from: 'center', direction: 'reverse'}),
   duration: anime.stagger(500, {start: 2000, grid: [5, 3], from: 'center', direction: 'reverse'}),
-  // easing: 'easeInOutQuad'
 });
 /*DEMO*/
 }

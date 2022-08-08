@@ -15,6 +15,14 @@ import {
 } from './units.js';
 
 import {
+  getTransformValue,
+} from './transforms.js';
+
+import {
+  getAnimatables,
+} from './animatables.js';
+
+import {
   lowerCaseRgx,
   transformsExecRgx,
   relativeValuesExecRgx,
@@ -45,28 +53,6 @@ export function getAnimationType(el, prop) {
   if (is.dom(el) && arrayContains(validTransforms, prop)) return 'transform';
   if (is.dom(el) && (prop !== 'transform' && getCSSValue(el, prop))) return 'css';
   if (!is.nil(el[prop])) return 'object';
-}
-
-export function getElementTransforms(el) {
-  if (!is.dom(el)) return;
-  const str = el.style.transform;
-  const transforms = new Map();
-  if (!str) return transforms;
-  let t;
-  while (t = transformsExecRgx.exec(str)) {
-    transforms.set(t[1], t[2]);
-  }
-  return transforms;
-}
-
-function getTransformValue(el, propName, animatable, unit) {
-  const defaultVal = stringContains(propName, 'scale') ? 1 : 0 + getTransformUnit(propName);
-  const value = getElementTransforms(el).get(propName) || defaultVal;
-  if (animatable) {
-    animatable.transforms.list.set(propName, value);
-    animatable.transforms.last = propName;
-  }
-  return unit ? convertPxToUnit(el, value, unit) : value;
 }
 
 export function getOriginalTargetValue(target, propName, unit, animatable) {
@@ -123,4 +109,20 @@ export const setValueByType = {
       t.style.transform = transforms.string;
     }
   }
+}
+
+export function setTargetsValue(targets, properties) {
+  const animatables = getAnimatables(targets);
+  animatables.forEach(animatable => {
+    for (let property in properties) {
+      const value = getFunctionValue(properties[property], animatable);
+      const target = animatable.target;
+      const valueUnit = getUnit(value);
+      const originalValue = getOriginalTargetValue(target, property, valueUnit, animatable);
+      const unit = valueUnit || getUnit(originalValue);
+      const to = getRelativeValue(validateValue(value, unit), originalValue);
+      const animType = getAnimationType(target, property);
+      setValueByType[animType](target, property, to, animatable.transforms, true);
+    }
+  });
 }
