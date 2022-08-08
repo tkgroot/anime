@@ -21,13 +21,25 @@ beforeEach(() => {
   `;
 
   // Dom elements and SVG
-  // '.target-class' number of elements should be exactly 4 in order to test function based values.
+  // '.target-class' number of elements should be exactly 4 in order to test targets length dependent animations
   document.body.innerHTML = `
     <div id="target-id" class="target-class" data-index="0"></div>
     <div class="target-class with-width-attribute" width="200" data-index="1"></div>
     <div class="target-class with-inline-styles" data-index="2" style="width: 200px"></div>
     <div class="target-class" data-index="3"></div>
     <div class="css-properties"></div>
+    <div id="stagger">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div id="grid">
+      <div></div><div></div><div></div><div></div><div></div>
+      <div></div><div></div><div></div><div></div><div></div>
+      <div></div><div></div><div></div><div></div><div></div>
+    </div>
     <svg id="svg-element" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" viewBox="0 0 600 400">
       <filter id="displacementFilter">
         <feTurbulence type="turbulence" baseFrequency=".05" numOctaves="2" result="turbulence"></feTurbulence>
