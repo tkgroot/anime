@@ -74,7 +74,7 @@ export function animate(params = {}) {
     if (!instance.reversePlayback) {
       for (let i = 0; i < childrenLength; i++) seekChild(time, children[i], muteCallbacks);
     } else {
-      for (let i = childrenLength; i--;) seekChild(time, children[i], muteCallbacks);
+      for (let j = childrenLength; j--;) seekChild(time, children[j], muteCallbacks);
     }
   }
 
@@ -97,17 +97,17 @@ export function animate(params = {}) {
       const numbers = [];
       const toNumbersLength = tween.to.numbers.length;
       let progress;
-      for (let n = 0; n < toNumbersLength; n++) {
+      for (let j = 0; j < toNumbersLength; j++) {
         let value;
-        const toNumber = tween.to.numbers[n];
-        const fromNumber = tween.from.numbers[n] || 0;
+        const toNumber = tween.to.numbers[j];
+        const fromNumber = tween.from.numbers[j] || 0;
         if (!tween.isPath) {
           value = fromNumber + (eased * (toNumber - fromNumber));
         } else {
           value = getPathProgress(tween.value, eased * toNumber, tween.isPathTargetInsideSVG);
         }
         if (round) {
-          if (!(tween.isColor && n > 2)) {
+          if (!(tween.isColor && j > 2)) {
             value = Math.round(value * round) / round;
           }
         }
