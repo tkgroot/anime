@@ -45,8 +45,8 @@ import {
 } from './svg.js';
 
 import {
-  parseTargets,
   getAnimatables,
+  removeAnimatablesFromActiveInstances,
 } from './animatables.js';
 
 import {
@@ -65,39 +65,6 @@ import {
 import {
   animate,
 } from './animate.js';
-
-// Remove targets from animation
-
-function removeTargetsFromAnimations(targetsArray, animations) {
-  for (let a = animations.length; a--;) {
-    if (arrayContains(targetsArray, animations[a].animatable.target)) {
-      animations.splice(a, 1);
-    }
-  }
-}
-
-function removeTargetsFromInstance(targetsArray, instance) {
-  const animations = instance.animations;
-  const children = instance.children;
-  for (let c = children.length; c--;) {
-    const child = children[c];
-    const childAnimations = child.animations;
-    removeTargetsFromAnimations(targetsArray, childAnimations);
-    if (!childAnimations.length && !child.children.length) children.splice(c, 1);
-  }
-  // Return early to prevent instances created without targets (and without animations) to be paused
-  if (!animations.length) return;
-  removeTargetsFromAnimations(targetsArray, animations);
-  if (!animations.length && !children.length) instance.pause();
-}
-
-function removeTargetsFromActiveInstances(targets) {
-  const targetsArray = parseTargets(targets);
-  for (let i = activeInstances.length; i--;) {
-    const instance = activeInstances[i];
-    removeTargetsFromInstance(targetsArray, instance);
-  }
-}
 
 // Stagger helpers
 
@@ -202,7 +169,7 @@ anime.version = '__packageVersion__';
 anime.speed = 1;
 anime.suspendWhenDocumentHidden = true;
 anime.running = activeInstances;
-anime.remove = removeTargetsFromActiveInstances;
+anime.remove = removeAnimatablesFromActiveInstances;
 anime.get = getOriginalTargetValue;
 anime.set = setTargetsValue;
 anime.convertPx = convertPxToUnit;
