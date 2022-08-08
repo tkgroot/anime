@@ -75,4 +75,41 @@ describe('Animatables', () => {
     expect(animation.animatables[1].target).toBe(targetDataEl);
     expect(animation.animatables.length).toBe(5);
   });
+
+  test('Animations without targets', () => {
+    const targetClassEls = document.querySelectorAll('.target-class');
+    const animation = anime({
+      duration: 100,
+    });
+
+    expect(animation.animatables[0]).toBe(undefined);
+    expect(animation.duration).toBe(100);
+  });
+
+  test('Remove targets', resolve => {
+    let updated = 0;
+    const animationWithoutTargets = anime({
+      duration: 100,
+      complete: () => {
+        updated = 1;
+        expect(updated).toBe(1);
+        resolve();
+      }
+    });
+
+    const animation = anime({
+      targets: ['#target-id', '.target-class', 'div[data-index="0"]'],
+      translateX: 100,
+    });
+    expect(animation.animations.length).toBe(4);
+
+    anime.remove('#target-id');
+    expect(animation.animations.length).toBe(3);
+
+    anime.remove('[data-index="2"]');
+    expect(animation.animations.length).toBe(2);
+
+    anime.remove('.target-class');
+    expect(animation.animations.length).toBe(0);
+  });
 });
