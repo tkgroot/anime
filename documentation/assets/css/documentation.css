@@ -438,7 +438,7 @@ article {
 
 .line {
   width: 100%;
-  padding: 1px 0px;
+  /*padding: 1px 0px;*/
 }
 
 .line.align-center {
@@ -447,8 +447,20 @@ article {
 }
 
 .grid {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
+  width: 100%;
+}
+
+.staggering-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: auto;
+  margin-right: auto;
+  width: calc(30px * 5);
+  height: calc(30px * 3);
 }
 
 .controls {
@@ -634,6 +646,7 @@ input.progress[value]::-webkit-slider-thumb {
 
 .shadow {
   position: absolute;
+  z-index: 0;
   opacity: .2;
 }
 
