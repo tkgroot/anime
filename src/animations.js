@@ -7,18 +7,19 @@ import {
 } from './values.js';
 
 import {
-  createTweens,
+  convertKeyframesToTweens,
 } from './tweens.js';
 
-function createAnimation(animatable, prop) {
-  const animType = getAnimationType(animatable.target, prop.name);
+function createAnimation(animatable, keyframes) {
+  const propertyName = keyframes[0].propertyName;
+  const animType = getAnimationType(animatable.target, propertyName);
   if (is.num(animType)) {
-    const tweens = createTweens(prop, animatable);
+    const tweens = convertKeyframesToTweens(keyframes, animatable, propertyName);
     const firstTween = tweens[0];
     const lastTween = tweens[tweens.length - 1];
     return {
       type: animType,
-      property: prop.name,
+      property: propertyName,
       animatable: animatable,
       tweens: tweens,
       delay: firstTween.delay,
@@ -29,16 +30,16 @@ function createAnimation(animatable, prop) {
   }
 }
 
-export function getAnimations(animatables, properties) {
+export function getAnimations(animatables, animationsKeyframes) {
   const animations = [];
   for (let a = 0, aLength = animatables.length; a < aLength; a++) {
     const animatable = animatables[a];
     if (animatable) {
-      for (let p = 0, pLength = properties.length; p < pLength; p++) {
-        const animation = createAnimation(animatable, properties[p]);
+      for (let p = 0, pLength = animationsKeyframes.length; p < pLength; p++) {
+        const animation = createAnimation(animatable, animationsKeyframes[p]);
         // Make sure the animation is not undefined
         if (animation) {
-          animations.push(createAnimation(animatable, properties[p]));
+          animations.push(animation);
         }
       }
     }

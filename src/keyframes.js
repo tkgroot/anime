@@ -86,10 +86,7 @@ function getKeyframesFromProperties(tweenSettings, params) {
   }
   for (let p in params) {
     if (is.key(p)) {
-      keyframes.push({
-        name: p,
-        tweens: convertPropertyValueToTweens(p, params[p], tweenSettings)
-      });
+      keyframes.push(convertPropertyValueToTweens(p, params[p], tweenSettings));
     }
   }
   return keyframes;

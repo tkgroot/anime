@@ -36,14 +36,14 @@ function normalizeTweenValues(tween, animatable) {
   return t;
 }
 
-export function createTweens(prop, animatable) {
+export function convertKeyframesToTweens(keyframes, animatable, propertyName) {
   let previousTween;
-  return prop.tweens.map(t => {
+  return keyframes.map(t => {
     const tween = normalizeTweenValues(t, animatable);
     const tweenValue = tween.value;
     let to = is.arr(tweenValue) ? tweenValue[1] : tweenValue;
     const toUnit = getUnit(to);
-    const originalValue = getOriginalTargetValue(animatable.target, prop.name, toUnit, animatable);
+    const originalValue = getOriginalTargetValue(animatable.target, propertyName, toUnit, animatable);
     const previousValue = previousTween ? previousTween.to.original : originalValue;
     const from = is.arr(tweenValue) ? tweenValue[0] : previousValue;
     const fromUnit = getUnit(from) || getUnit(originalValue);
