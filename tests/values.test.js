@@ -1,3 +1,7 @@
+import {
+  animationTypes
+} from '../src/consts.js';
+
 describe('Values', () => {
   test('Function as values', () => {
     const animation = anime({

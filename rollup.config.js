@@ -1,7 +1,7 @@
 import buble from '@rollup/plugin-buble';
 import replace from '@rollup/plugin-replace';
-import { uglify } from "rollup-plugin-uglify";
-import notify from 'rollup-plugin-notify';
+// import { uglify } from "rollup-plugin-uglify";
+// import notify from 'rollup-plugin-notify';
 import pkg from './package.json';
 
 const inputPath = 'src/anime.js';
@@ -46,7 +46,7 @@ export default [
     ],
     plugins: [
       replace(replaceOptions),
-      notify()
+      // notify()
     ]
   },
   // ES5 Minified
@@ -56,12 +56,12 @@ export default [
     plugins: [
       replace(replaceOptions),
       buble(bubleOptions),
-      uglify({
-        output: {
-          preamble: banner('ES5 IIFE minified')
-        }
-      }),
-      notify()
+      // uglify({
+      //   output: {
+      //     preamble: banner('ES5 IIFE minified')
+      //   }
+      // }),
+      // notify()
     ]
   },
   // ES5 
@@ -71,7 +71,7 @@ export default [
     plugins: [
       replace(replaceOptions),
       buble(bubleOptions),
-      notify()
+      // notify()
     ]
   },
 ];

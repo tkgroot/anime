@@ -1,4 +1,4 @@
-const anime = require("../lib/anime.umd.js");
+import anime from '../src/anime.js';
 
 beforeEach(() => {
   // Set default styles since Jest doesn't seem to properly inherits styles from html when using getComputedStyle

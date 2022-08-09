@@ -36,6 +36,15 @@ export const settings = {
   suspendWhenDocumentHidden: true,
 }
 
+// Animation type
+
+export const animationTypes = {
+  NUMBER: 0,
+  ATTRIBUTE: 1,
+  CSS: 2,
+  TRANSFORM: 3,
+}
+
 // Transforms
 
 export const validTransforms = [
