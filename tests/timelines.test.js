@@ -20,7 +20,7 @@ describe('Timelines', () => {
     })
     .add({
       // override the targets parameter
-      targets: 'id="target-id',
+      targets: '#target-id',
       rotate: 180
     })
     .add({
