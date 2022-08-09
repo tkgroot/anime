@@ -31,6 +31,7 @@ import {
   digitWithExponentRgx,
   validTransforms,
   animationTypes,
+  valueTypes,
 } from './consts.js';
 
 import {
@@ -84,6 +85,8 @@ export function getRelativeValue(to, from) {
 
 export function validateValue(val, unit) {
   if (is.col(val)) return normalizeColorToRgba(val);
+  // NEXT TO DO : FIGURE OUT A BETTER WAY TO HANDLE COMPLEX ANIMATIONS CONTAINING WHITE SPACES
+  // If value contains a white space, do not attempt to add a unit
   if (whiteSpaceTestRgx.test(val)) return val;
   const originalUnit = getUnit(val);
   const unitLess = originalUnit ? val.substr(0, val.length - originalUnit.length) : val;
@@ -91,12 +94,21 @@ export function validateValue(val, unit) {
   return unitLess;
 }
 
-export function decomposeValue(val, unit, tweenValue, originalValue, previousValue) {
-  const value = validateValue((is.pth(val) ? val.totalLength : val), unit) + emptyString;
-  return {
-    original: value,
-    numbers: value.match(digitWithExponentRgx) ? value.match(digitWithExponentRgx).map(Number) : [0],
-    strings: (is.str(val) || unit) ? value.split(digitWithExponentRgx) : []
+export function decomposeValue(val, unit) {
+  if (is.num(val) && is.und(unit)) {
+    return {
+      type: valueTypes.NUMBER,
+      original: val,
+      numbers: [val],
+      strings: []
+    }
+  } else {
+    const value = validateValue((is.pth(val) ? val.totalLength : val), unit) + emptyString;
+    return {
+      original: value,
+      numbers: value.match(digitWithExponentRgx) ? value.match(digitWithExponentRgx).map(Number) : [0],
+      strings: (is.str(val) || unit) ? value.split(digitWithExponentRgx) : []
+    }
   }
 }
 

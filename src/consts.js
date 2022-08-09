@@ -45,6 +45,12 @@ export const animationTypes = {
   TRANSFORM: 3,
 }
 
+export const valueTypes = {
+  NUMBER: 0,
+  UNIT: 1,
+  COMPLEX: 2,
+}
+
 // Transforms
 
 export const validTransforms = [

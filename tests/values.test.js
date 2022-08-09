@@ -103,12 +103,40 @@ describe('Values', () => {
     expect(animation.animations[8].tweens[0].from.original).toBe('0deg');
     expect(animation.animations[9].tweens[0].from.original).toBe('0deg');
     // Scale
-    expect(animation.animations[10].tweens[0].from.original).toBe('1');
-    expect(animation.animations[11].tweens[0].from.original).toBe('1');
-    expect(animation.animations[12].tweens[0].from.original).toBe('1');
-    expect(animation.animations[13].tweens[0].from.original).toBe('1');
+    expect(animation.animations[10].tweens[0].from.original).toBe(1);
+    expect(animation.animations[11].tweens[0].from.original).toBe(1);
+    expect(animation.animations[12].tweens[0].from.original).toBe(1);
+    expect(animation.animations[13].tweens[0].from.original).toBe(1);
     // Perspective
     expect(animation.animations[14].tweens[0].from.original).toBe('0px');
+  });
+
+  test('Values with white space', resolve => {
+    const animation = anime({
+      targets: '#target-id',
+      backgroundSize: ['auto 100%', 'auto 200%'],
+      duration: 10,
+      complete: () => {
+        expect(animation.animations[0].currentValue).toBe('auto 200%');
+        resolve();
+      }
+    });
+  });
+
+  test('Complex CSS values', resolve => {
+    const animation = anime({
+      targets: '#target-id',
+      filter: 'blur(10px) constrast(200)',
+      translateX: 'calc( calc(15px * 2) -42rem)',
+      duration: 10,
+      complete: () => {
+        expect(animation.animations[0].currentValue).toBe('blur(10px) constrast(200)');
+        expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual([10, 200]);
+        expect(animation.animations[1].currentValue).toBe('calc( calc(15px * 2) -42rem)');
+        expect(animation.animations[1].tweens[0].to.numbers).toStrictEqual([15, 2, -42]);
+        resolve();
+      }
+    });
   });
 
   // Animation types
