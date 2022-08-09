@@ -34,6 +34,6 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --watch"
+    "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --watch"
   }
 }
