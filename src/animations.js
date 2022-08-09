@@ -1,4 +1,8 @@
 import {
+  is,
+} from './helpers.js';
+
+import {
   getAnimationType,
 } from './values.js';
 
@@ -8,7 +12,7 @@ import {
 
 function createAnimation(animatable, prop) {
   const animType = getAnimationType(animatable.target, prop.name);
-  if (animType) {
+  if (is.num(animType)) {
     const tweens = normalizeTweens(prop, animatable);
     const firstTween = tweens[0];
     const lastTween = tweens[tweens.length - 1];

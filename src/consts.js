@@ -39,7 +39,7 @@ export const settings = {
 // Animation type
 
 export const animationTypes = {
-  NUMBER: 0,
+  OBJECT: 0,
   ATTRIBUTE: 1,
   CSS: 2,
   TRANSFORM: 3,
@@ -80,6 +80,7 @@ export const easingsExecRgx = /\(([^)]+)\)/;
 export const unitsExecRgx = /[+-]?\d*\.?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?(%|px|pt|em|rem|in|cm|mm|ex|ch|pc|vw|vh|vmin|vmax|deg|rad|turn)?$/;
 export const digitWithExponentRgx = /[+-]?\d*\.?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g;
 export const lowerCaseRgx = /([a-z])([A-Z])/g;
+export const lowerCaseRgxParam = '$1-$2';
 export const transformsExecRgx = /(\w+)\(([^)]*)\)/g;
 export const relativeValuesExecRgx = /^(\*=|\+=|-=)/;
 export const whiteSpaceTestRgx = /\s/g;

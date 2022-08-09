@@ -1,5 +1,5 @@
 import {
-  animationTypes
+  animationTypes,
 } from '../src/consts.js';
 
 describe('Values', () => {
@@ -69,90 +69,6 @@ describe('Values', () => {
     expect(animation.animations[0].tweens[0].from.original).toBe('200px');
   });
 
-  test('Get attribute animation type with SVG attribute values', () => {
-    const animation = anime({
-      targets: '#svg-element path',
-      stroke: '#FFFFFF',
-      d: 'M80 20c-30 0 0 30-30 30'
-    });
-
-    expect(animation.animations[0].type).toBe('attribute');
-    expect(animation.animations[1].type).toBe('attribute');
-  });
-
-  test('Get attribute animation type with DOM attribute values', () => {
-    const animation = anime({
-      targets: '.with-width-attribute',
-      width: 100,
-    });
-
-    expect(animation.animations[0].type).toBe('attribute');
-  });
-
-  test('Get transform animation type with mixed transforms values', () => {
-    const animation = anime({
-      targets: '#target-id',
-      translateX: 100,
-      translateY: 100,
-      translateZ: 100,
-      rotate: 100,
-      rotateX: 100,
-      rotateY: 100,
-      rotateZ: 100,
-      scale: 100,
-      scaleX: 100,
-      scaleY: 100,
-      scaleZ: 100,
-      skew: 100,
-      skewX: 100,
-      skewY: 100,
-      perspective: 100,
-      matrix: 100,
-      matrix3d: 100,
-    });
-
-    animation.animations.forEach( a => {
-      expect(a.type).toBe('transform');
-    });
-  });
-
-  test('Get CSS animation type with mixed values', () => {
-    const animation = anime({
-      targets: ['.with-inline-styles'],
-      width: 50,
-      height: 50,
-      fontSize: 50,
-      backgroundColor: '#FFF',
-    });
-
-    animation.animations.forEach( a => {
-      expect(a.type).toBe('css');
-    });
-  });
-
-  test('Get attribute animation type with input values', () => {
-    const animation = anime({
-      targets: '#input-number',
-      value: 50,
-    });
-
-    expect(animation.animations[0].type).toBe('attribute');
-  });
-
-  test('Get object animation type with plain JS object values', () => {
-    const animation = anime({
-      targets: testObject,
-      plainValue: 20,
-      valueWithUnit: '20px',
-      multiplePLainValues: '32 64 128 256',
-      multipleValuesWithUnits: '32px 64em 128% 25ch'
-    });
-
-    animation.animations.forEach( a => {
-      expect(a.type).toBe('object');
-    });
-  });
-
   test('Get default transforms values', () => {
     const animation = anime({
       targets: '#target-id',
@@ -193,5 +109,91 @@ describe('Values', () => {
     expect(animation.animations[13].tweens[0].from.original).toBe('1');
     // Perspective
     expect(animation.animations[14].tweens[0].from.original).toBe('0px');
+  });
+
+  // Animation types
+
+  test('Get attribute animation type with SVG attribute values', () => {
+    const animation = anime({
+      targets: '#svg-element path',
+      stroke: '#FFFFFF',
+      d: 'M80 20c-30 0 0 30-30 30'
+    });
+
+    expect(animation.animations[0].type).toBe(animationTypes.ATTRIBUTE);
+    expect(animation.animations[1].type).toBe(animationTypes.ATTRIBUTE);
+  });
+
+  test('Get attribute animation type with DOM attribute values', () => {
+    const animation = anime({
+      targets: '.with-width-attribute',
+      width: 100,
+    });
+
+    expect(animation.animations[0].type).toBe(animationTypes.ATTRIBUTE);
+  });
+
+  test('Get transform animation type with mixed transforms values', () => {
+    const animation = anime({
+      targets: '#target-id',
+      translateX: 100,
+      translateY: 100,
+      translateZ: 100,
+      rotate: 100,
+      rotateX: 100,
+      rotateY: 100,
+      rotateZ: 100,
+      scale: 100,
+      scaleX: 100,
+      scaleY: 100,
+      scaleZ: 100,
+      skew: 100,
+      skewX: 100,
+      skewY: 100,
+      perspective: 100,
+      matrix: 100,
+      matrix3d: 100,
+    });
+
+    animation.animations.forEach( a => {
+      expect(a.type).toBe(animationTypes.TRANSFORM);
+    });
+  });
+
+  test('Get CSS animation type with mixed values', () => {
+    const animation = anime({
+      targets: ['.with-inline-styles'],
+      width: 50,
+      height: 50,
+      fontSize: 50,
+      backgroundColor: '#FFF',
+    });
+
+    animation.animations.forEach( a => {
+      expect(a.type).toBe(animationTypes.CSS);
+    });
+  });
+
+  test('Get attribute animation type with input values', () => {
+    const animation = anime({
+      targets: '#input-number',
+      value: 50,
+    });
+
+    expect(animation.animations[0].type).toBe(animationTypes.ATTRIBUTE);
+  });
+
+  test('Get object animation type with plain JS object values', () => {
+    const animation = anime({
+      targets: testObject,
+      plainValue: 20,
+      valueWithUnit: '20px',
+      multiplePLainValues: '32 64 128 256',
+      multipleValuesWithUnits: '32px 64em 128% 25ch'
+    });
+
+    animation.animations.forEach( a => {
+      expect(a.type).toBe(animationTypes.OBJECT);
+    });
   });
 });

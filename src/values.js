@@ -24,11 +24,13 @@ import {
 
 import {
   lowerCaseRgx,
+  lowerCaseRgxParam,
   transformsExecRgx,
   relativeValuesExecRgx,
   whiteSpaceTestRgx,
   digitWithExponentRgx,
   validTransforms,
+  animationTypes,
 } from './consts.js';
 
 import {
@@ -41,30 +43,29 @@ export function getFunctionValue(val, animatable) {
 }
 
 function getCSSValue(el, prop, unit) {
-  if (prop in el.style) {
-    const uppercasePropName = prop.replace(lowerCaseRgx, '$1-$2').toLowerCase();
-    const value = el.style[prop] || getComputedStyle(el).getPropertyValue(uppercasePropName) || '0';
-    return unit ? convertPxToUnit(el, value, unit) : value;
-  }
+  const uppercasePropName = prop.replace(lowerCaseRgx, lowerCaseRgxParam).toLowerCase();
+  const value = el.style[prop] || getComputedStyle(el).getPropertyValue(uppercasePropName) || '0';
+  return unit ? convertPxToUnit(el, value, unit) : value;
 }
 
 export function getAnimationType(el, prop) {
   if (is.obj(el)) {
-    return 'object';
+    return animationTypes.OBJECT;
   } else if (is.dom(el)) {
-    if (!is.nil(el.getAttribute(prop))) return 'attribute';
-    if (arrayContains(validTransforms, prop)) return 'transform';
-    if (prop in el.style) return 'css';
+    if (!is.nil(el.getAttribute(prop))) return animationTypes.ATTRIBUTE;
+    if (arrayContains(validTransforms, prop)) return animationTypes.TRANSFORM;
+    if (prop in el.style) return animationTypes.CSS;
+    return console.warn(`Can't animate property '${prop}' on DOM element '${el}'.`);
   }
+  return console.warn(`Target '${el}' can't be animated.`);
 }
 
 export function getOriginalTargetValue(target, propName, unit, animatable) {
-  switch (getAnimationType(target, propName)) {
-    case 'transform': return getTransformValue(target, propName, animatable, unit);
-    case 'css': return getCSSValue(target, propName, unit);
-    case 'attribute': return target.getAttribute(propName);
-    default: return target[propName] || 0;
-  }
+  const animType = getAnimationType(target, propName);
+  if (animType === animationTypes.OBJECT) return target[propName] || 0;
+  if (animType === animationTypes.ATTRIBUTE) return target.getAttribute(propName);
+  if (animType === animationTypes.TRANSFORM) return getTransformValue(target, propName, animatable, unit);
+  if (animType === animationTypes.CSS) return getCSSValue(target, propName, unit);
 }
 
 export function getRelativeValue(to, from) {
@@ -98,11 +99,11 @@ export function decomposeValue(val, unit) {
   }
 }
 
-export const setValueByType = {
-  css: (t, p, v) => t.style[p] = v,
-  attribute: (t, p, v) => t.setAttribute(p, v),
-  object: (t, p, v) => t[p] = v,
-  transform: (t, p, v, transforms, manual) => {
+export const setValueByType = [
+  (t, p, v) => t[p] = v,
+  (t, p, v) => t.setAttribute(p, v),
+  (t, p, v) => t.style[p] = v,
+  (t, p, v, transforms, manual) => {
     transforms.list.set(p, v);
     if (p === transforms.last || manual) {
       transforms.string = emptyString;
@@ -112,7 +113,7 @@ export const setValueByType = {
       t.style.transform = transforms.string;
     }
   }
-}
+]
 
 export function setTargetsValue(targets, properties) {
   const animatables = getAnimatables(targets);
