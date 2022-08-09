@@ -36,7 +36,7 @@ function normalizeTweenValues(tween, animatable) {
   return t;
 }
 
-export function normalizeTweens(prop, animatable) {
+export function createTweens(prop, animatable) {
   let previousTween;
   return prop.tweens.map(t => {
     const tween = normalizeTweenValues(t, animatable);

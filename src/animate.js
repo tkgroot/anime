@@ -122,10 +122,10 @@ export function animate(params = {}) {
       const anim = animations[i];
       const animatable = anim.animatable;
       const tweens = anim.tweens;
-      const tweenLength = tweens.length - 1;
-      let tween = tweens[tweenLength];
+      const tweensLength = tweens.length - 1;
+      let tween = tweens[tweensLength];
       // Only check for keyframes if there is more than one tween
-      if (tweenLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
+      if (tweensLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
       const elapsed = clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration;
       const eased = isNaN(elapsed) ? 1 : tween.easing(elapsed);
       const strings = tween.to.strings;

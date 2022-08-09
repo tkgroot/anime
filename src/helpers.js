@@ -89,20 +89,14 @@ export function arrayContains(arr, val) {
 
 // Objects
 
-export function cloneObject(o) {
-  const clone = {};
-  for (let p in o) clone[p] = o[p];
-  return clone;
-}
-
 export function replaceObjectProps(o1, o2) {
-  const o = cloneObject(o1);
+  const o = {...o1};
   for (let p in o1) o[p] = o2.hasOwnProperty(p) ? o2[p] : o1[p];
   return o;
 }
 
 export function mergeObjects(o1, o2) {
-  const o = cloneObject(o1);
+  const o = {...o1};
   for (let p in o2) o[p] = is.und(o1[p]) ? o2[p] : o1[p];
   return o;
 }

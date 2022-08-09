@@ -7,13 +7,13 @@ import {
 } from './values.js';
 
 import {
-  normalizeTweens,
+  createTweens,
 } from './tweens.js';
 
 function createAnimation(animatable, prop) {
   const animType = getAnimationType(animatable.target, prop.name);
   if (is.num(animType)) {
-    const tweens = normalizeTweens(prop, animatable);
+    const tweens = createTweens(prop, animatable);
     const firstTween = tweens[0];
     const lastTween = tweens[tweens.length - 1];
     return {

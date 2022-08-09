@@ -1,7 +1,6 @@
-import buble from '@rollup/plugin-buble';
+import { babel } from '@rollup/plugin-babel';
+import { terser } from "rollup-plugin-terser";
 import replace from '@rollup/plugin-replace';
-// import { uglify } from "rollup-plugin-uglify";
-// import notify from 'rollup-plugin-notify';
 import pkg from './package.json';
 
 const inputPath = 'src/anime.js';
@@ -19,21 +18,13 @@ const banner = format => {
 }
 
 const replaceOptions = {
-  __packageVersion__: pkg.version
+  __packageVersion__: pkg.version,
+  preventAssignment: true
 }
 
-const bubleOptions = {
-  exclude: ['node_modules/**'],
-  transforms: {
-    dangerousForOf: true
-  },
-  targets: {
-    firefox: 32,
-    chrome: 24,
-    safari: 6,
-    opera: 15,
-    edge: 10
-  }
+const babelOptions = {
+  presets: ["@babel/preset-env"],
+  babelHelpers: 'bundled',
 }
 
 export default [
@@ -42,7 +33,7 @@ export default [
     input: inputPath,
     output: [
       { file: pkg.main, format: 'umd', name: outputName, banner: banner('ES6 UMD') },
-      { file: pkg.module, format: 'es', banner: banner('ES6 Module') }
+      { file: pkg.module, format: 'esm', banner: banner('ES6 ESM') }
     ],
     plugins: [
       replace(replaceOptions),
@@ -52,10 +43,11 @@ export default [
   // ES5 Minified
   {
     input: inputPath,
-    output: { file: pkg.files + '/anime.es5.min.js', format: 'iife', name: outputName },
+    output: { file: pkg.files + '/anime.es5.min.js', format: 'iife', name: outputName, banner: banner('ES5 IIFE') },
     plugins: [
       replace(replaceOptions),
-      buble(bubleOptions),
+      babel(babelOptions),
+      terser(),
       // uglify({
       //   output: {
       //     preamble: banner('ES5 IIFE minified')
@@ -70,7 +62,7 @@ export default [
     output: { file: pkg.files + '/anime.es5.js', format: 'iife', name: outputName, banner: banner('ES5 IIFE') },
     plugins: [
       replace(replaceOptions),
-      buble(bubleOptions),
+      babel(babelOptions),
       // notify()
     ]
   },

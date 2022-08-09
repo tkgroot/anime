@@ -1,6 +1,5 @@
 import {
   is,
-  cloneObject,
   mergeObjects,
   flattenArray,
   filterArray,
@@ -14,9 +13,10 @@ import {
   spring,
 } from './easings.js';
 
-function convertPropertyValueToTweens(propertyValue, tweenSettings) {
+function convertPropertyValueToTweens(propertyName, propertyValue, tweenSettings) {
   let value = propertyValue;
-  let settings = cloneObject(tweenSettings);
+  const settings = {...tweenSettings};
+  settings.propertyName = propertyName;
   // Override duration if easing is a spring
   if (springTestRgx.test(settings.easing)) {
     settings.duration = spring(settings.easing);
@@ -88,7 +88,7 @@ function getKeyframesFromProperties(tweenSettings, params) {
     if (is.key(p)) {
       keyframes.push({
         name: p,
-        tweens: convertPropertyValueToTweens(params[p], tweenSettings)
+        tweens: convertPropertyValueToTweens(p, params[p], tweenSettings)
       });
     }
   }
