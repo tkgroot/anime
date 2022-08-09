@@ -22,14 +22,14 @@ import {
 function normalizeTweenValues(tween, animatable) {
   const t = {};
   for (let p in tween) {
-    let value = getFunctionValue(tween[p], animatable);
-    if (is.arr(value)) {
-      value = value.map(v => getFunctionValue(v, animatable));
-      if (value.length === 1) {
-        value = value[0];
+    let prop = getFunctionValue(tween[p], animatable);
+    if (is.arr(prop)) {
+      prop = prop.map(v => getFunctionValue(v, animatable));
+      if (prop.length === 1) {
+        prop = prop[0];
       }
     }
-    t[p] = value;
+    t[p] = prop;
   }
   t.duration = parseFloat(t.duration);
   t.delay = parseFloat(t.delay);
@@ -53,9 +53,8 @@ export function normalizeTweens(prop, animatable) {
     tween.to = decomposeValue(getRelativeValue(to, from), unit);
     tween.start = previousTween ? previousTween.end : 0;
     tween.end = tween.start + tween.delay + tween.duration + tween.endDelay;
-    // TODO use a map for easings instead of 
     tween.easing = parseEasings(tween.easing, tween.duration);
-    tween.isPath = is.pth(tweenValue);
+    tween.isPath = !is.und(tweenValue) && is.pth(tweenValue);
     tween.isPathTargetInsideSVG = tween.isPath && is.svg(animatable.target);
     tween.isColor = is.col(tween.from.original);
     if (tween.isColor) {

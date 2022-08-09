@@ -39,8 +39,7 @@ export function random(min, max) {
 
 export const is = {
   arr: a => Array.isArray(a),
-  obj: a => stringContains(Object.prototype.toString.call(a), 'Object'),
-  pth: a => is.obj(a) && a.hasOwnProperty('totalLength'),
+  obj: a => a.constructor === Object,
   svg: a => a instanceof SVGElement,
   dom: a => a.nodeType || is.svg(a),
   num: a => typeof a === 'number',
@@ -52,7 +51,8 @@ export const is = {
   rgb: a => rgbTestRgx.test(a),
   hsl: a => hslTestRgx.test(a),
   col: a => (is.hex(a) || is.rgb(a) || is.hsl(a)),
-  key: a => !defaultInstanceSettings.hasOwnProperty(a) && !defaultTweenSettings.hasOwnProperty(a) && a !== 'targets' && a !== 'keyframes'
+  key: a => !defaultInstanceSettings.hasOwnProperty(a) && !defaultTweenSettings.hasOwnProperty(a) && a !== 'targets' && a !== 'keyframes',
+  pth: a => is.obj(a) && !is.und(a.totalLength),
 }
 
 // Arrays

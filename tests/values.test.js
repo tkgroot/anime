@@ -162,7 +162,7 @@ describe('Values', () => {
 
   test('Get CSS animation type with mixed values', () => {
     const animation = anime({
-      targets: ['.with-inline-styles'],
+      targets: '.with-inline-styles',
       width: 50,
       height: 50,
       fontSize: 50,
@@ -183,7 +183,7 @@ describe('Values', () => {
     expect(animation.animations[0].type).toBe(animationTypes.ATTRIBUTE);
   });
 
-  test('Get object animation type with plain JS object values', () => {
+  test('Get Object animation type with plain JS object values', () => {
     const animation = anime({
       targets: testObject,
       plainValue: 20,
@@ -195,5 +195,14 @@ describe('Values', () => {
     animation.animations.forEach( a => {
       expect(a.type).toBe(animationTypes.OBJECT);
     });
+  });
+
+  test('Get Object animation type with DOM properties that can\'t be accessed with getAttribute()', () => {
+    const animation = anime({
+      targets: '#target-id',
+      innerHTML: 9999,
+    });
+
+    expect(animation.animations[0].type).toBe(animationTypes.OBJECT);
   });
 });

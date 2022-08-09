@@ -37,9 +37,9 @@ import {
   normalizeColorToRgba
 } from './colors.js';
 
-export function getFunctionValue(val, animatable) {
-  if (!is.fnc(val)) return val;
-  return val(animatable.target, animatable.id, animatable.total);
+export function getFunctionValue(functionValion, animatable) {
+  if (!is.fnc(functionValion)) return functionValion;
+  return functionValion(animatable.target, animatable.id, animatable.total) || 0; // Fallback to 0 if the function results in undefined / NaN / null
 }
 
 function getCSSValue(el, prop, unit) {
@@ -52,9 +52,10 @@ export function getAnimationType(el, prop) {
   if (is.obj(el)) {
     return animationTypes.OBJECT;
   } else if (is.dom(el)) {
-    if (!is.nil(el.getAttribute(prop))) return animationTypes.ATTRIBUTE;
-    if (arrayContains(validTransforms, prop)) return animationTypes.TRANSFORM;
-    if (prop in el.style) return animationTypes.CSS;
+    if (!is.nil(el.getAttribute(prop))) return animationTypes.ATTRIBUTE; // Handle DOM and SVG attributes
+    if (arrayContains(validTransforms, prop)) return animationTypes.TRANSFORM; // Handle CSS Transform properties differently than CSS to allow individual animations
+    if (prop in el.style) return animationTypes.CSS; // All other CSS properties
+    if (!is.und(el[prop])) return animationTypes.OBJECT; // Handle DOM elements properies that can't be accessed using getAttribute()
     return console.warn(`Can't animate property '${prop}' on DOM element '${el}'.`);
   }
   return console.warn(`Target '${el}' can't be animated.`);
@@ -90,7 +91,7 @@ export function validateValue(val, unit) {
   return unitLess;
 }
 
-export function decomposeValue(val, unit) {
+export function decomposeValue(val, unit, tweenValue, originalValue, previousValue) {
   const value = validateValue((is.pth(val) ? val.totalLength : val), unit) + emptyString;
   return {
     original: value,
