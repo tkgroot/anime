@@ -83,7 +83,7 @@ describe('Animatables', () => {
 
     const targetIdEl = document.querySelector('#target-id');
     const targetDataEl = document.querySelector('div[data-index="0"]');
-    expect(animation.animations.length).toBe(4);
+    expect(animation.animations.length).toBe(5);
     expect(animation.animatables[0].target).toBe(testObject);
     expect(animation.animatables[1].target).toBe(targetIdEl);
     expect(animation.animatables[1].target).toBe(targetDataEl);

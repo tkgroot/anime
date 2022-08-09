@@ -8,16 +8,27 @@
 </head>
 <body>
   <!-- © https://github.com/anars/blank-audio -->
-  <audio id="audio-tag" src="assets/audio/1-second-of-silence.mp3" volume="0" controls></audio>
+  <audio id="audio-tag" src="assets/audio/fundomo_pad_fixed.mp3" volume="1" controls></audio>
+  <div></div>
 </body>
 <script type="module">
   import anime from '../../src/anime.js';
+  // import anime from './assets/anime.3.2.1.js';
 
-  anime({
+  const audioEl = document.querySelector('#audio-tag');
+  const divEl = document.querySelector('div');
+
+  console.log(audioEl instanceof HTMLInputElement);
+  console.log(divEl instanceof HTMLInputElement);
+
+  const animation = anime({
     targets: '#audio-tag',
-    volume: 1,
+    volume: [0, 1],
     loop: true,
-    direction: 'alternate'
-  })
+    direction: 'alternate',
+    easing: 'linear',
+  });
+
+  console.log(animation);
 </script>
 </html>

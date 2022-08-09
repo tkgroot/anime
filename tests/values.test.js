@@ -126,13 +126,13 @@ describe('Values', () => {
     });
   });
 
-  test('Get object animation type with input values', () => {
+  test('Get attribute animation type with input values', () => {
     const animation = anime({
       targets: '#input-number',
       value: 50,
     });
 
-    expect(animation.animations[0].type).toBe('object');
+    expect(animation.animations[0].type).toBe('attribute');
   });
 
   test('Get object animation type with plain JS object values', () => {
@@ -141,7 +141,7 @@ describe('Values', () => {
       plainValue: 20,
       valueWithUnit: '20px',
       multiplePLainValues: '32 64 128 256',
-      multipleValuesWithUnits: '32px 64em 128% 25§ch'
+      multipleValuesWithUnits: '32px 64em 128% 25ch'
     });
 
     animation.animations.forEach( a => {

@@ -21,10 +21,10 @@
       position: absolute;
       left: 50%;
       top: 50%;
-      width: 10px;
-      height: 10px;
-      margin-left: -5px;
-      margin-top: -5px;
+      width: 4px;
+      height: 4px;
+      margin-left: -2px;
+      margin-top: -2px;
       background-color: currentColor;
       /*backface-visibility: hidden;*/
     }
@@ -36,7 +36,7 @@
 <script type="module">
   import anime from '../../lib/anime.esm.js';
 
-  const particles = document.querySelector('#particles')
+  const particles = document.querySelector('#particles');
 
   function createParticule() {
     const el = document.createElement('div');
@@ -46,21 +46,25 @@
 
   const docFrag = document.createDocumentFragment();
 
-  for (let i = 0; i < 10000; i++) {
+  function animateParticle(particleEl, total) {
+    anime({
+      targets: particleEl,
+      translateX: [0, window.innerWidth * .5],
+      translateY: [0, window.innerHeight * .5],
+      // translateZ: 200,
+      scale: [0, 2],
+      easing: 'linear',
+      delay: anime.random(0, 2000),
+      duration: 1000,
+      complete: () => { animateParticle(particleEl) }
+    });
+  }
+
+  for (let i = 0; i < 500; i++) {
     const particleEl = createParticule();
     particles.appendChild(particleEl);
     anime.set(particleEl, {rotate: anime.random(-360, 360)});
-    anime({
-      targets: particleEl,
-      translateX: 200,
-      translateY: 200,
-      // translateZ: 200,
-      scale: [1, 0],
-      // loop: true,
-      easing: 'linear',
-      delay: anime.random(0, 2000),
-      duration: anime.random(1000, 2000),
-    });
+    animateParticle(particleEl);
   }
 
 </script>
