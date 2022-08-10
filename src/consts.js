@@ -48,7 +48,8 @@ export const animationTypes = {
 export const valueTypes = {
   NUMBER: 0,
   UNIT: 1,
-  COMPLEX: 2,
+  COLOR: 2,
+  COMPLEX: 3,
 }
 
 // Transforms
@@ -78,7 +79,8 @@ export const validTransforms = [
 export const hexTestRgx = /(^#([\da-f]{3}){1,2}$)|(^#([\da-f]{4}){1,2}$)/i;
 export const rgbTestRgx = /^rgb/i;
 export const hslTestRgx = /^hsl/i;
-export const rgbExecRgx = /rgb\((\d+,\s*[\d]+,\s*[\d]+)\)/i;
+export const rgbExecRgx = /rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i;
+export const rgbaExecRgx = /rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(-?\d+|-?\d*.\d+)\s*\)/i;
 export const hslExecRgx = /hsl\(\s*(-?\d+|-?\d*.\d+)\s*,\s*(-?\d+|-?\d*.\d+)%\s*,\s*(-?\d+|-?\d*.\d+)%\s*\)/i;
 export const hslaExecRgx = /hsla\(\s*(-?\d+|-?\d*.\d+)\s*,\s*(-?\d+|-?\d*.\d+)%\s*,\s*(-?\d+|-?\d*.\d+)%\s*,\s*(-?\d+|-?\d*.\d+)\s*\)/i;
 export const springTestRgx = /^spring/;
@@ -90,3 +92,7 @@ export const lowerCaseRgxParam = '$1-$2';
 export const transformsExecRgx = /(\w+)\(([^)]*)\)/g;
 export const relativeValuesExecRgx = /^(\*=|\+=|-=)/;
 export const whiteSpaceTestRgx = /\s/g;
+
+// Colors
+
+export const rgbaStrings = ['rgba(', ',', ',', ',', ')'];

@@ -32,10 +32,11 @@ import {
   validTransforms,
   animationTypes,
   valueTypes,
+  rgbaStrings,
 } from './consts.js';
 
 import {
-  normalizeColorToRgba
+  convertColorStringValuesToRgbaArray
 } from './colors.js';
 
 export function getFunctionValue(functionValion, animatable) {
@@ -64,10 +65,12 @@ export function getAnimationType(el, prop) {
 
 export function getOriginalTargetValue(target, propName, unit, animatable) {
   const animType = getAnimationType(target, propName);
-  if (animType === animationTypes.OBJECT) return target[propName] || 0;
-  if (animType === animationTypes.ATTRIBUTE) return target.getAttribute(propName);
-  if (animType === animationTypes.TRANSFORM) return getTransformValue(target, propName, animatable, unit);
-  if (animType === animationTypes.CSS) return getCSSValue(target, propName, unit);
+  switch (animType) {
+    case animationTypes.OBJECT: return target[propName] || 0;
+    case animationTypes.ATTRIBUTE: return target.getAttribute(propName);
+    case animationTypes.TRANSFORM: return getTransformValue(target, propName, animatable, unit);
+    case animationTypes.CSS: return getCSSValue(target, propName, unit);
+  }
 }
 
 export function getRelativeValue(to, from) {
@@ -83,8 +86,7 @@ export function getRelativeValue(to, from) {
   }
 }
 
-export function validateValue(val, unit) {
-  if (is.col(val)) return normalizeColorToRgba(val);
+function validateValue(val, unit) {
   // NEXT TO DO : FIGURE OUT A BETTER WAY TO HANDLE COMPLEX ANIMATIONS CONTAINING WHITE SPACES
   // If value contains a white space, do not attempt to add a unit
   if (whiteSpaceTestRgx.test(val)) return val;
@@ -101,6 +103,15 @@ export function decomposeValue(val, unit) {
       original: val,
       numbers: [val],
       strings: []
+    }
+  } else if (is.col(val)) {
+    const rgbaNumbers = convertColorStringValuesToRgbaArray(val);
+    const rgbaString = rgbaStrings[0] + rgbaNumbers[0] + rgbaStrings[1] + rgbaNumbers[1] + rgbaStrings[2] + rgbaNumbers[2] + rgbaStrings[3] + rgbaNumbers[3] + rgbaStrings[4];
+    return {
+      type: valueTypes.COLOR,
+      original: rgbaString,
+      numbers: rgbaNumbers,
+      strings: rgbaStrings
     }
   } else {
     const value = validateValue((is.pth(val) ? val.totalLength : val), unit) + emptyString;

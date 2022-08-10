@@ -1,117 +1,70 @@
-const fromHex3 = '#f99';
-const fromHex3A = '#f999';
-const fromHex6 = '#ff9999';
-const fromHex6A = '#ff999999';
-const fromRgb = 'rgb(255, 153, 153)';
-const fromRgba = 'rgba(255, 153, 153, .6)';
-const fromHsl = 'hsl(0, 100%, 80%)';
-const fromHsla = 'hsla(0, 100%, 80%, .6)';
+const colors = {
+  from: {
+    rgb: {
+      input: {
+        HEX3: '#f99',
+        HEX6: '#ff9999',
+        RGB: 'rgb(255, 153, 153)',
+        HSL: 'hsl(0, 100%, 80%)',
+      },
+      output: [255, 153, 153, 1]
+    },
+    rgba: {
+      input: {
+        HEX3A: '#f999',
+        HEX6A: '#ff999999',
+        RGBA: 'rgba(255, 153, 153, .6)',
+        HSLA: 'hsla(0, 100%, 80%, .6)',
+      },
+      output: [255, 153, 153, .6]
+    }
+  },
+  to: {
+    rgb: {
+      input: {
+        HEX3: '#0FF',
+        HEX6: '#00FFFF',
+        RGB: 'rgb(0, 255, 255)',
+        HSL: 'hsl(180, 100%, 50%)',
+      },
+      output: [0, 255, 255, 1]
+    },
+    rgba: {
+      input: {
+        HEX3A: '#0FFC',
+        HEX6A: '#00FFFFCC',
+        RGBA: 'rgba(0, 255, 255, .8)',
+        HSLA: 'hsla(180, 100%, 50%, .8)',
+      },
+      output: [0, 255, 255, .8]
+    }
+  },
+}
 
-const expectedFromRgbValues = [255, 153, 153, 1];
-const expectedFromRgbaValues = [255, 153, 153, .6];
+function createColorTest(testName, inFrom, inTo, outFrom, outTo) {
+  return test(testName, () => {
+    const animation = anime({ targets: '#target-id', color: [inFrom, inTo] });
+    expect(animation.animations[0].tweens[0].from.numbers).toStrictEqual(outFrom);
+    expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual(outTo);
+  });
+}
 
-const toHex3 = '#0FF';
-const toHex3A = '#0FFC';
-const toHex6 = '#00FFFF';
-const toHex6A = '#00FFFFCC';
-const toRgb = 'rgb(0, 255, 255)';
-const toRgba = 'rgba(0, 255, 255, .8)';
-const toHsl = 'hsl(180, 100%, 50%)';
-const toHsla = 'hsla(180, 100%, 50%, .8)';
-
-const expectedToRgbValues = [0, 255, 255, 1];
-const expectedToRgbaValues = [0, 255, 255, .8];
+function createColorTestsByType(fromType, toType) {
+  for (let inputFromName in colors.from[fromType].input) {
+    const inputFromValue = colors.from[fromType].input[inputFromName];
+    const outputFromValue = colors.from[fromType].output;
+    for (let inputToName in colors.to[toType].input) {
+      const inputToValue = colors.to[toType].input[inputToName];
+      const outputToValue = colors.to[toType].output;
+      const testName = 'Convert ' + inputFromName + ' to ' + inputToName;
+      createColorTest(testName, inputFromValue, inputToValue, outputFromValue, outputToValue);
+    }
+  }
+}
 
 describe('Colors', () => {
-  // Hex
-  test('Hex3 to Hex3', () => {
-    const animation = anime({
-      targets: '#target-id',
-      backgroundColor: [fromHex3, toHex3]
-    });
-    expect(animation.animations[0].tweens[0].from.numbers).toStrictEqual(expectedFromRgbValues);
-    expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual(expectedToRgbValues);
-  });
-
-  test('Hex3A to Hex3A', () => {
-    const animation = anime({
-      targets: '#target-id',
-      backgroundColor: [fromHex3A, toHex3A]
-    });
-    expect(animation.animations[0].tweens[0].from.numbers).toStrictEqual(expectedFromRgbaValues);
-    expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual(expectedToRgbaValues);
-  });
-
-  test('Hex6 to Hex3', () => {
-    const animation = anime({
-      targets: '#target-id',
-      backgroundColor: [fromHex6, toHex3]
-    });
-    expect(animation.animations[0].tweens[0].from.numbers).toStrictEqual(expectedFromRgbValues);
-    expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual(expectedToRgbValues);
-  });
-
-  test('Hex6A to Hex3A', () => {
-    const animation = anime({
-      targets: '#target-id',
-      backgroundColor: [fromHex6A, toHex3A]
-    });
-    expect(animation.animations[0].tweens[0].from.numbers).toStrictEqual(expectedFromRgbaValues);
-    expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual(expectedToRgbaValues);
-  });
-
-  test('Hex6 to RGB', () => {
-    const animation = anime({
-      targets: '#target-id',
-      backgroundColor: [fromHex6, toRgb]
-    });
-    expect(animation.animations[0].tweens[0].from.numbers).toStrictEqual(expectedFromRgbValues);
-    expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual(expectedToRgbValues);
-  });
-
-  test('Hex6 to RGBA', () => {
-    const animation = anime({
-      targets: '#target-id',
-      backgroundColor: [fromHex6, toRgba]
-    });
-    expect(animation.animations[0].tweens[0].from.numbers).toStrictEqual(expectedFromRgbValues);
-    expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual(expectedToRgbaValues);
-  });
-
-  test('Hex6A to RGBA', () => {
-    const animation = anime({
-      targets: '#target-id',
-      backgroundColor: [fromHex6A, toRgba]
-    });
-    expect(animation.animations[0].tweens[0].from.numbers).toStrictEqual(expectedFromRgbaValues);
-    expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual(expectedToRgbaValues);
-  });
-
-  test('Hex6 to HSL', () => {
-    const animation = anime({
-      targets: '#target-id',
-      backgroundColor: [fromHex6, toHsl]
-    });
-    expect(animation.animations[0].tweens[0].from.numbers).toStrictEqual(expectedFromRgbValues);
-    expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual(expectedToRgbValues);
-  });
-
-  test('Hex6 to HSLA', () => {
-    const animation = anime({
-      targets: '#target-id',
-      backgroundColor: [fromHex6, toHsla]
-    });
-    expect(animation.animations[0].tweens[0].from.numbers).toStrictEqual(expectedFromRgbValues);
-    expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual(expectedToRgbaValues);
-  });
-
-  test('Hex6A to HSLA', () => {
-    const animation = anime({
-      targets: '#target-id',
-      backgroundColor: [fromHex6A, toHsla]
-    });
-    expect(animation.animations[0].tweens[0].from.numbers).toStrictEqual(expectedFromRgbaValues);
-    expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual(expectedToRgbaValues);
-  });
+  createColorTestsByType('rgb', 'rgb');
+  createColorTestsByType('rgb', 'rgba');
+  createColorTestsByType('rgba', 'rgb');
+  createColorTestsByType('rgba', 'rgba');
 });
-
