@@ -19,27 +19,30 @@ import {
 
 // Tweens
 
-function normalizeTweenValues(tween, animatable) {
-  const t = {};
-  for (let p in tween) {
-    let prop = getFunctionValue(tween[p], animatable);
+function convertKeyframeToTween(keyframe, animatable) {
+  const tween = {};
+  for (let p in keyframe) {
+    let prop = getFunctionValue(keyframe[p], animatable);
     if (is.arr(prop)) {
       prop = prop.map(v => getFunctionValue(v, animatable));
       if (prop.length === 1) {
         prop = prop[0];
       }
     }
-    t[p] = prop;
+    tween[p] = prop;
   }
-  t.duration = parseFloat(t.duration);
-  t.delay = parseFloat(t.delay);
-  return t;
+  // Make sure duration is not equal to 0 to prevents NaN when (progress = 0 / duration = 0);
+  tween.duration = parseFloat(tween.duration) || Number.MIN_VALUE;
+  tween.delay = parseFloat(tween.delay);
+  return tween;
 }
 
 export function convertKeyframesToTweens(keyframes, animatable, propertyName) {
   let previousTween;
-  return keyframes.map(t => {
-    const tween = normalizeTweenValues(t, animatable);
+  const tweens = [];
+  for (let i = 0, l = keyframes.length; i < l; i++) {
+    const keyframe = keyframes[i];
+    const tween = convertKeyframeToTween(keyframe, animatable);
     const tweenValue = tween.value;
     let to = is.arr(tweenValue) ? tweenValue[1] : tweenValue;
     const toUnit = getUnit(to);
@@ -61,6 +64,7 @@ export function convertKeyframesToTweens(keyframes, animatable, propertyName) {
       tween.round = 1;
     }
     previousTween = tween;
-    return tween;
-  });
+    tweens.push(tween);
+  }
+  return tweens;
 }

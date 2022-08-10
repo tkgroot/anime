@@ -127,7 +127,7 @@ export function animate(params = {}) {
       // Only check for keyframes if there is more than one tween
       if (tweensLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
       const elapsed = clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration;
-      const eased = isNaN(elapsed) ? 1 : tween.easing(elapsed);
+      const eased = tween.easing(elapsed);
       const strings = tween.to.strings;
       const round = tween.round;
       const numbers = [];
