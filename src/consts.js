@@ -96,3 +96,4 @@ export const whiteSpaceTestRgx = /\s/g;
 // Colors
 
 export const rgbaStrings = ['rgba(', ',', ',', ',', ')'];
+export const hexValuePrefix = '0x';

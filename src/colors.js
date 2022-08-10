@@ -2,7 +2,8 @@ import {
   rgbExecRgx,
   rgbaExecRgx,
   hslExecRgx,
-  hslaExecRgx
+  hslaExecRgx,
+  hexValuePrefix,
 } from './consts.js';
 
 import {
@@ -19,7 +20,6 @@ function rgbToRgba(rgbValue) {
   const b = +rgba[3];
   const a = +(rgba[4] || 1);
   return [r, g, b, a];
-  // return `rgba(${r},${g},${b},${a})`;
 }
 
 // HEX3 / HEX3A / HEX6 / HEX6A Color value string -> RGBA values array
@@ -28,13 +28,11 @@ function hexToRgba(hexValue) {
   const hexLength = hexValue.length;
   const isShort = hexLength === 4 || hexLength === 5;
   const isAlpha = hexLength === 5 || hexLength === 9;
-  const hexPrefix = '0x';
-  const r = +(hexPrefix + hexValue[1] + hexValue[isShort ? 1 : 2]);
-  const g = +(hexPrefix + hexValue[isShort ? 2 : 3] + hexValue[isShort ? 2 : 4]);
-  const b = +(hexPrefix + hexValue[isShort ? 3 : 5] + hexValue[isShort ? 3 : 6]);
-  const a = isAlpha ? +((hexPrefix + hexValue[isShort ? 4 : 7] + hexValue[isShort ? 4 : 8]) / 255).toFixed(3) : 1;
+  const r = +(hexValuePrefix + hexValue[1] + hexValue[isShort ? 1 : 2]);
+  const g = +(hexValuePrefix + hexValue[isShort ? 2 : 3] + hexValue[isShort ? 2 : 4]);
+  const b = +(hexValuePrefix + hexValue[isShort ? 3 : 5] + hexValue[isShort ? 3 : 6]);
+  const a = isAlpha ? +((hexValuePrefix + hexValue[isShort ? 4 : 7] + hexValue[isShort ? 4 : 8]) / 255).toFixed(3) : 1;
   return [r, g, b, a];
-  // return `rgba(${r},${g},${b},${a})`;
 }
 
 // HSL / HSLA Color value string -> RGBA values array
