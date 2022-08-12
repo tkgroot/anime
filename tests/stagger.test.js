@@ -25,17 +25,44 @@ describe('Stagger', () => {
     expect(animation.animations[3].delay).toBe(35);
   });
 
-  test('Distributes evenly values between two numbers', () => {
+  test('Distributes evenly values between two numbers', resolve => {
     const animation = anime({
       targets: '#stagger div',
       translateX: anime.stagger([-10, 10]),
       duration: 10,
+      complete: () => {
+        expect(animation.animations[0].tweens[0].to.numbers[0]).toBe(-10);
+        expect(animation.animations[1].tweens[0].to.numbers[0]).toBe(-5);
+        expect(animation.animations[2].tweens[0].to.numbers[0]).toBe(0);
+        expect(animation.animations[3].tweens[0].to.numbers[0]).toBe(5);
+        expect(animation.animations[4].tweens[0].to.numbers[0]).toBe(10);
+
+        expect(animation.animations[0].currentValue).toBe('-10px');
+        expect(animation.animations[1].currentValue).toBe('-5px');
+        expect(animation.animations[2].currentValue).toBe('0px');
+        expect(animation.animations[3].currentValue).toBe('5px');
+        expect(animation.animations[4].currentValue).toBe('10px');
+
+        resolve();
+      }
     });
-    expect(animation.animations[0].tweens[0].to.numbers[0]).toBe(-10);
-    expect(animation.animations[1].tweens[0].to.numbers[0]).toBe(-5);
-    expect(animation.animations[2].tweens[0].to.numbers[0]).toBe(0);
-    expect(animation.animations[3].tweens[0].to.numbers[0]).toBe(5);
-    expect(animation.animations[4].tweens[0].to.numbers[0]).toBe(10);
+  });
+
+  test('Specific staggered ranged value unit', resolve => {
+    const animation = anime({
+      targets: '#stagger div',
+      translateX: anime.stagger(['-10rem', '10rem']),
+      duration: 10,
+      complete: () => {
+        expect(animation.animations[0].currentValue).toBe('-10rem');
+        expect(animation.animations[1].currentValue).toBe('-5rem');
+        expect(animation.animations[2].currentValue).toBe('0rem');
+        expect(animation.animations[3].currentValue).toBe('5rem');
+        expect(animation.animations[4].currentValue).toBe('10rem');
+
+        resolve();
+      }
+    });
   });
 
   test('Starts the stagger effect from the center', () => {

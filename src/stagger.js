@@ -3,7 +3,7 @@ import {
 } from './easings.js';
 
 import {
-  getUnit,
+  splitValueUnit,
 } from './units.js';
 
 import {
@@ -22,7 +22,8 @@ export function stagger(val, params = {}) {
   const isRange = is.arr(val);
   const val1 = isRange ? parseFloat(val[0]) : parseFloat(val);
   const val2 = isRange ? parseFloat(val[1]) : 0;
-  const unit = getUnit(isRange ? val[1] : val) || 0;
+  const valueUnit = splitValueUnit(isRange ? val[1] : val);
+  const unit = valueUnit[3] ? valueUnit[3] : 0;
   const start = params.start || 0 + (isRange ? val1 : 0);
   let values = [];
   let maxValue = 0;

@@ -252,7 +252,7 @@ anime({
       Any CSS properties can be animated.
     </p>
     <p class="bubble warning">
-      Most CSS properties will cause layout changes or repaint, and will result in choppy animation.
+      Most CSS properties will cause layout changes or repaint, and might result in choppy animation.
       Prioritize opacity and CSS transforms as much as possible.
     </p>
     <p>More details about accepted values in the <a class="color-values" href="#unitlessValue">values</a> section.</p>
@@ -267,7 +267,15 @@ anime({
       </tr>
       <tr>
         <td><code>left</code></td>
-        <td><code>'100px'</code></td>
+        <td><code>100 | '100px' | '6.25rem'</code></td>
+      </tr>
+      <tr>
+        <td><code>backgroundColor</code></td>
+        <td><code>'#FFF' | '#FFFFFF' | 'rgb(255,255,255)'</code></td>
+      </tr>
+      <tr>
+        <td><code>filter</code></td>
+        <td><code>'blur(10px) contrast(200)'</code></td>
       </tr>
     </table>
   </div>
@@ -279,10 +287,11 @@ anime({
 /*DEMO*/
 anime({
   targets: '.css-prop-demo .el',
-  left: '240px',
-  backgroundColor: '#FFF',
+  left: 'calc(6.25rem * 2)',
+  backgroundColor: '#18FF74',
   borderRadius: ['0%', '50%'],
-  easing: 'easeInOutQuad'
+  filter: 'blur(5px)',
+  easing: 'easeInOutQuad',
 });
 /*DEMO*/
 }
@@ -331,7 +340,9 @@ anime({
   targets: '.css-transforms-demo .el',
   translateX: 250,
   scale: 2,
-  rotate: '1turn'
+  skew: -45,
+  rotate: '1turn',
+  easing: 'easeInOutQuad',
 });
 /*DEMO*/
 }
@@ -1379,7 +1390,7 @@ anime({
   </div>
   <script>var functionBasedPropVal = function() {
 /*DEMO*/
-anime({
+const animation = anime({
   targets: '.function-based-values-demo .el',
   translateX: function(el) {
     return el.getAttribute('data-x');
@@ -1397,6 +1408,7 @@ anime({
   direction: 'alternate',
   loop: true
 });
+console.log(animation);
 /*DEMO*/
 }
   </script>
@@ -3011,7 +3023,7 @@ animation.finished.then(logFinished);
 /*DEMO*/
 var path = anime.path('.motion-path-demo path');
 
-anime({
+const animation = anime({
   targets: '.motion-path-demo .el',
   translateX: path('x'),
   translateY: path('y'),
@@ -3020,6 +3032,8 @@ anime({
   duration: 2000,
   loop: true
 });
+
+console.log(animation);
 /*DEMO*/
 }
   </script>

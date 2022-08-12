@@ -11,7 +11,7 @@ import {
 import {
   convertPxToUnit,
   getTransformUnit,
-  getUnit,
+  splitValueUnit,
 } from './units.js';
 
 import {
@@ -27,7 +27,7 @@ import {
   lowerCaseRgxParam,
   transformsExecRgx,
   relativeValuesExecRgx,
-  whiteSpaceTestRgx,
+  // whiteSpaceTestRgx,
   digitWithExponentRgx,
   validTransforms,
   animationTypes,
@@ -39,9 +39,9 @@ import {
   convertColorStringValuesToRgbaArray
 } from './colors.js';
 
-export function getFunctionValue(functionValion, animatable) {
-  if (!is.fnc(functionValion)) return functionValion;
-  return functionValion(animatable.target, animatable.id, animatable.total) || 0; // Fallback to 0 if the function results in undefined / NaN / null
+export function getFunctionValue(functionValue, animatable) {
+  if (!is.fnc(functionValue)) return functionValue;
+  return functionValue(animatable.target, animatable.id, animatable.total) || 0; // Fallback to 0 if the function results in undefined / NaN / null
 }
 
 function getCSSValue(el, prop, unit) {
@@ -66,7 +66,7 @@ export function getAnimationType(el, prop) {
 export function getOriginalTargetValue(target, propName, unit, animatable) {
   const animType = getAnimationType(target, propName);
   switch (animType) {
-    case animationTypes.OBJECT: return target[propName] || 0;
+    case animationTypes.OBJECT: return target[propName] || 0; // Fallaback to 0 if the property doesn't exist on the object.
     case animationTypes.ATTRIBUTE: return target.getAttribute(propName);
     case animationTypes.TRANSFORM: return getTransformValue(target, propName, animatable, unit);
     case animationTypes.CSS: return getCSSValue(target, propName, unit);
@@ -76,9 +76,10 @@ export function getOriginalTargetValue(target, propName, unit, animatable) {
 export function getRelativeValue(to, from) {
   const operator = relativeValuesExecRgx.exec(to);
   if (!operator) return to;
-  const u = getUnit(to) || 0;
+  const t = to.replace(operator[0], emptyString);
+  const u = splitValueUnit(t)[3] || 0;
   const x = parseFloat(from);
-  const y = parseFloat(to.replace(operator[0], emptyString));
+  const y = parseFloat(t);
   switch (operator[0][0]) {
     case '+': return x + y + u;
     case '-': return x - y + u;
@@ -86,23 +87,39 @@ export function getRelativeValue(to, from) {
   }
 }
 
-function validateValue(val, unit) {
-  // NEXT TO DO : FIGURE OUT A BETTER WAY TO HANDLE COMPLEX ANIMATIONS CONTAINING WHITE SPACES
-  // If value contains a white space, do not attempt to add a unit
-  if (whiteSpaceTestRgx.test(val)) return val;
-  const originalUnit = getUnit(val);
-  const unitLess = originalUnit ? val.substr(0, val.length - originalUnit.length) : val;
-  if (unit) return unitLess + unit;
-  return unitLess;
+function replaceValueUnitIfNecessary(val, unit) {
+  if (!unit) {
+    return val;
+  } else {
+    const originalSplitValueUnit = splitValueUnit(val);
+    if (!is.und(originalSplitValueUnit[1])) {
+      return originalSplitValueUnit[1] + unit;
+    } else {
+      return val;
+    }
+  }
 }
 
 export function decomposeValue(val, unit) {
-  if (is.num(val) && is.und(unit)) {
+  const valNumber = +val;
+  const valIsNumber = !isNaN(valNumber);
+  const hasUnit = !is.und(unit);
+  if (valIsNumber && !hasUnit) {
     return {
       type: valueTypes.NUMBER,
-      original: val,
-      numbers: [val],
+      original: valNumber,
+      numbers: [valNumber],
       strings: []
+    }
+  } else if (valIsNumber && hasUnit) {
+    // if (isNaN(val)) {
+    //   console.log(val + unit);
+    // }
+    return {
+      type: valueTypes.UNIT,
+      original: val + unit,
+      numbers: [valNumber],
+      strings: [emptyString, unit]
     }
   } else if (is.col(val)) {
     const rgbaNumbers = convertColorStringValuesToRgbaArray(val);
@@ -114,7 +131,14 @@ export function decomposeValue(val, unit) {
       strings: rgbaStrings
     }
   } else {
-    const value = validateValue((is.pth(val) ? val.totalLength : val), unit) + emptyString;
+    // TO DO/ ONLY REPLACE VALUE IF UNITS ARE DIFFERENT
+    // if (!is.num(val) && unit) {
+    //   console.log(val, unit);
+    // }
+    const value = replaceValueUnitIfNecessary((is.pth(val) ? val.totalLength : val), unit) + emptyString;
+    // console.log(val);
+    // const value = (is.pth(val) ? val.totalLength : val) + emptyString;
+    // console.log(value);
     return {
       original: value,
       numbers: value.match(digitWithExponentRgx) ? value.match(digitWithExponentRgx).map(Number) : [0],
@@ -145,10 +169,10 @@ export function setTargetsValue(targets, properties) {
     for (let property in properties) {
       const value = getFunctionValue(properties[property], animatable);
       const target = animatable.target;
-      const valueUnit = getUnit(value);
+      const valueUnit = splitValueUnit(value)[2];
       const originalValue = getOriginalTargetValue(target, property, valueUnit, animatable);
-      const unit = valueUnit || getUnit(originalValue);
-      const to = getRelativeValue(validateValue(value, unit), originalValue);
+      const unit = valueUnit || splitValueUnit(originalValue)[2];
+      const to = getRelativeValue(replaceValueUnitIfNecessary(value, unit), originalValue);
       const animType = getAnimationType(target, property);
       setValueByType[animType](target, property, to, animatable.transforms, true);
     }

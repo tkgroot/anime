@@ -14,7 +14,7 @@ import {
 } from './values.js';
 
 import {
-  getUnit,
+  splitValueUnit,
 } from './units.js';
 
 // Tweens
@@ -45,13 +45,14 @@ export function convertKeyframesToTweens(keyframes, animatable, propertyName) {
     const tween = convertKeyframeToTween(keyframe, animatable);
     const tweenValue = tween.value;
     let to = is.arr(tweenValue) ? tweenValue[1] : tweenValue;
-    const toUnit = getUnit(to);
+    const toUnit = splitValueUnit(to)[3];
     const originalValue = getOriginalTargetValue(animatable.target, propertyName, toUnit, animatable);
     const previousValue = previousTween ? previousTween.to.original : originalValue;
     const from = is.arr(tweenValue) ? tweenValue[0] : previousValue;
-    const fromUnit = getUnit(from) || getUnit(originalValue);
+    const fromUnit = splitValueUnit(from)[3] || splitValueUnit(originalValue)[3];
     const unit = toUnit || fromUnit;
     if (is.und(to)) to = previousValue;
+    // console.log(to, ~~to, unit, from, originalValue);
     tween.from = decomposeValue(from, unit);
     tween.to = decomposeValue(getRelativeValue(to, from), unit);
     tween.start = previousTween ? previousTween.end : 0;

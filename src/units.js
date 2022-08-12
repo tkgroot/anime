@@ -12,9 +12,15 @@ import {
   arrayContains,
 } from './helpers.js';
 
-export function getUnit(val) {
-  const split = unitsExecRgx.exec(val);
-  if (split) return split[1];
+// Return an array [original value, operator (+=, -=, *=), value number, value unit];
+export function splitValueUnit(val) {
+  const unitMatch = unitsExecRgx.exec(val);
+  if (unitMatch) {
+    unitMatch[2] = +unitMatch[2]; // Convert the string value to a number
+    return unitMatch;
+  } else {
+    return [val];
+  }
 }
 
 export function getTransformUnit(propName) {
@@ -23,8 +29,10 @@ export function getTransformUnit(propName) {
 }
 
 export function convertPxToUnit(el, value, unit) {
-  const valueUnit = getUnit(value);
-  if (arrayContains([unit, 'deg', 'rad', 'turn'], valueUnit)) return value;
+  const valueUnit = splitValueUnit(value)[3];
+  if (valueUnit && arrayContains([unit, 'deg', 'rad', 'turn'], valueUnit)) {
+    return value;
+  }
   const cached = cache.CSS[value + unit];
   if (!is.und(cached)) return cached;
   const baseline = 100;

@@ -37,7 +37,6 @@ export function getAnimations(animatables, animationsKeyframes) {
     if (animatable) {
       for (let p = 0, pLength = animationsKeyframes.length; p < pLength; p++) {
         const animation = createAnimation(animatable, animationsKeyframes[p]);
-        // Make sure the animation is not undefined
         if (animation) {
           animations.push(animation);
         }

@@ -3,12 +3,12 @@ import {
 } from '../src/consts.js';
 
 describe('Values', () => {
-  test('Function as values', () => {
+  test('Function based values', () => {
     const animation = anime({
       targets: '.target-class',
+      autoplay: false,
       translateX: (el, i, total) => {
-        const index = parseFloat(el.dataset.index);
-        return total + ((i + index) * 100);
+        return el.getAttribute('data-index');
       },
       duration: (el, i, total) => {
         const index = parseFloat(el.dataset.index);
@@ -24,11 +24,21 @@ describe('Values', () => {
       }
     });
 
+    animation.seek(animation.duration);
+
     // Property value
-    expect(animation.animations[0].tweens[0].to.numbers[0]).toBe(4);
-    expect(animation.animations[1].tweens[0].to.numbers[0]).toBe(204);
-    expect(animation.animations[2].tweens[0].to.numbers[0]).toBe(404);
-    expect(animation.animations[3].tweens[0].to.numbers[0]).toBe(604);
+    expect(animation.animations[0].tweens[0].to.numbers[0]).toBe(0);
+    expect(animation.animations[1].tweens[0].to.numbers[0]).toBe(1);
+    expect(animation.animations[2].tweens[0].to.numbers[0]).toBe(2);
+    expect(animation.animations[3].tweens[0].to.numbers[0]).toBe(3);
+    expect(animation.animations[0].tweens[0].from.strings[1]).toBe('px');
+    expect(animation.animations[1].tweens[0].from.strings[1]).toBe('px');
+    expect(animation.animations[2].tweens[0].from.strings[1]).toBe('px');
+    expect(animation.animations[3].tweens[0].from.strings[1]).toBe('px');
+    expect(animation.animations[0].currentValue).toBe('0px');
+    expect(animation.animations[1].currentValue).toBe('1px');
+    expect(animation.animations[2].currentValue).toBe('2px');
+    expect(animation.animations[3].currentValue).toBe('3px');
 
     // Duration
     expect(animation.animations[0].tweens[0].duration).toBe(4);
@@ -232,5 +242,24 @@ describe('Values', () => {
     });
 
     expect(animation.animations[0].type).toBe(animationTypes.OBJECT);
+  });
+
+  test('Adds, substracts or multiplies the original value with +=, -=, *=', resolve => {
+    const relativeEl = document.querySelector('#target-id');
+    relativeEl.style.transform = 'translateX(100px)';
+    relativeEl.style.width = '28px';
+    const animation = anime({
+      targets: '#target-id',
+      translateX: '*=2.5', // 100px * 2.5 = '250px',
+      width: '-=20px', // 28 - 20 = '8px',
+      rotate: '+=2turn', // 0 + 2 = '2turn',
+      duration: 10,
+      complete: () => {
+        expect(animation.animations[0].currentValue).toBe('250px');
+        expect(animation.animations[1].currentValue).toBe('8px');
+        expect(animation.animations[2].currentValue).toBe('2turn');
+        resolve();
+      }
+    });
   });
 });
