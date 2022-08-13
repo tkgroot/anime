@@ -13,7 +13,7 @@ import {
 } from './units.js';
 
 import {
-  getOriginalTargetValue,
+  getTargetValue,
   setTargetsValue,
 } from './values.js';
 
@@ -50,7 +50,7 @@ anime.speed = 1;
 anime.suspendWhenDocumentHidden = true;
 anime.running = activeInstances;
 anime.remove = removeAnimatablesFromActiveInstances;
-anime.get = getOriginalTargetValue;
+anime.get = getTargetValue;
 anime.set = setTargetsValue;
 anime.convertPx = convertPxToUnit;
 anime.path = getPath;

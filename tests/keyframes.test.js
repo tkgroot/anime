@@ -198,4 +198,31 @@ describe('Keyframes', () => {
     expect(animation.animations[1].tweens[4].to.numbers[0]).toBe(0);
   });
 
+  test('Keyframes units inheritance', () => {
+    const animation = anime({
+      targets: '#target-id',
+      translateX: [
+        { value: [-20, -40] },
+        { value: '5rem' },
+        { value: '100%' },
+        { value: 0 },
+        { value: '10%' },
+        { value: [50, 200] },
+        { value: [25, '100px'] },
+      ],
+    });
+
+    expect(animation.animations[0].tweens[0].from.original).toBe('-20px'); // inherit px
+    expect(animation.animations[0].tweens[0].to.original).toBe('-40px');
+    expect(animation.animations[0].tweens[1].to.original).toBe('5rem'); // switch to rem
+    expect(animation.animations[0].tweens[2].to.original).toBe('100%'); // switch to %
+    expect(animation.animations[0].tweens[3].to.original).toBe('0%'); // inherit %
+    expect(animation.animations[0].tweens[4].to.original).toBe('10%'); // switch back to %
+    expect(animation.animations[0].tweens[5].from.original).toBe('50%');
+    expect(animation.animations[0].tweens[5].to.original).toBe('200%');
+    expect(animation.animations[0].tweens[6].from.original).toBe('25px'); // switch to px
+    expect(animation.animations[0].tweens[6].to.original).toBe('100px'); // switch to px
+
+  });
+
 });

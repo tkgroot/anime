@@ -244,7 +244,7 @@ describe('Values', () => {
     expect(animation.animations[0].type).toBe(animationTypes.OBJECT);
   });
 
-  test('Adds, substracts or multiplies the original value with +=, -=, *=', resolve => {
+  test('Relative values with operators +=, -=, *=', resolve => {
     const relativeEl = document.querySelector('#target-id');
     relativeEl.style.transform = 'translateX(100px)';
     relativeEl.style.width = '28px';
@@ -261,5 +261,31 @@ describe('Values', () => {
         resolve();
       }
     });
+  });
+
+  test('Relative values inside from to values', resolve => {
+    const relativeEl = document.querySelector('#target-id');
+    relativeEl.style.transform = 'translateX(100px)';
+    relativeEl.style.width = '28px';
+    const animation = anime({
+      targets: '#target-id',
+      translateX: ['*=2.5', 10], // Relative from value
+      width: [100, '-=20px'], // Relative to value
+      rotate: ['+=2turn', '-=1turn'], // Relative from and to values
+      duration: 10,
+      complete: () => {
+        expect(animation.animations[0].currentValue).toBe('10px');
+        expect(animation.animations[1].currentValue).toBe('80px');
+        expect(animation.animations[2].currentValue).toBe('1turn');
+        resolve();
+      }
+    });
+
+    expect(animation.animations[0].tweens[0].from.original).toBe('250px');
+    expect(animation.animations[0].tweens[0].to.original).toBe('10px');
+    expect(animation.animations[1].tweens[0].from.original).toBe('100px');
+    expect(animation.animations[1].tweens[0].to.original).toBe('80px');
+    expect(animation.animations[2].tweens[0].from.original).toBe('2turn');
+    expect(animation.animations[2].tweens[0].to.original).toBe('1turn');
   });
 });

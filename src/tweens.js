@@ -8,8 +8,9 @@ import {
 
 import {
   getFunctionValue,
-  getOriginalTargetValue,
+  getOriginalAnimatableValue,
   getRelativeValue,
+  getComputedValue,
   decomposeValue,
 } from './values.js';
 
@@ -37,24 +38,41 @@ function convertKeyframeToTween(keyframe, animatable) {
   return tween;
 }
 
-export function convertKeyframesToTweens(keyframes, animatable, propertyName) {
+export function convertKeyframesToTweens(keyframes, animatable, propertyName, animationType) {
   let previousTween;
   const tweens = [];
   for (let i = 0, l = keyframes.length; i < l; i++) {
     const keyframe = keyframes[i];
     const tween = convertKeyframeToTween(keyframe, animatable);
     const tweenValue = tween.value;
-    let to = is.arr(tweenValue) ? tweenValue[1] : tweenValue;
-    const toUnit = splitValueUnit(to)[3];
-    const originalValue = getOriginalTargetValue(animatable.target, propertyName, toUnit, animatable);
+    const isFromToValue = is.arr(tweenValue);
+    const originalValue = getOriginalAnimatableValue(animatable, propertyName, animationType);
     const previousValue = previousTween ? previousTween.to.original : originalValue;
-    const from = is.arr(tweenValue) ? tweenValue[0] : previousValue;
-    const fromUnit = splitValueUnit(from)[3] || splitValueUnit(originalValue)[3];
+
+    let previousValue2 = previousTween ? previousTween.to : originalValue;
+
+    const keyTo = (isFromToValue ? tweenValue[1] : tweenValue);
+    const to = !is.und(keyTo) ? keyTo : previousValue;
+    const toComputed = !is.und(keyTo) ? getComputedValue(keyTo) : previousTween ? previousTween.computedTo : getComputedValue(getOriginalAnimatableValue(animatable, propertyName, animationType));
+    const toSplitted = splitValueUnit(to);
+    const toNumber = toSplitted[2];
+    const toUnit = toSplitted[3];
+
+    const from = isFromToValue ? tweenValue[0] : previousValue;
+    const fromComputed = isFromToValue ? getComputedValue(tweenValue[0]) : previousTween ? previousTween.computedTo : getComputedValue(getOriginalAnimatableValue(animatable, propertyName, animationType));
+    const fromSplitted = splitValueUnit(from);
+    const fromNumber = fromSplitted[2];
+    // In case of [from, to] values, checking the original value unit is necessary if no units are provided in the values.
+    const fromUnit = fromSplitted[3] || (isFromToValue ? splitValueUnit(previousValue)[3] : undefined);
+
+    console.log(fromComputed, toComputed);
+
     const unit = toUnit || fromUnit;
-    if (is.und(to)) to = previousValue;
-    // console.log(to, ~~to, unit, from, originalValue);
-    tween.from = decomposeValue(from, unit);
-    tween.to = decomposeValue(getRelativeValue(to, from), unit);
+
+    tween.from = decomposeValue(getRelativeValue(previousValue, from), unit);
+    tween.to = decomposeValue(getRelativeValue(from, to), unit);
+    tween.computedFrom = toComputed;
+    tween.computedTo = fromComputed;
     tween.start = previousTween ? previousTween.end : 0;
     tween.end = tween.start + tween.delay + tween.duration + tween.endDelay;
     tween.easing = parseEasings(tween.easing, tween.duration);

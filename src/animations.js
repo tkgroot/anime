@@ -14,7 +14,7 @@ function createAnimation(animatable, keyframes) {
   const propertyName = keyframes[0].propertyName;
   const animType = getAnimationType(animatable.target, propertyName);
   if (is.num(animType)) {
-    const tweens = convertKeyframesToTweens(keyframes, animatable, propertyName);
+    const tweens = convertKeyframesToTweens(keyframes, animatable, propertyName, animType);
     const firstTween = tweens[0];
     const lastTween = tweens[tweens.length - 1];
     return {

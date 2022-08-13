@@ -24,12 +24,11 @@ export function getElementTransforms(el) {
   return transforms;
 }
 
-export function getTransformValue(el, propName, animatable, unit) {
+export function getTransformValue(animatable, propName) {
+  const target = animatable.target;
   const defaultVal = stringContains(propName, 'scale') ? 1 : 0 + getTransformUnit(propName);
-  const value = getElementTransforms(el).get(propName) || defaultVal;
-  if (animatable) {
-    animatable.transforms.list.set(propName, value);
-    animatable.transforms.last = propName;
-  }
-  return unit ? convertPxToUnit(el, value, unit) : value;
+  const value = getElementTransforms(target).get(propName) || defaultVal;
+  animatable.transforms.list.set(propName, value);
+  animatable.transforms.last = propName;
+  return value;
 }
