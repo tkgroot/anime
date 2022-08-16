@@ -217,9 +217,15 @@ export const setAnimationValueFunctions = [
 export function getTargetValue(target, propName, unit) {
   const animatables = getAnimatables(target);
   if (animatables) {
-    let value = getOriginalAnimatableValue(animatables[0], propName);
+    const animatable = animatables[0];
+    let value = getOriginalAnimatableValue(animatable, propName);
     if (unit) {
       // do unit conversion here
+      const decomposedValue = decomposeValue(value);
+      if (decomposedValue.type === valueTypes.NUMBER || decomposedValue.type === valueTypes.UNIT) {
+        const convertedValue = convertPxToUnit(animatable.target, decomposedValue, unit);
+        value = convertedValue.number + convertedValue.unit;
+      }
     }
     return value;
   }

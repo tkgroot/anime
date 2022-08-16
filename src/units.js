@@ -4,10 +4,12 @@ import {
 
 import {
   valueTypes,
+  tinyNumber,
 } from './consts.js';
 
 import {
   is,
+  clamp,
   stringContains,
   arrayContains,
 } from './helpers.js';
@@ -21,12 +23,12 @@ export function getTransformUnit(propName) {
 
 const nonConvertableUnitsYet = ['', 'deg', 'rad', 'turn'];
 
-export function convertPxToUnit(el, value, unit) {
+export function convertPxToUnit(el, decomposedValue, unit) {
   nonConvertableUnitsYet[0] = unit;
-  if (value.type === valueTypes.UNIT && arrayContains(nonConvertableUnitsYet, value.unit)) {
-    return value;
+  if (decomposedValue.type === valueTypes.UNIT && arrayContains(nonConvertableUnitsYet, decomposedValue.unit)) {
+    return decomposedValue;
   }
-  const valueNumber = value.number;
+  const valueNumber = decomposedValue.number;
   const cached = cache.CSS[valueNumber + unit];
   if (!is.und(cached)) return cached;
   const baseline = 100;
@@ -36,9 +38,11 @@ export function convertPxToUnit(el, value, unit) {
   parentEl.appendChild(tempEl);
   tempEl.style.position = 'absolute';
   tempEl.style.width = baseline + unit;
-  const factor = baseline / tempEl.offsetWidth;
+  const factor = tempEl.offsetWidth ? (baseline / tempEl.offsetWidth) : 0;
   parentEl.removeChild(tempEl);
-  const convertedValue = factor * parseFloat(valueNumber);
-  cache.CSS[valueNumber + unit] = convertedValue;
-  return convertedValue;
+  decomposedValue.type === valueTypes.UNIT;
+  decomposedValue.number = factor * parseFloat(valueNumber);
+  decomposedValue.unit = unit;
+  cache.CSS[valueNumber + unit] = decomposedValue;
+  return decomposedValue;
 }

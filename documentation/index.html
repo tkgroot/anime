@@ -1153,13 +1153,15 @@ anime({
   </div>
   <script>var specificUnitValue = function() {
 /*DEMO*/
-anime({
+const animation = anime({
   targets: '.specific-unit-values-demo .el',
-  width: '100%', // -> from '28px' to '100%',
+  width: '100%', // from '28px' to '100%',
+  height: ['75%', '2rem'], // from '75%' to '2rem',
   easing: 'easeInOutQuad',
   direction: 'alternate',
   loop: true
 });
+console.log(animation);
 /*DEMO*/
 }
   </script>
@@ -3711,7 +3713,7 @@ var el = document.querySelector('.get-value-demo .el');
 logEl.innerHTML = '';
 logEl.innerHTML += '".el" width is :<br>';
 logEl.innerHTML += '"' + anime.get(el, 'width', 'px') + '"';
-logEl.innerHTML += ' or "' + anime.get(el, 'width', 'rem') + 'rem"'
+logEl.innerHTML += ' or "' + anime.get(el, 'width', 'rem') + '"';
 /*DEMO*/
 }
   </script>

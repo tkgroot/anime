@@ -1,5 +1,6 @@
 import {
   valueTypes,
+  tinyNumber,
 } from './consts.js';
 
 import {
@@ -17,6 +18,10 @@ import {
   decomposeValue,
 } from './values.js';
 
+import {
+  convertPxToUnit,
+} from './units.js';
+
 // Tweens
 
 function convertKeyframeToTween(keyframe, animatable) {
@@ -32,7 +37,7 @@ function convertKeyframeToTween(keyframe, animatable) {
     tween[p] = prop;
   }
   // Make sure duration is not equal to 0 to prevents NaN when (progress = 0 / duration = 0);
-  tween.duration = parseFloat(tween.duration) || Number.MIN_VALUE;
+  tween.duration = parseFloat(tween.duration) || tinyNumber;
   tween.delay = parseFloat(tween.delay);
   return tween;
 }
@@ -112,11 +117,14 @@ export function convertKeyframesToTweens(keyframes, animatable, propertyName, an
         notUnitValue.unit = unitValue.unit;
         notUnitValue.type = valueTypes.UNIT;
       }
-    } else {
-      if (from.unit !== to.unit) {
-        // Need values unit conversion here
-        from.unit = to.unit;
-      }
+    }
+
+    if (from.unit !== to.unit) {
+      // Need values unit conversion here
+      // from.unit = to.unit;
+      const valueToConvert = to.unit ? from : to;
+      const unitToConvertTo = to.unit ? to.unit : from.unit;
+      convertPxToUnit(animatable.target, valueToConvert, unitToConvertTo);
     }
 
     if (to.type === valueTypes.PATH) {

@@ -1,12 +1,16 @@
 // Misc
 
 export const noop = () => {};
+export const pi = Math.PI;
+export const tinyNumber = Number.MIN_VALUE;
+
+// Strings
+
 export const emptyString = '';
 export const openParenthesisString = '(';
 export const closeParenthesisString = ')';
 export const rgbaStrings = ['rgba(', ',', ',', ',', ')'];
 export const hexValuePrefix = '0x';
-export const pi = Math.PI;
 
 // Default animation parameters
 
