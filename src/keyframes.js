@@ -36,7 +36,7 @@ function convertPropertyValueToTweens(propertyName, propertyValue, tweenSettings
   }
   const valuesArray = is.arr(value) ? value : [value];
   return valuesArray.map((v, i) => {
-    const obj = (is.obj(v) && !is.pth(v)) ? v : { value: v };
+    const obj = (is.obj(v) && !v.isPath) ? v : { value: v };
     // Default delay value should only be applied to the first tween
     if (is.und(obj.delay)) {
       obj.delay = !i ? tweenSettings.delay : 0;

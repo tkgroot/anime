@@ -312,22 +312,23 @@ anime({
       <thead>
         <td>Valid properties</td>
         <td>Default unit</td>
+        <td>Default value</td>
       </thead>
-      <tr><td><code>'translateX'</code></td><td><code>'px'</code></td></tr>
-      <tr><td><code>'translateY'</code></td><td><code>'px'</code></td></tr>
-      <tr><td><code>'translateZ'</code></td><td><code>'px'</code></td></tr>
-      <tr><td><code>'rotate'</code></td><td><code>'deg'</code></td></tr>
-      <tr><td><code>'rotateX'</code></td><td><code>'deg'</code></td></tr>
-      <tr><td><code>'rotateY'</code></td><td><code>'deg'</code></td></tr>
-      <tr><td><code>'rotateZ'</code></td><td><code>'deg'</code></td></tr>
-      <tr><td><code>'scale'</code></td><td><code>—</code></td></tr>
-      <tr><td><code>'scaleX'</code></td><td><code>—</code></td></tr>
-      <tr><td><code>'scaleY'</code></td><td><code>—</code></td></tr>
-      <tr><td><code>'scaleZ'</code></td><td><code>—</code></td></tr>
-      <tr><td><code>'skew'</code></td><td><code>'deg'</code></td></tr>
-      <tr><td><code>'skewX'</code></td><td><code>'deg'</code></td></tr>
-      <tr><td><code>'skewY'</code></td><td><code>'deg'</code></td></tr>
-      <tr><td><code>'perspective'</code></td><td><code>'px'</code></td></tr>
+      <tr><td><code>'translateX'</code></td><td><code>'px'</code></td><td><code>'0px'</code></td></tr>
+      <tr><td><code>'translateY'</code></td><td><code>'px'</code></td><td><code>'0px'</code></td></tr>
+      <tr><td><code>'translateZ'</code></td><td><code>'px'</code></td><td><code>'0px'</code></td></tr>
+      <tr><td><code>'rotate'</code></td><td><code>'deg'</code></td><td><code>'0deg'</code></td></tr>
+      <tr><td><code>'rotateX'</code></td><td><code>'deg'</code></td><td><code>'0deg'</code></td></tr>
+      <tr><td><code>'rotateY'</code></td><td><code>'deg'</code></td><td><code>'0deg'</code></td></tr>
+      <tr><td><code>'rotateZ'</code></td><td><code>'deg'</code></td><td><code>'0deg'</code></td></tr>
+      <tr><td><code>'scale'</code></td><td><code>—</code></td><td><code>1</code></td></tr>
+      <tr><td><code>'scaleX'</code></td><td><code>—</code></td><td><code>1</code></td></tr>
+      <tr><td><code>'scaleY'</code></td><td><code>—</code></td><td><code>1</code></td></tr>
+      <tr><td><code>'scaleZ'</code></td><td><code>—</code></td><td><code>1</code></td></tr>
+      <tr><td><code>'skew'</code></td><td><code>'deg'</code></td><td><code>'0deg'</code></td></tr>
+      <tr><td><code>'skewX'</code></td><td><code>'deg'</code></td><td><code>'0deg'</code></td></tr>
+      <tr><td><code>'skewY'</code></td><td><code>'deg'</code></td><td><code>'0deg'</code></td></tr>
+      <tr><td><code>'perspective'</code></td><td><code>'px'</code></td><td><code>'0px'</code></td></tr>
     </table>
   </div>
   <div class="demo-content css-transforms-demo">
@@ -3675,8 +3676,18 @@ document.querySelector('.remove-el-button').addEventListener('click', function()
       </thead>
       <tr>
         <td>target</td>
-        <td><code>'string'</code>, <code>var</code></td>
+        <td><a class="color-targets" href="#cssSelector">targets</a></td>
         <td>Any valid <a class="color-targets" href="#cssSelector">targets</a> can be used</td>
+      </tr>
+      <tr>
+        <td>property</td>
+        <td><a class="color-properties" href="#cssProperties">properties</a></td>
+        <td>Any valid <a class="color-properties" href="#cssProperties">properties</a> can be used</td>
+      </tr>
+      <tr>
+        <td>unit</td>
+        <td><code>string</code></td>
+        <td>Optional, convert the returned value to the specified unit</td>
       </tr>
     </table>
     <p class="bubble warning">
@@ -3721,13 +3732,13 @@ logEl.innerHTML += ' or "' + anime.get(el, 'width', 'rem') + 'rem"'
         <td>Info</td>
       </thead>
       <tr>
-        <td>target(s)</td>
-        <td><code>'string'</code>, <code>var</code></td>
+        <td>targets</td>
+        <td><a class="color-targets" href="#cssSelector">targets</a></td>
         <td>Any valid <a class="color-targets" href="#cssSelector">targets</a> can be used</td>
       </tr>
       <tr>
-        <td>values</td>
-        <td><code>object</code></td>
+        <td>properties</td>
+        <td><a class="color-properties" href="#cssProperties">properties</a></td>
         <td>Any valid <a class="color-properties" href="#cssProperties">properties</a> can be used</td>
       </tr>
     </table>

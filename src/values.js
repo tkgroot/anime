@@ -236,7 +236,7 @@ export const setAnimationValueFunctions = [
 // NEEDS TESTING
 
 export function getTargetValue(target, propName) {
-  const animatables = getAnimatables(targets);
+  const animatables = getAnimatables(target);
   if (animatables) {
     return getOriginalAnimatableValue(animatables[0], propName);
   }

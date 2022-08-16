@@ -25,9 +25,10 @@ beforeEach(() => {
   document.body.innerHTML = `
     <div id="target-id" class="target-class" data-index="0"></div>
     <div class="target-class with-width-attribute" width="200" data-index="1"></div>
-    <div class="target-class with-inline-styles" data-index="2" style="width: 200px"></div>
+    <div class="target-class with-inline-styles" data-index="2" style="width: 200px;"></div>
     <div class="target-class" data-index="3"></div>
     <div class="css-properties"></div>
+    <div class="with-inline-transforms" style="transform: translateX(10px)translateY(20px)"></div>
     <div id="stagger">
       <div></div>
       <div></div>

@@ -52,7 +52,6 @@ export const is = {
   hsl: a => hslTestRgx.test(a),
   col: a => (is.hex(a) || is.rgb(a) || is.hsl(a)),
   key: a => !defaultInstanceSettings.hasOwnProperty(a) && !defaultTweenSettings.hasOwnProperty(a) && a !== 'targets' && a !== 'keyframes',
-  pth: a => is.obj(a) && !is.und(a.totalLength),
 }
 
 // Arrays
