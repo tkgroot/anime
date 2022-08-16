@@ -117,7 +117,9 @@ export function decomposeValue(rawValue) {
     return value;
   } else if (rawValue.isPath) {
     value.type = valueTypes.PATH;
-    value.number = rawValue.totalLength;
+    value.path = rawValue;
+    value.number = value.path.totalLength;
+    value.unit = emptyString;
     return value;
   } else {
     const operatorMatch = relativeValuesExecRgx.exec(val);
@@ -176,7 +178,8 @@ function recomposeColorValue(tween) {
 }
 
 function recomposePathValue(tween) {
-  let value = getPathProgress(tween.path, tween.progress, tween.isPathTargetInsideSVG);
+  let value = getPathProgress(tween.to.path, tween.progress * tween.to.number) + tween.to.unit;
+  if (tween.round) return round(value, tween.round);
   return value;
 }
 

@@ -108,6 +108,8 @@ export function convertKeyframesToTweens(keyframes, animatable, propertyName, an
         // Fallback to 0 for all "from" values
         complexValue.numbers.forEach((val, i) => i ? notComplexValue.numbers[i] = 0 : notComplexValue.numbers[i] = notComplexValue.number);
         notComplexValue.type = valueTypes.COMPLEX;
+      } else if (from.type === valueTypes.UNIT && to.type === valueTypes.PATH) {
+        to.unit = from.unit;
       } else if (from.type === valueTypes.UNIT || to.type === valueTypes.UNIT) {
         const unitValue = from.type === valueTypes.UNIT ? from : to;
         const notUnitValue = from.type === valueTypes.UNIT ? to : from;
@@ -121,14 +123,16 @@ export function convertKeyframesToTweens(keyframes, animatable, propertyName, an
       }
     }
 
+    if (to.type === valueTypes.PATH) {
+      to.path.isTargetInsideSVG = is.svg(animatable.target);
+    }
+
     tween.from = from;
     tween.to = to;
     tween.type = to.type;
     tween.start = prevTween ? prevTween.end : 0;
     tween.end = tween.start + tween.delay + tween.duration + tween.endDelay;
     tween.easing = parseEasings(tween.easing, tween.duration);
-    tween.isPath = !is.und(tweenValue) && is.pth(tweenValue);
-    tween.isPathTargetInsideSVG = tween.isPath && is.svg(animatable.target);
     tween.progress = 0;
     tween.value = null;
     prevTween = tween;
