@@ -1203,7 +1203,7 @@ anime({
 var relativeEl = document.querySelector('.el.relative-values');
 relativeEl.style.transform = 'translateX(100px)';
 
-anime({
+var animation = anime({
   targets: '.el.relative-values',
   translateX: {
     value: '*=2.5', // 100px * 2.5 = '250px'
@@ -1294,7 +1294,7 @@ anime({
 /*DEMO*/
 var colorsExamples = anime.timeline({
   endDelay: 1000,
-  easing: 'easeInOutQuad',
+  easing: 'linear',
   direction: 'alternate',
   loop: true
 })
@@ -1303,7 +1303,7 @@ var colorsExamples = anime.timeline({
 .add({ targets: '.color-hsl',  background: 'hsl(0, 100%, 100%)' }, 0)
 .add({ targets: '.color-rgba', background: 'rgba(255,255,255, .2)' }, 0)
 .add({ targets: '.color-hsla', background: 'hsla(0, 100%, 100%, .2)' }, 0)
-.add({ targets: '.colors-demo .el', translateX: 270 }, 0);
+.add({ targets: '.colors-demo .el', translateX: 270, easing: 'easeInOutQuad' }, 0);
 /*DEMO*/
 }
   </script>
@@ -1390,7 +1390,7 @@ anime({
   </div>
   <script>var functionBasedPropVal = function() {
 /*DEMO*/
-const animation = anime({
+anime({
   targets: '.function-based-values-demo .el',
   translateX: function(el) {
     return el.getAttribute('data-x');
@@ -1408,7 +1408,6 @@ const animation = anime({
   direction: 'alternate',
   loop: true
 });
-console.log(animation);
 /*DEMO*/
 }
   </script>
@@ -3023,7 +3022,7 @@ animation.finished.then(logFinished);
 /*DEMO*/
 var path = anime.path('.motion-path-demo path');
 
-const animation = anime({
+anime({
   targets: '.motion-path-demo .el',
   translateX: path('x'),
   translateY: path('y'),
@@ -3032,8 +3031,6 @@ const animation = anime({
   duration: 2000,
   loop: true
 });
-
-console.log(animation);
 /*DEMO*/
 }
   </script>

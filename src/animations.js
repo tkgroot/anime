@@ -3,12 +3,12 @@ import {
 } from './helpers.js';
 
 import {
-  getAnimationType,
-} from './values.js';
-
-import {
   convertKeyframesToTweens,
 } from './tweens.js';
+
+import {
+  getAnimationType,
+} from './values.js';
 
 function createAnimation(animatable, keyframes) {
   const propertyName = keyframes[0].propertyName;

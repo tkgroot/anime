@@ -34,7 +34,8 @@
   <div id="particles"></div>
 </body>
 <script type="module">
-  import anime from '../../lib/anime.esm.js';
+  // import anime from '../../lib/anime.esm.js';
+  import anime from 'https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.es.min.js';
 
   const particles = document.querySelector('#particles');
 
@@ -44,26 +45,43 @@
     return el;
   }
 
-  const docFrag = document.createDocumentFragment();
+  // function animateParticle(particleEl, total) {
+  //   const angle = anime.random(-360, 360);
+  //   anime({
+  //     targets: particleEl,
+  //     rotate: [angle, angle],
+  //     translateX: [0, 250],
+  //     translateY: [0, 250],
+  //     scale: [2, 0],
+  //     easing: 'linear',
+  //     delay: anime.random(0, 4000),
+  //     duration: 2000,
+  //     complete: () => { animateParticle(particleEl) }
+  //   });
+  // }
 
-  function animateParticle(particleEl, total) {
+  function animateParticle(particleEl, i, total) {
+    // const angle = anime.random(-360, 360);
+    const angle = (i / total) * 360;
+    const delay = anime.random(0, 1000);
     anime({
       targets: particleEl,
+      rotate: [angle, angle],
       translateX: [0, 250],
       translateY: [0, 250],
-      scale: [2, 0],
+      // scale: [0, 2],
       easing: 'linear',
-      delay: anime.random(0, 4000),
-      duration: 2000,
-      complete: () => { animateParticle(particleEl) }
+      delay: delay,
+      duration: 4000,
+      loop: true,
     });
   }
 
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0, l = 1000; i < l; i++) {
     const particleEl = createParticule();
     particles.appendChild(particleEl);
-    anime.set(particleEl, {rotate: anime.random(-360, 360)});
-    animateParticle(particleEl);
+    // anime.set(particleEl, {rotate: anime.random(-360, 360)});
+    animateParticle(particleEl, i, l);
   }
 
 </script>

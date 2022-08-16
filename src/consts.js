@@ -2,6 +2,12 @@
 
 export const noop = () => {};
 export const emptyString = '';
+export const spaceString = ' ';
+export const plusOperator = '+';
+export const minusOperator = '-';
+export const multiplyOperator = '*';
+export const openParenthesis = '(';
+export const closeParenthesis = ')';
 export const pi = Math.PI;
 
 // Default animation parameters
@@ -49,7 +55,8 @@ export const valueTypes = {
   NUMBER: 0,
   UNIT: 1,
   COLOR: 2,
-  COMPLEX: 3,
+  PATH: 3,
+  COMPLEX: 4,
 }
 
 // Transforms

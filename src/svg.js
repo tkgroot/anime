@@ -104,6 +104,7 @@ function getPath(path, percent) {
   const p = percent || 100;
   return function(property) {
     return {
+      isPath: true,
       property,
       el: pathEl,
       svg: getParentSvg(pathEl),

@@ -31,11 +31,11 @@ describe('Stagger', () => {
       translateX: anime.stagger([-10, 10]),
       duration: 10,
       complete: () => {
-        expect(animation.animations[0].tweens[0].to.numbers[0]).toBe(-10);
-        expect(animation.animations[1].tweens[0].to.numbers[0]).toBe(-5);
-        expect(animation.animations[2].tweens[0].to.numbers[0]).toBe(0);
-        expect(animation.animations[3].tweens[0].to.numbers[0]).toBe(5);
-        expect(animation.animations[4].tweens[0].to.numbers[0]).toBe(10);
+        expect(animation.animations[0].tweens[0].to.number).toBe(-10);
+        expect(animation.animations[1].tweens[0].to.number).toBe(-5);
+        expect(animation.animations[2].tweens[0].to.number).toBe(0);
+        expect(animation.animations[3].tweens[0].to.number).toBe(5);
+        expect(animation.animations[4].tweens[0].to.number).toBe(10);
 
         expect(animation.animations[0].currentValue).toBe('-10px');
         expect(animation.animations[1].currentValue).toBe('-5px');
@@ -163,40 +163,40 @@ describe('Stagger', () => {
       translateY: anime.stagger(10, {grid: [5, 3], from: 'center', axis: 'y'})
     });
 
-    expect(animation.animations[0].tweens[0].to.numbers[0]).toBe(-20);
-    expect(animation.animations[2].tweens[0].to.numbers[0]).toBe(-10);
-    expect(animation.animations[4].tweens[0].to.numbers[0]).toBe(0);
-    expect(animation.animations[6].tweens[0].to.numbers[0]).toBe(10);
-    expect(animation.animations[8].tweens[0].to.numbers[0]).toBe(20);
+    expect(animation.animations[0].tweens[0].to.number).toBe(-20);
+    expect(animation.animations[2].tweens[0].to.number).toBe(-10);
+    expect(animation.animations[4].tweens[0].to.number).toBe(0);
+    expect(animation.animations[6].tweens[0].to.number).toBe(10);
+    expect(animation.animations[8].tweens[0].to.number).toBe(20);
 
-    expect(animation.animations[10].tweens[0].to.numbers[0]).toBe(-20);
-    expect(animation.animations[12].tweens[0].to.numbers[0]).toBe(-10);
-    expect(animation.animations[14].tweens[0].to.numbers[0]).toBe(0);
-    expect(animation.animations[16].tweens[0].to.numbers[0]).toBe(10);
-    expect(animation.animations[18].tweens[0].to.numbers[0]).toBe(20);
+    expect(animation.animations[10].tweens[0].to.number).toBe(-20);
+    expect(animation.animations[12].tweens[0].to.number).toBe(-10);
+    expect(animation.animations[14].tweens[0].to.number).toBe(0);
+    expect(animation.animations[16].tweens[0].to.number).toBe(10);
+    expect(animation.animations[18].tweens[0].to.number).toBe(20);
 
-    expect(animation.animations[20].tweens[0].to.numbers[0]).toBe(-20);
-    expect(animation.animations[22].tweens[0].to.numbers[0]).toBe(-10);
-    expect(animation.animations[24].tweens[0].to.numbers[0]).toBe(0);
-    expect(animation.animations[26].tweens[0].to.numbers[0]).toBe(10);
-    expect(animation.animations[28].tweens[0].to.numbers[0]).toBe(20);
+    expect(animation.animations[20].tweens[0].to.number).toBe(-20);
+    expect(animation.animations[22].tweens[0].to.number).toBe(-10);
+    expect(animation.animations[24].tweens[0].to.number).toBe(0);
+    expect(animation.animations[26].tweens[0].to.number).toBe(10);
+    expect(animation.animations[28].tweens[0].to.number).toBe(20);
 
-    expect(animation.animations[1].tweens[0].to.numbers[0]).toBe(-10);
-    expect(animation.animations[3].tweens[0].to.numbers[0]).toBe(-10);
-    expect(animation.animations[5].tweens[0].to.numbers[0]).toBe(-10);
-    expect(animation.animations[7].tweens[0].to.numbers[0]).toBe(-10);
-    expect(animation.animations[9].tweens[0].to.numbers[0]).toBe(-10);
+    expect(animation.animations[1].tweens[0].to.number).toBe(-10);
+    expect(animation.animations[3].tweens[0].to.number).toBe(-10);
+    expect(animation.animations[5].tweens[0].to.number).toBe(-10);
+    expect(animation.animations[7].tweens[0].to.number).toBe(-10);
+    expect(animation.animations[9].tweens[0].to.number).toBe(-10);
 
-    expect(animation.animations[11].tweens[0].to.numbers[0]).toBe(0);
-    expect(animation.animations[13].tweens[0].to.numbers[0]).toBe(0);
-    expect(animation.animations[15].tweens[0].to.numbers[0]).toBe(0);
-    expect(animation.animations[17].tweens[0].to.numbers[0]).toBe(0);
-    expect(animation.animations[19].tweens[0].to.numbers[0]).toBe(0);
+    expect(animation.animations[11].tweens[0].to.number).toBe(0);
+    expect(animation.animations[13].tweens[0].to.number).toBe(0);
+    expect(animation.animations[15].tweens[0].to.number).toBe(0);
+    expect(animation.animations[17].tweens[0].to.number).toBe(0);
+    expect(animation.animations[19].tweens[0].to.number).toBe(0);
 
-    expect(animation.animations[21].tweens[0].to.numbers[0]).toBe(10);
-    expect(animation.animations[23].tweens[0].to.numbers[0]).toBe(10);
-    expect(animation.animations[25].tweens[0].to.numbers[0]).toBe(10);
-    expect(animation.animations[27].tweens[0].to.numbers[0]).toBe(10);
-    expect(animation.animations[29].tweens[0].to.numbers[0]).toBe(10);
+    expect(animation.animations[21].tweens[0].to.number).toBe(10);
+    expect(animation.animations[23].tweens[0].to.number).toBe(10);
+    expect(animation.animations[25].tweens[0].to.number).toBe(10);
+    expect(animation.animations[27].tweens[0].to.number).toBe(10);
+    expect(animation.animations[29].tweens[0].to.number).toBe(10);
   });
 });

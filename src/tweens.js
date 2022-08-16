@@ -7,16 +7,19 @@ import {
 } from './easings.js';
 
 import {
+  getRelativeValue,
   getFunctionValue,
   getOriginalAnimatableValue,
-  getRelativeValue,
-  getComputedValue,
   decomposeValue,
 } from './values.js';
 
 import {
   splitValueUnit,
 } from './units.js';
+
+import {
+  valueTypes,
+} from './consts.js';
 
 // Tweens
 
@@ -39,50 +42,96 @@ function convertKeyframeToTween(keyframe, animatable) {
 }
 
 export function convertKeyframesToTweens(keyframes, animatable, propertyName, animationType) {
-  let previousTween;
+  let prevTween;
   const tweens = [];
   for (let i = 0, l = keyframes.length; i < l; i++) {
     const keyframe = keyframes[i];
     const tween = convertKeyframeToTween(keyframe, animatable);
     const tweenValue = tween.value;
-    const isFromToValue = is.arr(tweenValue);
-    const originalValue = getOriginalAnimatableValue(animatable, propertyName, animationType);
-    const previousValue = previousTween ? previousTween.to.original : originalValue;
+    const originalDecomposedValue = decomposeValue(getOriginalAnimatableValue(animatable, propertyName, animationType));
 
-    let previousValue2 = previousTween ? previousTween.to : originalValue;
+    let from, to;
 
-    const keyTo = (isFromToValue ? tweenValue[1] : tweenValue);
-    const to = !is.und(keyTo) ? keyTo : previousValue;
-    const toComputed = !is.und(keyTo) ? getComputedValue(keyTo) : previousTween ? previousTween.computedTo : getComputedValue(getOriginalAnimatableValue(animatable, propertyName, animationType));
-    const toSplitted = splitValueUnit(to);
-    const toNumber = toSplitted[2];
-    const toUnit = toSplitted[3];
+    // Decompose values
 
-    const from = isFromToValue ? tweenValue[0] : previousValue;
-    const fromComputed = isFromToValue ? getComputedValue(tweenValue[0]) : previousTween ? previousTween.computedTo : getComputedValue(getOriginalAnimatableValue(animatable, propertyName, animationType));
-    const fromSplitted = splitValueUnit(from);
-    const fromNumber = fromSplitted[2];
-    // In case of [from, to] values, checking the original value unit is necessary if no units are provided in the values.
-    const fromUnit = fromSplitted[3] || (isFromToValue ? splitValueUnit(previousValue)[3] : undefined);
+    if (is.arr(tweenValue)) {
+      from = decomposeValue(tweenValue[0]);
+      to = decomposeValue(tweenValue[1]);
+      if (from.type === valueTypes.NUMBER) {
+        if (prevTween) {
+          if (prevTween.to.type === valueTypes.UNIT) {
+            from.type = valueTypes.UNIT;
+            from.unit = prevTween.to.unit;
+          }
+        } else {
+          if (originalDecomposedValue.type === valueTypes.UNIT) {
+            from.type = valueTypes.UNIT;
+            from.unit = originalDecomposedValue.unit;
+          }
+        }
+      }
+    } else {
+      if (!is.und(tweenValue)) {
+        to = decomposeValue(tweenValue);
+      } else if (prevTween) {
+        to = {...prevTween.to};
+      }
+      if (prevTween) {
+        from = {...prevTween.to};
+      } else {
+        from = {...originalDecomposedValue};
+        if (is.und(to)) {
+          to = {...originalDecomposedValue};
+        }
+      }
+    }
 
-    console.log(fromComputed, toComputed);
+    // Apply operators
 
-    const unit = toUnit || fromUnit;
+    if (from.operator) {
+      from.number = getRelativeValue(!prevTween ? originalDecomposedValue.number : prevTween.to.number, from.number, from.operator);
+    }
 
-    tween.from = decomposeValue(getRelativeValue(previousValue, from), unit);
-    tween.to = decomposeValue(getRelativeValue(from, to), unit);
-    tween.computedFrom = toComputed;
-    tween.computedTo = fromComputed;
-    tween.start = previousTween ? previousTween.end : 0;
+    if (to.operator) {
+      to.number = getRelativeValue(from.number, to.number, to.operator);
+    }
+
+
+    // Values omogenisation in cases of type difference between "from" and "to"
+
+    if (from.type !== to.type) {
+      if (from.type === valueTypes.COMPLEX || to.type === valueTypes.COMPLEX) {
+        const complexValue = from.type === valueTypes.COMPLEX ? from : to;
+        const notComplexValue = from.type === valueTypes.COMPLEX ? to : from;
+        notComplexValue.strings = complexValue.strings;
+        notComplexValue.numbers = [];
+        // Fallback to 0 for all "from" values
+        complexValue.numbers.forEach((val, i) => i ? notComplexValue.numbers[i] = 0 : notComplexValue.numbers[i] = notComplexValue.number);
+        notComplexValue.type = valueTypes.COMPLEX;
+      } else if (from.type === valueTypes.UNIT || to.type === valueTypes.UNIT) {
+        const unitValue = from.type === valueTypes.UNIT ? from : to;
+        const notUnitValue = from.type === valueTypes.UNIT ? to : from;
+        notUnitValue.unit = unitValue.unit;
+        notUnitValue.type = valueTypes.UNIT;
+      }
+    } else {
+      if (from.unit !== to.unit) {
+        // Need values unit conversion here
+        from.unit = to.unit;
+      }
+    }
+
+    tween.from = from;
+    tween.to = to;
+    tween.type = to.type;
+    tween.start = prevTween ? prevTween.end : 0;
     tween.end = tween.start + tween.delay + tween.duration + tween.endDelay;
     tween.easing = parseEasings(tween.easing, tween.duration);
     tween.isPath = !is.und(tweenValue) && is.pth(tweenValue);
     tween.isPathTargetInsideSVG = tween.isPath && is.svg(animatable.target);
-    tween.isColor = is.col(tween.from.original);
-    if (tween.isColor) {
-      tween.round = 1;
-    }
-    previousTween = tween;
+    tween.progress = 0;
+    tween.value = null;
+    prevTween = tween;
     tweens.push(tween);
   }
   return tweens;

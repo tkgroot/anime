@@ -24,6 +24,12 @@ import {
   activeInstances,
 } from './engine.js';
 
+function parseTimelineOffset(timelineOffset, timelineDuration) {
+  if (is.und(timelineOffset)) return timelineDuration;
+  if (is.num(timelineOffset)) return timelineOffset;
+  return getRelativeValue(timelineOffset, tlDuration); // NEEDS FIX
+}
+
 export function createTimeline(params = {}) {
   let tl = animate(params);
   tl.duration = 0;
@@ -36,7 +42,7 @@ export function createTimeline(params = {}) {
     const tlDuration = tl.duration;
     insParams.autoplay = false;
     insParams.direction = tl.direction;
-    insParams.timelineOffset = is.und(timelineOffset) ? tlDuration : getRelativeValue(timelineOffset, tlDuration);
+    insParams.timelineOffset = parseTimelineOffset(timelineOffset, tlDuration);
     tl.seekSilently(insParams.timelineOffset);
     const ins = animate(insParams);
     const totalDuration = ins.duration + insParams.timelineOffset;

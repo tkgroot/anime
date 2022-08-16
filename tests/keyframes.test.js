@@ -1,3 +1,7 @@
+import {
+  valueTypes,
+} from '../src/consts.js';
+
 describe('Keyframes', () => {
   test('An array of one raw value should be considered as a simple value', () => {
     const animation = anime({
@@ -5,8 +9,12 @@ describe('Keyframes', () => {
       translateX: [50]
     });
 
-    expect(animation.animations[0].tweens[0].from.numbers[0]).toBe(0);
-    expect(animation.animations[0].tweens[0].to.numbers[0]).toBe(50);
+    expect(animation.animations[0].tweens[0].from.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[0].to.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[0].from.number).toBe(0);
+    expect(animation.animations[0].tweens[0].to.number).toBe(50);
+    expect(animation.animations[0].tweens[0].from.unit).toBe('px');
+    expect(animation.animations[0].tweens[0].to.unit).toBe('px');
   });
 
   test('An array of two raw values should be converted to "From To" values', () => {
@@ -15,8 +23,12 @@ describe('Keyframes', () => {
       translateX: [-100, 100]
     });
 
-    expect(animation.animations[0].tweens[0].from.numbers[0]).toBe(-100);
-    expect(animation.animations[0].tweens[0].to.numbers[0]).toBe(100);
+    expect(animation.animations[0].tweens[0].from.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[0].to.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[0].from.number).toBe(-100);
+    expect(animation.animations[0].tweens[0].to.number).toBe(100);
+    expect(animation.animations[0].tweens[0].from.unit).toBe('px');
+    expect(animation.animations[0].tweens[0].to.unit).toBe('px');
   });
 
   test('An array of more than two raw values should be converted to keyframes', () => {
@@ -25,12 +37,26 @@ describe('Keyframes', () => {
       translateX: [-100, 100, 50]
     });
 
-    expect(animation.animations[0].tweens[0].from.numbers[0]).toBe(0);
-    expect(animation.animations[0].tweens[0].to.numbers[0]).toBe(-100);
-    expect(animation.animations[0].tweens[1].from.numbers[0]).toBe(-100);
-    expect(animation.animations[0].tweens[1].to.numbers[0]).toBe(100);
-    expect(animation.animations[0].tweens[2].from.numbers[0]).toBe(100);
-    expect(animation.animations[0].tweens[2].to.numbers[0]).toBe(50);
+    expect(animation.animations[0].tweens[0].from.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[0].to.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[0].from.number).toBe(0);
+    expect(animation.animations[0].tweens[0].to.number).toBe(-100);
+    expect(animation.animations[0].tweens[0].from.unit).toBe('px');
+    expect(animation.animations[0].tweens[0].to.unit).toBe('px');
+
+    expect(animation.animations[0].tweens[1].from.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[1].to.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[1].from.number).toBe(-100);
+    expect(animation.animations[0].tweens[1].to.number).toBe(100);
+    expect(animation.animations[0].tweens[1].from.unit).toBe('px');
+    expect(animation.animations[0].tweens[1].to.unit).toBe('px');
+
+    expect(animation.animations[0].tweens[2].from.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[2].to.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[2].from.number).toBe(100);
+    expect(animation.animations[0].tweens[2].to.number).toBe(50);
+    expect(animation.animations[0].tweens[2].from.unit).toBe('px');
+    expect(animation.animations[0].tweens[2].to.unit).toBe('px');
   });
 
   test('An array of two object values should be converted to keyframes', () => {
@@ -42,13 +68,22 @@ describe('Keyframes', () => {
       ]
     });
 
-    expect(animation.animations[0].tweens[0].from.numbers[0]).toBe(0);
-    expect(animation.animations[0].tweens[0].to.numbers[0]).toBe(-100);
-    expect(animation.animations[0].tweens[1].from.numbers[0]).toBe(-100);
-    expect(animation.animations[0].tweens[1].to.numbers[0]).toBe(100);
+    expect(animation.animations[0].tweens[0].from.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[0].to.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[0].from.number).toBe(0);
+    expect(animation.animations[0].tweens[0].to.number).toBe(-100);
+    expect(animation.animations[0].tweens[0].from.unit).toBe('px');
+    expect(animation.animations[0].tweens[0].to.unit).toBe('px');
+
+    expect(animation.animations[0].tweens[1].from.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[1].to.type).toBe(valueTypes.UNIT);
+    expect(animation.animations[0].tweens[1].from.number).toBe(-100);
+    expect(animation.animations[0].tweens[1].to.number).toBe(100);
+    expect(animation.animations[0].tweens[1].from.unit).toBe('px');
+    expect(animation.animations[0].tweens[1].to.unit).toBe('px');
   });
 
-  test('Unspecified keyframe duration should be inherited from instance duration devided by the keyframes length', () => {
+  test('Unspecified keyframe duration should be inherited from instance duration and devided by the number of keyframes', () => {
     const animation = anime({
       targets: '#target-id',
       translateX: [
@@ -128,22 +163,22 @@ describe('Keyframes', () => {
     expect(animation.animations[0].tweens[1].easing(.5)).toBe(.5);
     expect(animation.animations[0].tweens[1].round).toBe(10);
 
-    expect(animation.animations[0].tweens[0].from.numbers[0]).toBe(0);
-    expect(animation.animations[0].tweens[0].to.numbers[0]).toBe(-100);
-    expect(animation.animations[0].tweens[1].from.numbers[0]).toBe(-100);
-    expect(animation.animations[0].tweens[1].to.numbers[0]).toBe(100);
-    expect(animation.animations[0].tweens[2].from.numbers[0]).toBe(100);
-    expect(animation.animations[0].tweens[2].to.numbers[0]).toBe(50);
+    expect(animation.animations[0].tweens[0].from.number).toBe(0);
+    expect(animation.animations[0].tweens[0].to.number).toBe(-100);
+    expect(animation.animations[0].tweens[1].from.number).toBe(-100);
+    expect(animation.animations[0].tweens[1].to.number).toBe(100);
+    expect(animation.animations[0].tweens[2].from.number).toBe(100);
+    expect(animation.animations[0].tweens[2].to.number).toBe(50);
 
-    expect(animation.animations[1].tweens[0].from.numbers[0]).toBe(0);
-    expect(animation.animations[1].tweens[0].to.numbers[0]).toBe(-200);
-    expect(animation.animations[1].tweens[1].from.numbers[0]).toBe(-200);
-    expect(animation.animations[1].tweens[1].to.numbers[0]).toBe(200);
-    expect(animation.animations[1].tweens[2].from.numbers[0]).toBe(200);
-    expect(animation.animations[1].tweens[2].to.numbers[0]).toBe(100);
+    expect(animation.animations[1].tweens[0].from.number).toBe(0);
+    expect(animation.animations[1].tweens[0].to.number).toBe(-200);
+    expect(animation.animations[1].tweens[1].from.number).toBe(-200);
+    expect(animation.animations[1].tweens[1].to.number).toBe(200);
+    expect(animation.animations[1].tweens[2].from.number).toBe(200);
+    expect(animation.animations[1].tweens[2].to.number).toBe(100);
   });
 
-  test('Keyframes parameter', () => {
+  test('Keyframes parameters inheritance', () => {
     const animation = anime({
       targets: '#target-id',
       keyframes: [
@@ -172,30 +207,30 @@ describe('Keyframes', () => {
     expect(animation.animations[0].tweens[1].easing(.5)).toBe(.5);
     expect(animation.animations[0].tweens[1].round).toBe(10);
 
-    expect(animation.animations[0].tweens[0].from.numbers[0]).toBe(0);
-    expect(animation.animations[0].tweens[0].to.numbers[0]).toBe(-40);
-    expect(animation.animations[1].tweens[0].from.numbers[0]).toBe(0);
-    expect(animation.animations[1].tweens[0].to.numbers[0]).toBe(0);
+    expect(animation.animations[0].tweens[0].from.number).toBe(0);
+    expect(animation.animations[0].tweens[0].to.number).toBe(-40);
+    expect(animation.animations[1].tweens[0].from.number).toBe(0);
+    expect(animation.animations[1].tweens[0].to.number).toBe(0);
 
-    expect(animation.animations[0].tweens[1].from.numbers[0]).toBe(-40);
-    expect(animation.animations[0].tweens[1].to.numbers[0]).toBe(-40);
-    expect(animation.animations[1].tweens[1].from.numbers[0]).toBe(0);
-    expect(animation.animations[1].tweens[1].to.numbers[0]).toBe(250);
+    expect(animation.animations[0].tweens[1].from.number).toBe(-40);
+    expect(animation.animations[0].tweens[1].to.number).toBe(-40);
+    expect(animation.animations[1].tweens[1].from.number).toBe(0);
+    expect(animation.animations[1].tweens[1].to.number).toBe(250);
 
-    expect(animation.animations[0].tweens[2].from.numbers[0]).toBe(-40);
-    expect(animation.animations[0].tweens[2].to.numbers[0]).toBe(40);
-    expect(animation.animations[1].tweens[2].from.numbers[0]).toBe(250);
-    expect(animation.animations[1].tweens[2].to.numbers[0]).toBe(250);
+    expect(animation.animations[0].tweens[2].from.number).toBe(-40);
+    expect(animation.animations[0].tweens[2].to.number).toBe(40);
+    expect(animation.animations[1].tweens[2].from.number).toBe(250);
+    expect(animation.animations[1].tweens[2].to.number).toBe(250);
 
-    expect(animation.animations[0].tweens[3].from.numbers[0]).toBe(40);
-    expect(animation.animations[0].tweens[3].to.numbers[0]).toBe(40);
-    expect(animation.animations[1].tweens[3].from.numbers[0]).toBe(250);
-    expect(animation.animations[1].tweens[3].to.numbers[0]).toBe(0);
+    expect(animation.animations[0].tweens[3].from.number).toBe(40);
+    expect(animation.animations[0].tweens[3].to.number).toBe(40);
+    expect(animation.animations[1].tweens[3].from.number).toBe(250);
+    expect(animation.animations[1].tweens[3].to.number).toBe(0);
 
-    expect(animation.animations[0].tweens[4].from.numbers[0]).toBe(40);
-    expect(animation.animations[0].tweens[4].to.numbers[0]).toBe(0);
-    expect(animation.animations[1].tweens[4].from.numbers[0]).toBe(0);
-    expect(animation.animations[1].tweens[4].to.numbers[0]).toBe(0);
+    expect(animation.animations[0].tweens[4].from.number).toBe(40);
+    expect(animation.animations[0].tweens[4].to.number).toBe(0);
+    expect(animation.animations[1].tweens[4].from.number).toBe(0);
+    expect(animation.animations[1].tweens[4].to.number).toBe(0);
   });
 
   test('Keyframes units inheritance', () => {
@@ -212,16 +247,20 @@ describe('Keyframes', () => {
       ],
     });
 
-    expect(animation.animations[0].tweens[0].from.original).toBe('-20px'); // inherit px
-    expect(animation.animations[0].tweens[0].to.original).toBe('-40px');
-    expect(animation.animations[0].tweens[1].to.original).toBe('5rem'); // switch to rem
-    expect(animation.animations[0].tweens[2].to.original).toBe('100%'); // switch to %
-    expect(animation.animations[0].tweens[3].to.original).toBe('0%'); // inherit %
-    expect(animation.animations[0].tweens[4].to.original).toBe('10%'); // switch back to %
-    expect(animation.animations[0].tweens[5].from.original).toBe('50%');
-    expect(animation.animations[0].tweens[5].to.original).toBe('200%');
-    expect(animation.animations[0].tweens[6].from.original).toBe('25px'); // switch to px
-    expect(animation.animations[0].tweens[6].to.original).toBe('100px'); // switch to px
+    expect(animation.animations[0].tweens[0].from.unit).toBe('px'); // inherit px
+    expect(animation.animations[0].tweens[0].to.unit).toBe('px');
+    expect(animation.animations[0].tweens[1].from.unit).toBe('rem'); // switch to rem
+    expect(animation.animations[0].tweens[1].to.unit).toBe('rem'); // switch to rem
+    expect(animation.animations[0].tweens[2].from.unit).toBe('%'); // switch to %
+    expect(animation.animations[0].tweens[2].to.unit).toBe('%'); // switch to %
+    expect(animation.animations[0].tweens[3].from.unit).toBe('%'); // inherit %
+    expect(animation.animations[0].tweens[3].to.unit).toBe('%'); // inherit %
+    expect(animation.animations[0].tweens[4].from.unit).toBe('%'); // switch back to %
+    expect(animation.animations[0].tweens[4].to.unit).toBe('%'); // switch back to %
+    expect(animation.animations[0].tweens[5].from.unit).toBe('%');
+    expect(animation.animations[0].tweens[5].to.unit).toBe('%');
+    expect(animation.animations[0].tweens[6].from.unit).toBe('px'); // switch to px
+    expect(animation.animations[0].tweens[6].to.unit).toBe('px'); // switch to px
 
   });
 

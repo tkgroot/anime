@@ -1,5 +1,23 @@
 import {
+  lowerCaseRgx,
+  lowerCaseRgxParam,
+  transformsExecRgx,
+  relativeValuesExecRgx,
+  digitWithExponentRgx,
+  validTransforms,
+  animationTypes,
+  valueTypes,
+  rgbaStrings,
+  plusOperator,
+  minusOperator,
+  multiplyOperator,
+} from './consts.js';
+
+import {
   emptyString,
+  spaceString,
+  openParenthesis,
+  closeParenthesis,
   unitsExecRgx,
 } from './consts.js';
 
@@ -7,6 +25,7 @@ import {
   is,
   stringContains,
   arrayContains,
+  round,
 } from './helpers.js';
 
 import {
@@ -24,17 +43,8 @@ import {
 } from './animatables.js';
 
 import {
-  lowerCaseRgx,
-  lowerCaseRgxParam,
-  transformsExecRgx,
-  relativeValuesExecRgx,
-  // whiteSpaceTestRgx,
-  digitWithExponentRgx,
-  validTransforms,
-  animationTypes,
-  valueTypes,
-  rgbaStrings,
-} from './consts.js';
+  getPathProgress
+} from './svg.js';
 
 import {
   convertColorStringValuesToRgbaArray
@@ -75,17 +85,11 @@ export function getOriginalAnimatableValue(animatable, propName, animationType) 
   }
 }
 
-export function getRelativeValue(from, to) {
-  const operator = relativeValuesExecRgx.exec(to);
-  if (!operator) return to;
-  const t = to.replace(operator[0], emptyString);
-  const u = splitValueUnit(t)[3] || 0;
-  const x = parseFloat(from);
-  const y = parseFloat(t);
-  switch (operator[0][0]) {
-    case '+': return x + y + u;
-    case '-': return x - y + u;
-    case '*': return x * y + u;
+export function getRelativeValue(x, y, operator) {
+  switch (operator) {
+    case plusOperator:      return x + y;
+    case minusOperator:     return x - y;
+    case multiplyOperator:  return x * y;
   }
 }
 
@@ -102,99 +106,131 @@ function replaceValueUnitIfNecessary(val, unit) {
   }
 }
 
-export function getComputedValue(val) {
-  const computed = {
+export function decomposeValue(rawValue) {
+  let val = rawValue;
+  const value = {
     type: valueTypes.NUMBER,
   };
   const numberedVal = +val;
   if (!isNaN(numberedVal)) {
-    computed.number = numberedVal;
-    return computed;
+    value.number = numberedVal;
+    return value;
+  } else if (rawValue.isPath) {
+    value.type = valueTypes.PATH;
+    value.number = rawValue.totalLength;
+    return value;
   } else {
+    const operatorMatch = relativeValuesExecRgx.exec(val);
+    if (operatorMatch) {
+      val = val.slice(2);
+      value.operator = operatorMatch[0][0];
+    }
     const unitMatch = unitsExecRgx.exec(val);
     if (unitMatch) {
-      computed.type = valueTypes.UNIT;
-      computed.number = +unitMatch[2];
-      computed.unit = unitMatch[3];
-      return computed;
+      value.type = valueTypes.UNIT;
+      value.number = +unitMatch[2];
+      value.unit = unitMatch[3];
+      return value;
+    } else if (value.operator) {
+      value.number = +val;
+      return value;
     } else if (is.col(val)) {
-      computed.type = valueTypes.COLOR;
-      computed.numbers = convertColorStringValuesToRgbaArray(val);
-      computed.strings = rgbaStrings;
-      return computed;
+      value.type = valueTypes.COLOR;
+      value.numbers = convertColorStringValuesToRgbaArray(val);
+      return value;
     } else {
       const stringifiedVal = val + emptyString;
       const matchedNumbers = stringifiedVal.match(digitWithExponentRgx);
-      computed.type = valueTypes.COMPLEX;
-      computed.numbers = matchedNumbers ? matchedNumbers.map(Number) : [0];
-      computed.strings = stringifiedVal.split(digitWithExponentRgx) || [];
-      return computed;
+      value.type = valueTypes.COMPLEX;
+      value.numbers = matchedNumbers ? matchedNumbers.map(Number) : [0];
+      value.strings = stringifiedVal.split(digitWithExponentRgx) || [];
+      return value;
     }
   }
 }
 
-export function decomposeValue(val, unit) {
-  const valNumber = +val;
-  const valIsNumber = !isNaN(valNumber);
-  const hasUnit = !is.und(unit);
-  if (valIsNumber && !hasUnit) {
-    return {
-      type: valueTypes.NUMBER,
-      original: valNumber,
-      numbers: [valNumber],
-      strings: []
-    }
-  } else if (valIsNumber && hasUnit) {
-    // if (isNaN(val)) {
-    //   console.log(val + unit);
-    // }
-    return {
-      type: valueTypes.UNIT,
-      original: val + unit,
-      numbers: [valNumber],
-      strings: [emptyString, unit]
-    }
-  } else if (is.col(val)) {
-    const rgbaNumbers = convertColorStringValuesToRgbaArray(val);
-    const rgbaString = rgbaStrings[0] + rgbaNumbers[0] + rgbaStrings[1] + rgbaNumbers[1] + rgbaStrings[2] + rgbaNumbers[2] + rgbaStrings[3] + rgbaNumbers[3] + rgbaStrings[4];
-    return {
-      type: valueTypes.COLOR,
-      original: rgbaString,
-      numbers: rgbaNumbers,
-      strings: rgbaStrings
-    }
-  } else {
-    // TO DO/ ONLY REPLACE VALUE IF UNITS ARE DIFFERENT
-    // if (!is.num(val) && unit) {
-    //   console.log(val, unit);
-    // }
-    const value = replaceValueUnitIfNecessary((is.pth(val) ? val.totalLength : val), unit) + emptyString;
-    // console.log(val);
-    // const value = (is.pth(val) ? val.totalLength : val) + emptyString;
-    // console.log(value);
-    return {
-      original: value,
-      numbers: value.match(digitWithExponentRgx) ? value.match(digitWithExponentRgx).map(Number) : [0],
-      strings: (is.str(val) || unit) ? value.split(digitWithExponentRgx) : []
-    }
-  }
+
+function getNumberProgress(fromNumber, toNumber, progressValue, roundValue) {
+  let value = fromNumber + (progressValue * (toNumber - fromNumber));
+  if (roundValue) return round(value, roundValue);
+  return value;
 }
 
-export const setValueByType = [
-  (t, p, v) => t[p] = v,
-  (t, p, v) => t.setAttribute(p, v),
-  (t, p, v) => t.style[p] = v,
-  (t, p, v, transforms, manual) => {
-    transforms.list.set(p, v);
-    if (p === transforms.last || manual) {
-      transforms.string = emptyString;
-      transforms.list.forEach((value, prop) => {
-        transforms.string += `${prop}(${value})${emptyString}`;
-      });
-      t.style.transform = transforms.string;
+function recomposeNumberValue(tween) {
+  return getNumberProgress(tween.from.number, tween.to.number, tween.progress, tween.round);
+}
+
+function recomposeUnitValue(tween) {
+  return getNumberProgress(tween.from.number, tween.to.number, tween.progress, tween.round) + tween.to.unit;
+}
+
+function recomposeColorValue(tween) {
+  const fn = tween.from.numbers;
+  const tn = tween.to.numbers;
+  let value = rgbaStrings[0];
+  value += getNumberProgress(fn[0], tn[0], tween.progress, 1) + rgbaStrings[1];
+  value += getNumberProgress(fn[1], tn[1], tween.progress, 1) + rgbaStrings[2];
+  value += getNumberProgress(fn[2], tn[2], tween.progress, 1) + rgbaStrings[3];
+  value += getNumberProgress(fn[3], tn[3], tween.progress) + rgbaStrings[4];
+  return value;
+}
+
+function recomposePathValue(tween) {
+  let value = getPathProgress(tween.path, tween.progress, tween.isPathTargetInsideSVG);
+  return value;
+}
+
+function recomposeComplexValue(tween) {
+  let value = tween.to.strings[0];
+  for (let i = 0, l = tween.to.numbers.length; i < l; i++) {
+    const number = getNumberProgress(tween.from.numbers[i], tween.to.numbers[i], tween.progress, tween.round);
+    const nextString = tween.to.strings[i + 1];
+    if (!nextString) {
+      value += number;
+    } else {
+      value += number + nextString;
     }
   }
+  return value;
+}
+
+export const recomposeValueFunctions = [
+  recomposeNumberValue,
+  recomposeUnitValue,
+  recomposeColorValue,
+  recomposePathValue,
+  recomposeComplexValue,
 ]
+
+function setObjectAnimationValue(t, p, v) {
+  return t[p] = v;
+}
+
+function setAttributeAnimationValue(t, p, v) {
+  return t.setAttribute(p, v);
+}
+
+function setCssAnimationValue(t, p, v) {
+  return t.style[p] = v;
+}
+
+function setTransformsAnimationValue(t, p, v, transforms, manual) {
+  transforms.list.set(p, v);
+  if (p === transforms.last || manual) {
+    transforms.string = emptyString;
+    transforms.list.forEach((value, prop) => transforms.string += `${prop}${openParenthesis}${value}${closeParenthesis}`);
+    return t.style.transform = transforms.string;
+  }
+}
+
+export const setAnimationValueFunctions = [
+  setObjectAnimationValue,
+  setAttributeAnimationValue,
+  setCssAnimationValue,
+  setTransformsAnimationValue,
+]
+
+// NEEDS TESTING
 
 export function getTargetValue(target, propName) {
   const animatables = getAnimatables(targets);
@@ -202,6 +238,8 @@ export function getTargetValue(target, propName) {
     return getOriginalAnimatableValue(animatables[0], propName);
   }
 }
+
+// NEEDS TESTING
 
 export function setTargetsValue(targets, properties) {
   const animatables = getAnimatables(targets);
@@ -214,7 +252,7 @@ export function setTargetsValue(targets, properties) {
       const originalValue = getOriginalAnimatableValue(animatable, property, animType);
       const unit = valueUnit || splitValueUnit(originalValue)[2];
       const to = getRelativeValue(originalValue, replaceValueUnitIfNecessary(value, unit));
-      setValueByType[animType](target, property, to, animatable.transforms, true);
+      setAnimationValueFunctions[animType](target, property, to, animatable.transforms, true);
     }
   });
 }

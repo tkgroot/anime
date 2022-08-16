@@ -12,7 +12,8 @@ import {
 } from './helpers.js';
 
 import {
-  setValueByType,
+  recomposeValueFunctions,
+  setAnimationValueFunctions,
 } from './values.js';
 
 import {
@@ -39,10 +40,6 @@ import {
 import {
   removeAnimatablesFromInstance,
 } from './animatables.js';
-
-import {
-  getPathProgress
-} from './svg.js';
 
 let instancesId = 0;
 
@@ -119,57 +116,17 @@ export function animate(params = {}) {
     const animations = instance.animations;
     const animationsLength = animations.length;
     while (i < animationsLength) {
-      const anim = animations[i];
-      const animatable = anim.animatable;
-      const tweens = anim.tweens;
+      const animation = animations[i];
+      const animatable = animation.animatable;
+      const tweens = animation.tweens;
       const tweensLength = tweens.length - 1;
       let tween = tweens[tweensLength];
       // Only check for keyframes if there is more than one tween
       if (tweensLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
-      const elapsed = clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration;
-      const eased = tween.easing(elapsed);
-      const strings = tween.to.strings;
-      const round = tween.round;
-      const numbers = [];
-      const toNumbersLength = tween.to.numbers.length;
-      let progress;
-      for (let j = 0; j < toNumbersLength; j++) {
-        let value;
-        const toNumber = tween.to.numbers[j];
-        const fromNumber = tween.from.numbers[j] || 0;
-        if (!tween.isPath) {
-          value = fromNumber + (eased * (toNumber - fromNumber));
-        } else {
-          value = getPathProgress(tween.value, eased * toNumber, tween.isPathTargetInsideSVG);
-        }
-        if (round) {
-          if (!(tween.isColor && j > 2)) {
-            value = Math.round(value * round) / round;
-          }
-        }
-        numbers.push(value);
-      }
-      // Manual Array.reduce for better performances
-      const stringsLength = strings.length;
-      if (!stringsLength) {
-        progress = numbers[0];
-      } else {
-        progress = strings[0];
-        for (let s = 0; s < stringsLength; s++) {
-          const a = strings[s];
-          const b = strings[s + 1];
-          const n = numbers[s];
-          if (!isNaN(n)) {
-            if (!b) {
-              progress += n + ' ';
-            } else {
-              progress += n + b;
-            }
-          }
-        }
-      }
-      setValueByType[anim.type](animatable.target, anim.property, progress, animatable.transforms);
-      anim.currentValue = progress;
+      tween.progress = tween.easing(clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration);
+      tween.value = recomposeValueFunctions[tween.type](tween);
+      setAnimationValueFunctions[animation.type](animatable.target, animation.property, tween.value, animatable.transforms);
+      animation.currentValue = tween.value;
       i++;
     }
   }
