@@ -1,4 +1,8 @@
 import {
+  valueTypes,
+} from './consts.js';
+
+import {
   is,
 } from './helpers.js';
 
@@ -12,14 +16,6 @@ import {
   getOriginalAnimatableValue,
   decomposeValue,
 } from './values.js';
-
-import {
-  splitValueUnit,
-} from './units.js';
-
-import {
-  valueTypes,
-} from './consts.js';
 
 // Tweens
 

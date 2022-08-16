@@ -40,4 +40,14 @@ describe('Utils', () => {
     expect(withInlineStylesTranslateX).toBe('10px');
     expect(withInlineStylesTranslateY).toBe('20px');
   });
+
+  test('get Object properties and convert unit', () => {
+    const targetIdWidth = anime.get('#target-id', 'width', 'rem');
+    // const cssPrpertiesWidth = anime.get('.css-properties', 'width');
+    // const withInlineStylesWidth = anime.get('.with-inline-styles', 'width');
+
+    expect(targetIdWidth).toBe('0rem');
+    // expect(cssPrpertiesWidth).toBe('150px');
+    // expect(withInlineStylesWidth).toBe('200px');
+  });
 });

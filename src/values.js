@@ -1,23 +1,16 @@
 import {
+  validTransforms,
+  animationTypes,
+  valueTypes,
+  emptyString,
+  openParenthesisString,
+  closeParenthesisString,
+  rgbaStrings,
   lowerCaseRgx,
   lowerCaseRgxParam,
   transformsExecRgx,
   relativeValuesExecRgx,
   digitWithExponentRgx,
-  validTransforms,
-  animationTypes,
-  valueTypes,
-  rgbaStrings,
-  plusOperator,
-  minusOperator,
-  multiplyOperator,
-} from './consts.js';
-
-import {
-  emptyString,
-  spaceString,
-  openParenthesis,
-  closeParenthesis,
   unitsExecRgx,
 } from './consts.js';
 
@@ -31,7 +24,6 @@ import {
 import {
   convertPxToUnit,
   getTransformUnit,
-  splitValueUnit,
 } from './units.js';
 
 import {
@@ -87,22 +79,9 @@ export function getOriginalAnimatableValue(animatable, propName, animationType) 
 
 export function getRelativeValue(x, y, operator) {
   switch (operator) {
-    case plusOperator:      return x + y;
-    case minusOperator:     return x - y;
-    case multiplyOperator:  return x * y;
-  }
-}
-
-function replaceValueUnitIfNecessary(val, unit) {
-  if (!unit) {
-    return val;
-  } else {
-    const originalSplitValueUnit = splitValueUnit(val);
-    if (!is.und(originalSplitValueUnit[1])) {
-      return originalSplitValueUnit[1] + unit;
-    } else {
-      return val;
-    }
+    case '+': return x + y;
+    case '-': return x - y;
+    case '*': return x * y;
   }
 }
 
@@ -130,8 +109,8 @@ export function decomposeValue(rawValue) {
     const unitMatch = unitsExecRgx.exec(val);
     if (unitMatch) {
       value.type = valueTypes.UNIT;
-      value.number = +unitMatch[2];
-      value.unit = unitMatch[3];
+      value.number = +unitMatch[1];
+      value.unit = unitMatch[2];
       return value;
     } else if (value.operator) {
       value.number = +val;
@@ -221,7 +200,7 @@ function setTransformsAnimationValue(t, p, v, transforms, manual) {
   transforms.list.set(p, v);
   if (p === transforms.last || manual) {
     transforms.string = emptyString;
-    transforms.list.forEach((value, prop) => transforms.string += `${prop}${openParenthesis}${value}${closeParenthesis}`);
+    transforms.list.forEach((value, prop) => transforms.string += `${prop}${openParenthesisString}${value}${closeParenthesisString}`);
     return t.style.transform = transforms.string;
   }
 }
@@ -235,10 +214,14 @@ export const setAnimationValueFunctions = [
 
 // NEEDS TESTING
 
-export function getTargetValue(target, propName) {
+export function getTargetValue(target, propName, unit) {
   const animatables = getAnimatables(target);
   if (animatables) {
-    return getOriginalAnimatableValue(animatables[0], propName);
+    let value = getOriginalAnimatableValue(animatables[0], propName);
+    if (unit) {
+      // do unit conversion here
+    }
+    return value;
   }
 }
 
@@ -253,8 +236,8 @@ export function setTargetsValue(targets, properties) {
       const value = getFunctionValue(properties[property], animatable);
       const valueUnit = splitValueUnit(value)[2];
       const originalValue = getOriginalAnimatableValue(animatable, property, animType);
-      const unit = valueUnit || splitValueUnit(originalValue)[2];
-      const to = getRelativeValue(originalValue, replaceValueUnitIfNecessary(value, unit));
+      // const unit = valueUnit || splitValueUnit(originalValue)[2];
+      // const to = getRelativeValue(originalValue, replaceValueUnitIfNecessary(value, unit));
       setAnimationValueFunctions[animType](target, property, to, animatable.transforms, true);
     }
   });

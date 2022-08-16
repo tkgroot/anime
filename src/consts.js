@@ -2,12 +2,10 @@
 
 export const noop = () => {};
 export const emptyString = '';
-export const spaceString = ' ';
-export const plusOperator = '+';
-export const minusOperator = '-';
-export const multiplyOperator = '*';
-export const openParenthesis = '(';
-export const closeParenthesis = ')';
+export const openParenthesisString = '(';
+export const closeParenthesisString = ')';
+export const rgbaStrings = ['rgba(', ',', ',', ',', ')'];
+export const hexValuePrefix = '0x';
 export const pi = Math.PI;
 
 // Default animation parameters
@@ -93,14 +91,9 @@ export const hslaExecRgx = /hsla\(\s*(-?\d+|-?\d*.\d+)\s*,\s*(-?\d+|-?\d*.\d+)%\
 export const springTestRgx = /^spring/;
 export const easingsExecRgx = /\(([^)]+)\)/;
 export const digitWithExponentRgx = /[+-]?\d*\.?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g;
-export const unitsExecRgx = /^(\*=|\+=|-=)*([+-]?\d*\.?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)+(%|px|pt|em|rem|in|cm|mm|ex|ch|pc|vw|vh|vmin|vmax|deg|rad|turn)$/;
+export const unitsExecRgx = /^([+-]?\d*\.?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)+(%|px|pt|em|rem|in|cm|mm|ex|ch|pc|vw|vh|vmin|vmax|deg|rad|turn)$/;
 export const lowerCaseRgx = /([a-z])([A-Z])/g;
 export const lowerCaseRgxParam = '$1-$2';
 export const transformsExecRgx = /(\w+)\(([^)]*)\)/g;
 export const relativeValuesExecRgx = /^(\*=|\+=|-=)/;
 // export const whiteSpaceTestRgx = /\s/g;
-
-// Colors
-
-export const rgbaStrings = ['rgba(', ',', ',', ',', ')'];
-export const hexValuePrefix = '0x';
