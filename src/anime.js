@@ -9,7 +9,7 @@ import {
 } from './easings.js';
 
 import {
-  convertPxToUnit,
+  convertValueUnit,
 } from './units.js';
 
 import {
@@ -52,7 +52,7 @@ anime.running = activeInstances;
 anime.remove = removeAnimatablesFromActiveInstances;
 anime.get = getTargetValue;
 anime.set = setTargetsValue;
-anime.convertPx = convertPxToUnit;
+anime.convertPx = convertValueUnit;
 anime.path = getPath;
 anime.setDashoffset = setDashoffset;
 anime.stagger = stagger;

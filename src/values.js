@@ -22,7 +22,7 @@ import {
 } from './helpers.js';
 
 import {
-  convertPxToUnit,
+  convertValueUnit,
   getTransformUnit,
 } from './units.js';
 
@@ -50,7 +50,7 @@ export function getFunctionValue(functionValue, animatable) {
 function getCSSValue(el, prop, unit) {
   const uppercasePropName = prop.replace(lowerCaseRgx, lowerCaseRgxParam).toLowerCase();
   const value = el.style[prop] || getComputedStyle(el).getPropertyValue(uppercasePropName) || '0';
-  return unit ? convertPxToUnit(el, value, unit) : value;
+  return unit ? convertValueUnit(el, value, unit) : value;
 }
 
 export function getAnimationType(el, prop) {
@@ -223,7 +223,7 @@ export function getTargetValue(target, propName, unit) {
       // do unit conversion here
       const decomposedValue = decomposeValue(value);
       if (decomposedValue.type === valueTypes.NUMBER || decomposedValue.type === valueTypes.UNIT) {
-        const convertedValue = convertPxToUnit(animatable.target, decomposedValue, unit);
+        const convertedValue = convertValueUnit(animatable.target, decomposedValue, unit);
         value = convertedValue.number + convertedValue.unit;
       }
     }
@@ -240,11 +240,19 @@ export function setTargetsValue(targets, properties) {
       const target = animatable.target;
       const animType = getAnimationType(target, property);
       const value = getFunctionValue(properties[property], animatable);
-      const valueUnit = splitValueUnit(value)[2];
-      const originalValue = getOriginalAnimatableValue(animatable, property, animType);
-      // const unit = valueUnit || splitValueUnit(originalValue)[2];
-      // const to = getRelativeValue(originalValue, replaceValueUnitIfNecessary(value, unit));
-      setAnimationValueFunctions[animType](target, property, to, animatable.transforms, true);
+      const decomposedValue = decomposeValue(value);
+      const originalValue = decomposeValue(getOriginalAnimatableValue(animatable, property, animType));
+      if (originalValue.type === valueTypes.UNIT && decomposedValue.type === valueTypes.NUMBER) {
+        decomposedValue.type = valueTypes.UNIT;
+        decomposedValue.unit = originalValue.unit;
+      }
+      const recomposedValue = recomposeValueFunctions[decomposedValue.type]({
+        from: originalValue,
+        to: decomposedValue,
+        progress: 1,
+      });
+      console.log(originalValue, decomposedValue, recomposedValue, value);
+      setAnimationValueFunctions[animType](target, property, recomposedValue, animatable.transforms, true);
     }
   });
 }

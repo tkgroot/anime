@@ -8,7 +8,6 @@ import {
 } from './helpers.js';
 
 import {
-  convertPxToUnit,
   getTransformUnit,
 } from './units.js';
 

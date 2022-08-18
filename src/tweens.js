@@ -19,7 +19,7 @@ import {
 } from './values.js';
 
 import {
-  convertPxToUnit,
+  convertValueUnit,
 } from './units.js';
 
 // Tweens
@@ -124,7 +124,7 @@ export function convertKeyframesToTweens(keyframes, animatable, propertyName, an
       // from.unit = to.unit;
       const valueToConvert = to.unit ? from : to;
       const unitToConvertTo = to.unit ? to.unit : from.unit;
-      convertPxToUnit(animatable.target, valueToConvert, unitToConvertTo);
+      convertValueUnit(animatable.target, valueToConvert, unitToConvertTo);
     }
 
     if (to.type === valueTypes.PATH) {

@@ -23,7 +23,7 @@ export function getTransformUnit(propName) {
 
 const nonConvertableUnitsYet = ['', 'deg', 'rad', 'turn'];
 
-export function convertPxToUnit(el, decomposedValue, unit) {
+export function convertValueUnit(el, decomposedValue, unit) {
   nonConvertableUnitsYet[0] = unit;
   if (decomposedValue.type === valueTypes.UNIT && arrayContains(nonConvertableUnitsYet, decomposedValue.unit)) {
     return decomposedValue;
