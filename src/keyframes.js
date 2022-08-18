@@ -1,6 +1,5 @@
 import {
   is,
-  cloneObject,
   mergeObjects,
   flattenArray,
   filterArray,
@@ -14,9 +13,10 @@ import {
   spring,
 } from './easings.js';
 
-function convertPropertyValueToTweens(propertyValue, tweenSettings) {
+function convertPropertyValueToTweens(propertyName, propertyValue, tweenSettings) {
   let value = propertyValue;
-  let settings = cloneObject(tweenSettings);
+  const settings = {...tweenSettings};
+  settings.propertyName = propertyName;
   // Override duration if easing is a spring
   if (springTestRgx.test(settings.easing)) {
     settings.duration = spring(settings.easing);
@@ -36,7 +36,7 @@ function convertPropertyValueToTweens(propertyValue, tweenSettings) {
   }
   const valuesArray = is.arr(value) ? value : [value];
   return valuesArray.map((v, i) => {
-    const obj = (is.obj(v) && !is.pth(v)) ? v : { value: v };
+    const obj = (is.obj(v) && !v.isPath) ? v : { value: v };
     // Default delay value should only be applied to the first tween
     if (is.und(obj.delay)) {
       obj.delay = !i ? tweenSettings.delay : 0;
@@ -86,10 +86,7 @@ function getKeyframesFromProperties(tweenSettings, params) {
   }
   for (let p in params) {
     if (is.key(p)) {
-      keyframes.push({
-        name: p,
-        tweens: convertPropertyValueToTweens(params[p], tweenSettings)
-      });
+      keyframes.push(convertPropertyValueToTweens(p, params[p], tweenSettings));
     }
   }
   return keyframes;

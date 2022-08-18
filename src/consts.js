@@ -1,8 +1,16 @@
 // Misc
 
 export const noop = () => {};
-export const emptyString = '';
 export const pi = Math.PI;
+export const tinyNumber = Number.MIN_VALUE;
+
+// Strings
+
+export const emptyString = '';
+export const openParenthesisString = '(';
+export const closeParenthesisString = ')';
+export const rgbaStrings = ['rgba(', ',', ',', ',', ')'];
+export const hexValuePrefix = '0x';
 
 // Default animation parameters
 
@@ -36,6 +44,23 @@ export const settings = {
   suspendWhenDocumentHidden: true,
 }
 
+// Animation type
+
+export const animationTypes = {
+  OBJECT: 0,
+  ATTRIBUTE: 1,
+  CSS: 2,
+  TRANSFORM: 3,
+}
+
+export const valueTypes = {
+  NUMBER: 0,
+  UNIT: 1,
+  COLOR: 2,
+  PATH: 3,
+  COMPLEX: 4,
+}
+
 // Transforms
 
 export const validTransforms = [
@@ -63,14 +88,16 @@ export const validTransforms = [
 export const hexTestRgx = /(^#([\da-f]{3}){1,2}$)|(^#([\da-f]{4}){1,2}$)/i;
 export const rgbTestRgx = /^rgb/i;
 export const hslTestRgx = /^hsl/i;
-export const rgbExecRgx = /rgb\((\d+,\s*[\d]+,\s*[\d]+)\)/i;
+export const rgbExecRgx = /rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i;
+export const rgbaExecRgx = /rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(-?\d+|-?\d*.\d+)\s*\)/i;
 export const hslExecRgx = /hsl\(\s*(-?\d+|-?\d*.\d+)\s*,\s*(-?\d+|-?\d*.\d+)%\s*,\s*(-?\d+|-?\d*.\d+)%\s*\)/i;
 export const hslaExecRgx = /hsla\(\s*(-?\d+|-?\d*.\d+)\s*,\s*(-?\d+|-?\d*.\d+)%\s*,\s*(-?\d+|-?\d*.\d+)%\s*,\s*(-?\d+|-?\d*.\d+)\s*\)/i;
 export const springTestRgx = /^spring/;
 export const easingsExecRgx = /\(([^)]+)\)/;
-export const unitsExecRgx = /[+-]?\d*\.?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?(%|px|pt|em|rem|in|cm|mm|ex|ch|pc|vw|vh|vmin|vmax|deg|rad|turn)?$/;
 export const digitWithExponentRgx = /[+-]?\d*\.?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g;
+export const unitsExecRgx = /^([+-]?\d*\.?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)+(%|px|pt|em|rem|in|cm|mm|ex|ch|pc|vw|vh|vmin|vmax|deg|rad|turn)$/;
 export const lowerCaseRgx = /([a-z])([A-Z])/g;
+export const lowerCaseRgxParam = '$1-$2';
 export const transformsExecRgx = /(\w+)\(([^)]*)\)/g;
 export const relativeValuesExecRgx = /^(\*=|\+=|-=)/;
-export const whiteSpaceTestRgx = /\s/g;
+// export const whiteSpaceTestRgx = /\s/g;

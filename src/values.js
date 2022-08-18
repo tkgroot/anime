@@ -1,125 +1,256 @@
 import {
+  validTransforms,
+  animationTypes,
+  valueTypes,
   emptyString,
+  openParenthesisString,
+  closeParenthesisString,
+  rgbaStrings,
+  lowerCaseRgx,
+  lowerCaseRgxParam,
+  transformsExecRgx,
+  relativeValuesExecRgx,
+  digitWithExponentRgx,
+  unitsExecRgx,
 } from './consts.js';
 
 import {
   is,
   arrayContains,
+  round,
 } from './helpers.js';
 
 import {
-  convertPxToUnit,
+  convertValueUnit,
   getTransformUnit,
-  getUnit,
 } from './units.js';
 
 import {
-  lowerCaseRgx,
-  transformsExecRgx,
-  relativeValuesExecRgx,
-  whiteSpaceTestRgx,
-  digitWithExponentRgx,
-  validTransforms,
-} from './consts.js';
+  getTransformValue,
+} from './transforms.js';
 
 import {
-  normalizeColorToRgba
+  getAnimatables,
+} from './animatables.js';
+
+import {
+  getPathProgress
+} from './svg.js';
+
+import {
+  convertColorStringValuesToRgbaArray
 } from './colors.js';
 
-export function getFunctionValue(val, animatable) {
-  if (!is.fnc(val)) return val;
-  return val(animatable.target, animatable.id, animatable.total);
+export function getFunctionValue(functionValue, animatable) {
+  if (!is.fnc(functionValue)) return functionValue;
+  return functionValue(animatable.target, animatable.id, animatable.total) || 0; // Fallback to 0 if the function results in undefined / NaN / null
 }
 
 function getCSSValue(el, prop, unit) {
-  if (prop in el.style) {
-    const uppercasePropName = prop.replace(lowerCaseRgx, '$1-$2').toLowerCase();
-    const value = el.style[prop] || getComputedStyle(el).getPropertyValue(uppercasePropName) || '0';
-    return unit ? convertPxToUnit(el, value, unit) : value;
-  }
+  const uppercasePropName = prop.replace(lowerCaseRgx, lowerCaseRgxParam).toLowerCase();
+  const value = el.style[prop] || getComputedStyle(el).getPropertyValue(uppercasePropName) || '0';
+  return unit ? convertValueUnit(el, value, unit) : value;
 }
 
 export function getAnimationType(el, prop) {
-  if (is.dom(el) && !is.inp(el) && (!is.nil(el.getAttribute(prop)) || (is.svg(el) && el[prop]))) return 'attribute';
-  if (is.dom(el) && arrayContains(validTransforms, prop)) return 'transform';
-  if (is.dom(el) && (prop !== 'transform' && getCSSValue(el, prop))) return 'css';
-  if (!is.nil(el[prop])) return 'object';
-}
-
-export function getElementTransforms(el) {
-  if (!is.dom(el)) return;
-  const str = el.style.transform;
-  const transforms = new Map();
-  if (!str) return transforms;
-  let t;
-  while (t = transformsExecRgx.exec(str)) {
-    transforms.set(t[1], t[2]);
+  if (is.obj(el)) {
+    return animationTypes.OBJECT;
+  } else if (is.dom(el)) {
+    if (!is.nil(el.getAttribute(prop))) return animationTypes.ATTRIBUTE; // Handle DOM and SVG attributes
+    if (arrayContains(validTransforms, prop)) return animationTypes.TRANSFORM; // Handle CSS Transform properties differently than CSS to allow individual animations
+    if (prop in el.style) return animationTypes.CSS; // All other CSS properties
+    if (!is.und(el[prop])) return animationTypes.OBJECT; // Handle DOM elements properies that can't be accessed using getAttribute()
+    return console.warn(`Can't animate property '${prop}' on DOM element '${el}'.`);
   }
-  return transforms;
+  return console.warn(`Target '${el}' can't be animated.`);
 }
 
-function getTransformValue(el, propName, animatable, unit) {
-  const defaultVal = propName.includes('scale') ? 1 : 0 + getTransformUnit(propName);
-  const value = getElementTransforms(el).get(propName) || defaultVal;
-  if (animatable) {
-    animatable.transforms.list.set(propName, value);
-    animatable.transforms.last = propName;
-  }
-  return unit ? convertPxToUnit(el, value, unit) : value;
-}
-
-export function getOriginalTargetValue(target, propName, unit, animatable) {
-  switch (getAnimationType(target, propName)) {
-    case 'transform': return getTransformValue(target, propName, animatable, unit);
-    case 'css': return getCSSValue(target, propName, unit);
-    case 'attribute': return target.getAttribute(propName);
-    default: return target[propName] || 0;
+export function getOriginalAnimatableValue(animatable, propName, animationType) {
+  const target = animatable.target;
+  const animType = is.num(animationType) ? animationType : getAnimationType(target, propName);
+  switch (animType) {
+    case animationTypes.OBJECT: return target[propName] || 0; // Fallaback to 0 if the property doesn't exist on the object.
+    case animationTypes.ATTRIBUTE: return target.getAttribute(propName);
+    case animationTypes.TRANSFORM: return getTransformValue(animatable, propName);
+    case animationTypes.CSS: return getCSSValue(target, propName);
   }
 }
 
-export function getRelativeValue(to, from) {
-  const operator = relativeValuesExecRgx.exec(to);
-  if (!operator) return to;
-  const u = getUnit(to) || 0;
-  const x = parseFloat(from);
-  const y = parseFloat(to.replace(operator[0], emptyString));
-  switch (operator[0][0]) {
-    case '+': return x + y + u;
-    case '-': return x - y + u;
-    case '*': return x * y + u;
+export function getRelativeValue(x, y, operator) {
+  switch (operator) {
+    case '+': return x + y;
+    case '-': return x - y;
+    case '*': return x * y;
   }
 }
 
-export function validateValue(val, unit) {
-  if (is.col(val)) return normalizeColorToRgba(val);
-  if (whiteSpaceTestRgx.test(val)) return val;
-  const originalUnit = getUnit(val);
-  const unitLess = originalUnit ? val.substr(0, val.length - originalUnit.length) : val;
-  if (unit) return unitLess + unit;
-  return unitLess;
-}
-
-export function decomposeValue(val, unit) {
-  const value = validateValue((is.pth(val) ? val.totalLength : val), unit) + emptyString;
-  return {
-    original: value,
-    numbers: value.match(digitWithExponentRgx) ? value.match(digitWithExponentRgx).map(Number) : [0],
-    strings: (is.str(val) || unit) ? value.split(digitWithExponentRgx) : []
-  }
-}
-
-export const setValueByType = {
-  css: (t, p, v) => t.style[p] = v,
-  attribute: (t, p, v) => t.setAttribute(p, v),
-  object: (t, p, v) => t[p] = v,
-  transform: (t, p, v, transforms, manual) => {
-    transforms.list.set(p, v);
-    if (p === transforms.last || manual) {
-      transforms.string = emptyString;
-      transforms.list.forEach((value, prop) => {
-        transforms.string += `${prop}(${value})${emptyString}`;
-      });
-      t.style.transform = transforms.string;
+export function decomposeValue(rawValue) {
+  let val = rawValue;
+  const value = {
+    type: valueTypes.NUMBER,
+  };
+  const numberedVal = +val;
+  if (!isNaN(numberedVal)) {
+    value.number = numberedVal;
+    return value;
+  } else if (rawValue.isPath) {
+    value.type = valueTypes.PATH;
+    value.path = rawValue;
+    value.number = value.path.totalLength;
+    value.unit = emptyString;
+    return value;
+  } else {
+    const operatorMatch = relativeValuesExecRgx.exec(val);
+    if (operatorMatch) {
+      val = val.slice(2);
+      value.operator = operatorMatch[0][0];
+    }
+    const unitMatch = unitsExecRgx.exec(val);
+    if (unitMatch) {
+      value.type = valueTypes.UNIT;
+      value.number = +unitMatch[1];
+      value.unit = unitMatch[2];
+      return value;
+    } else if (value.operator) {
+      value.number = +val;
+      return value;
+    } else if (is.col(val)) {
+      value.type = valueTypes.COLOR;
+      value.numbers = convertColorStringValuesToRgbaArray(val);
+      return value;
+    } else {
+      const stringifiedVal = val + emptyString;
+      const matchedNumbers = stringifiedVal.match(digitWithExponentRgx);
+      value.type = valueTypes.COMPLEX;
+      value.numbers = matchedNumbers ? matchedNumbers.map(Number) : [0];
+      value.strings = stringifiedVal.split(digitWithExponentRgx) || [];
+      return value;
     }
   }
+}
+
+
+function getNumberProgress(fromNumber, toNumber, progressValue, roundValue) {
+  let value = fromNumber + (progressValue * (toNumber - fromNumber));
+  if (roundValue) return round(value, roundValue);
+  return value;
+}
+
+function recomposeNumberValue(tween) {
+  return getNumberProgress(tween.from.number, tween.to.number, tween.progress, tween.round);
+}
+
+function recomposeUnitValue(tween) {
+  return getNumberProgress(tween.from.number, tween.to.number, tween.progress, tween.round) + tween.to.unit;
+}
+
+function recomposeColorValue(tween) {
+  const fn = tween.from.numbers;
+  const tn = tween.to.numbers;
+  let value = rgbaStrings[0];
+  value += getNumberProgress(fn[0], tn[0], tween.progress, 1) + rgbaStrings[1];
+  value += getNumberProgress(fn[1], tn[1], tween.progress, 1) + rgbaStrings[2];
+  value += getNumberProgress(fn[2], tn[2], tween.progress, 1) + rgbaStrings[3];
+  value += getNumberProgress(fn[3], tn[3], tween.progress) + rgbaStrings[4];
+  return value;
+}
+
+function recomposePathValue(tween) {
+  let value = getPathProgress(tween.to.path, tween.progress * tween.to.number) + tween.to.unit;
+  if (tween.round) return round(value, tween.round);
+  return value;
+}
+
+function recomposeComplexValue(tween) {
+  let value = tween.to.strings[0];
+  for (let i = 0, l = tween.to.numbers.length; i < l; i++) {
+    const number = getNumberProgress(tween.from.numbers[i], tween.to.numbers[i], tween.progress, tween.round);
+    const nextString = tween.to.strings[i + 1];
+    if (!nextString) {
+      value += number;
+    } else {
+      value += number + nextString;
+    }
+  }
+  return value;
+}
+
+export const recomposeValueFunctions = [
+  recomposeNumberValue,
+  recomposeUnitValue,
+  recomposeColorValue,
+  recomposePathValue,
+  recomposeComplexValue,
+]
+
+function setObjectAnimationValue(t, p, v) {
+  return t[p] = v;
+}
+
+function setAttributeAnimationValue(t, p, v) {
+  return t.setAttribute(p, v);
+}
+
+function setCssAnimationValue(t, p, v) {
+  return t.style[p] = v;
+}
+
+function setTransformsAnimationValue(t, p, v, transforms, manual) {
+  transforms.list.set(p, v);
+  if (p === transforms.last || manual) {
+    transforms.string = emptyString;
+    transforms.list.forEach((value, prop) => transforms.string += `${prop}${openParenthesisString}${value}${closeParenthesisString}`);
+    return t.style.transform = transforms.string;
+  }
+}
+
+export const setAnimationValueFunctions = [
+  setObjectAnimationValue,
+  setAttributeAnimationValue,
+  setCssAnimationValue,
+  setTransformsAnimationValue,
+]
+
+// NEEDS TESTING
+
+export function getTargetValue(target, propName, unit) {
+  const animatables = getAnimatables(target);
+  if (animatables) {
+    const animatable = animatables[0];
+    let value = getOriginalAnimatableValue(animatable, propName);
+    if (unit) {
+      // do unit conversion here
+      const decomposedValue = decomposeValue(value);
+      if (decomposedValue.type === valueTypes.NUMBER || decomposedValue.type === valueTypes.UNIT) {
+        const convertedValue = convertValueUnit(animatable.target, decomposedValue, unit);
+        value = convertedValue.number + convertedValue.unit;
+      }
+    }
+    return value;
+  }
+}
+
+// NEEDS TESTING
+
+export function setTargetsValue(targets, properties) {
+  const animatables = getAnimatables(targets);
+  animatables.forEach(animatable => {
+    for (let property in properties) {
+      const target = animatable.target;
+      const animType = getAnimationType(target, property);
+      const value = getFunctionValue(properties[property], animatable);
+      const decomposedValue = decomposeValue(value);
+      const originalValue = decomposeValue(getOriginalAnimatableValue(animatable, property, animType));
+      if (originalValue.type === valueTypes.UNIT && decomposedValue.type === valueTypes.NUMBER) {
+        decomposedValue.type = valueTypes.UNIT;
+        decomposedValue.unit = originalValue.unit;
+      }
+      const recomposedValue = recomposeValueFunctions[decomposedValue.type]({
+        from: originalValue,
+        to: decomposedValue,
+        progress: 1,
+      });
+      setAnimationValueFunctions[animType](target, property, recomposedValue, animatable.transforms, true);
+    }
+  });
 }

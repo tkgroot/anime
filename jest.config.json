@@ -1,0 +1,10 @@
+{
+  "testEnvironment": "jsdom",
+  "setupFilesAfterEnv": ["./tests/_template.js"],
+  "testMatch": ["**/tests/?(*.)+(spec|test).js?(x)"],
+  "transform": {},
+  "verbose": true,
+  "testEnvironmentOptions": {
+    "pretendToBeVisual": true
+  }
+}

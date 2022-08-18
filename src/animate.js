@@ -1,18 +1,19 @@
 import {
   settings,
+  defaultInstanceSettings,
+  defaultTweenSettings,
 } from './consts.js';
 
 import {
   clamp,
   filterArray,
+  replaceObjectProps,
+  mergeObjects,
 } from './helpers.js';
 
 import {
-  createTimeline,
-} from './timelines.js';
-
-import {
-  setValueByType,
+  recomposeValueFunctions,
+  setAnimationValueFunctions,
 } from './values.js';
 
 import {
@@ -21,8 +22,44 @@ import {
 } from './engine.js';
 
 import {
-  getPathProgress
-} from './svg.js';
+  getAnimatables,
+} from './animatables.js';
+
+import {
+  getAnimations,
+} from './animations.js';
+
+import {
+  getTimingsFromAnimations,
+} from './timings.js';
+
+import {
+  getKeyframesFromProperties,
+} from './keyframes.js';
+
+import {
+  removeAnimatablesFromInstance,
+} from './animatables.js';
+
+let instancesId = 0;
+
+export function createInstance(params) {
+  const instanceSettings = replaceObjectProps(defaultInstanceSettings, params);
+  const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
+  const properties = getKeyframesFromProperties(tweenSettings, params);
+  const animatables = getAnimatables(params.targets);
+  const animations = getAnimations(animatables, properties);
+  const timings = getTimingsFromAnimations(animations, tweenSettings);
+  return mergeObjects(instanceSettings, {
+    id: instancesId++,
+    children: [],
+    animatables: animatables,
+    animations: animations,
+    delay: timings.delay,
+    duration: timings.duration,
+    endDelay: timings.endDelay,
+  });
+}
 
 export function animate(params = {}) {
   let startTime = 0, lastTime = 0, now = 0;
@@ -35,7 +72,7 @@ export function animate(params = {}) {
     return promise;
   }
 
-  let instance = createTimeline(params);
+  let instance = createInstance(params);
   let promise = makePromise(instance);
 
   function toggleInstanceDirection() {
@@ -70,7 +107,7 @@ export function animate(params = {}) {
     if (!instance.reversePlayback) {
       for (let i = 0; i < childrenLength; i++) seekChild(time, children[i], muteCallbacks);
     } else {
-      for (let i = childrenLength; i--;) seekChild(time, children[i], muteCallbacks);
+      for (let j = childrenLength; j--;) seekChild(time, children[j], muteCallbacks);
     }
   }
 
@@ -79,57 +116,17 @@ export function animate(params = {}) {
     const animations = instance.animations;
     const animationsLength = animations.length;
     while (i < animationsLength) {
-      const anim = animations[i];
-      const animatable = anim.animatable;
-      const tweens = anim.tweens;
-      const tweenLength = tweens.length - 1;
-      let tween = tweens[tweenLength];
+      const animation = animations[i];
+      const animatable = animation.animatable;
+      const tweens = animation.tweens;
+      const tweensLength = tweens.length - 1;
+      let tween = tweens[tweensLength];
       // Only check for keyframes if there is more than one tween
-      if (tweenLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
-      const elapsed = clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration;
-      const eased = isNaN(elapsed) ? 1 : tween.easing(elapsed);
-      const strings = tween.to.strings;
-      const round = tween.round;
-      const numbers = [];
-      const toNumbersLength = tween.to.numbers.length;
-      let progress;
-      for (let n = 0; n < toNumbersLength; n++) {
-        let value;
-        const toNumber = tween.to.numbers[n];
-        const fromNumber = tween.from.numbers[n] || 0;
-        if (!tween.isPath) {
-          value = fromNumber + (eased * (toNumber - fromNumber));
-        } else {
-          value = getPathProgress(tween.value, eased * toNumber, tween.isPathTargetInsideSVG);
-        }
-        if (round) {
-          if (!(tween.isColor && n > 2)) {
-            value = Math.round(value * round) / round;
-          }
-        }
-        numbers.push(value);
-      }
-      // Manual Array.reduce for better performances
-      const stringsLength = strings.length;
-      if (!stringsLength) {
-        progress = numbers[0];
-      } else {
-        progress = strings[0];
-        for (let s = 0; s < stringsLength; s++) {
-          const a = strings[s];
-          const b = strings[s + 1];
-          const n = numbers[s];
-          if (!isNaN(n)) {
-            if (!b) {
-              progress += n + ' ';
-            } else {
-              progress += n + b;
-            }
-          }
-        }
-      }
-      setValueByType[anim.type](animatable.target, anim.property, progress, animatable.transforms);
-      anim.currentValue = progress;
+      if (tweensLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
+      tween.progress = tween.easing(clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration);
+      tween.value = recomposeValueFunctions[tween.type](tween);
+      setAnimationValueFunctions[animation.type](animatable.target, animation.property, tween.value, animatable.transforms);
+      animation.currentValue = tween.value;
       i++;
     }
   }
@@ -267,8 +264,7 @@ export function animate(params = {}) {
   }
 
   instance.remove = function(targets) {
-    const targetsArray = parseTargets(targets);
-    removeTargetsFromInstance(targetsArray, instance);
+    removeAnimatablesFromInstance(targets, instance);
   }
 
   instance.reset();

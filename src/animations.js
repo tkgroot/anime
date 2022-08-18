@@ -1,20 +1,25 @@
 import {
+  is,
+} from './helpers.js';
+
+import {
+  convertKeyframesToTweens,
+} from './tweens.js';
+
+import {
   getAnimationType,
 } from './values.js';
 
-import {
-  normalizeTweens,
-} from './tweens.js';
-
-function createAnimation(animatable, prop) {
-  const animType = getAnimationType(animatable.target, prop.name);
-  if (animType) {
-    const tweens = normalizeTweens(prop, animatable);
+function createAnimation(animatable, keyframes) {
+  const propertyName = keyframes[0].propertyName;
+  const animType = getAnimationType(animatable.target, propertyName);
+  if (is.num(animType)) {
+    const tweens = convertKeyframesToTweens(keyframes, animatable, propertyName, animType);
     const firstTween = tweens[0];
     const lastTween = tweens[tweens.length - 1];
     return {
       type: animType,
-      property: prop.name,
+      property: propertyName,
       animatable: animatable,
       tweens: tweens,
       delay: firstTween.delay,
@@ -25,16 +30,15 @@ function createAnimation(animatable, prop) {
   }
 }
 
-export function getAnimations(animatables, properties) {
+export function getAnimations(animatables, animationsKeyframes) {
   const animations = [];
   for (let a = 0, aLength = animatables.length; a < aLength; a++) {
     const animatable = animatables[a];
     if (animatable) {
-      for (let p = 0, pLength = properties.length; p < pLength; p++) {
-        const animation = createAnimation(animatable, properties[p]);
-        // Make sure the animation is not undefined
+      for (let p = 0, pLength = animationsKeyframes.length; p < pLength; p++) {
+        const animation = createAnimation(animatable, animationsKeyframes[p]);
         if (animation) {
-          animations.push(createAnimation(animatable, properties[p]));
+          animations.push(animation);
         }
       }
     }

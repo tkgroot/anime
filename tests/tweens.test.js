@@ -1,3 +1,7 @@
+import {
+  valueTypes,
+} from '../src/consts.js';
+
 describe('Tweens', () => {
   test('Single tween timings', () => {
     const delay = 200;
@@ -73,10 +77,8 @@ describe('Tweens', () => {
       backgroundColor: '#000',
     });
 
-    const tween1 = animation.animations[0].tweens[0];
-    expect(tween1.isColor).toBe(false);
-
-    const tween2 = animation.animations[1].tweens[0];
-    expect(tween2.isColor).toBe(true);
+    expect(animation.animations[1].type).toBe(valueTypes.COLOR);
+    expect(animation.animations[1].tweens[0].from.type).toBe(valueTypes.COLOR);
+    expect(animation.animations[1].tweens[0].to.type).toBe(valueTypes.COLOR);
   });
 });

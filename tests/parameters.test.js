@@ -65,4 +65,17 @@ describe('Parameters', () => {
     expect(translateYTween.duration).toBe(700);
     expect(translateYTween.endDelay).toBe(500);
   });
+
+  test('0 duration animation', resolve => {
+    const animation = anime({
+      targets: '#target-id',
+      translateX: 100,
+      easing: 'easeOutQuad',
+      duration: 0,
+      complete: () => {
+        expect(animation.animations[0].currentValue).toBe('100px');
+        resolve();
+      }
+    });
+  });
 });

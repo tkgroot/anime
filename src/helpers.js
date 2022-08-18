@@ -35,11 +35,10 @@ export function random(min, max) {
 
 export const is = {
   arr: a => Array.isArray(a),
-  obj: a => Object.prototype.toString.call(a).includes('Object'),
-  pth: a => is.obj(a) && a.hasOwnProperty('totalLength'),
+  obj: a => a.constructor === Object,
   svg: a => a instanceof SVGElement,
-  inp: a => a instanceof HTMLInputElement,
   dom: a => a.nodeType || is.svg(a),
+  num: a => typeof a === 'number',
   str: a => typeof a === 'string',
   fnc: a => typeof a === 'function',
   und: a => typeof a === 'undefined',
@@ -48,7 +47,7 @@ export const is = {
   rgb: a => rgbTestRgx.test(a),
   hsl: a => hslTestRgx.test(a),
   col: a => (is.hex(a) || is.rgb(a) || is.hsl(a)),
-  key: a => !defaultInstanceSettings.hasOwnProperty(a) && !defaultTweenSettings.hasOwnProperty(a) && a !== 'targets' && a !== 'keyframes'
+  key: a => !defaultInstanceSettings.hasOwnProperty(a) && !defaultTweenSettings.hasOwnProperty(a) && a !== 'targets' && a !== 'keyframes',
 }
 
 // Arrays
@@ -85,20 +84,14 @@ export function arrayContains(arr, val) {
 
 // Objects
 
-export function cloneObject(o) {
-  const clone = {};
-  for (let p in o) clone[p] = o[p];
-  return clone;
-}
-
 export function replaceObjectProps(o1, o2) {
-  const o = cloneObject(o1);
+  const o = {...o1};
   for (let p in o1) o[p] = o2.hasOwnProperty(p) ? o2[p] : o1[p];
   return o;
 }
 
 export function mergeObjects(o1, o2) {
-  const o = cloneObject(o1);
+  const o = {...o1};
   for (let p in o2) o[p] = is.und(o1[p]) ? o2[p] : o1[p];
   return o;
 }

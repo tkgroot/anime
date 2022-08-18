@@ -3,28 +3,32 @@ import {
 } from './cache.js';
 
 import {
-  unitsExecRgx,
+  valueTypes,
+  tinyNumber,
 } from './consts.js';
 
 import {
   is,
+  clamp,
   arrayContains,
 } from './helpers.js';
 
-export function getUnit(val) {
-  const split = unitsExecRgx.exec(val);
-  if (split) return split[1];
-}
+// Return an array [original value, operator (+=, -=, *=), value number, value unit];
 
 export function getTransformUnit(propName) {
   if (propName.includes('translate') || propName === 'perspective') return 'px';
   if (propName.includes('rotate') || propName.includes('skew')) return 'deg';
 }
 
-export function convertPxToUnit(el, value, unit) {
-  const valueUnit = getUnit(value);
-  if (arrayContains([unit, 'deg', 'rad', 'turn'], valueUnit)) return value;
-  const cached = cache.CSS[value + unit];
+const nonConvertableUnitsYet = ['', 'deg', 'rad', 'turn'];
+
+export function convertValueUnit(el, decomposedValue, unit) {
+  nonConvertableUnitsYet[0] = unit;
+  if (decomposedValue.type === valueTypes.UNIT && arrayContains(nonConvertableUnitsYet, decomposedValue.unit)) {
+    return decomposedValue;
+  }
+  const valueNumber = decomposedValue.number;
+  const cached = cache.CSS[valueNumber + unit];
   if (!is.und(cached)) return cached;
   const baseline = 100;
   const tempEl = document.createElement(el.tagName);
@@ -33,9 +37,11 @@ export function convertPxToUnit(el, value, unit) {
   parentEl.appendChild(tempEl);
   tempEl.style.position = 'absolute';
   tempEl.style.width = baseline + unit;
-  const factor = baseline / tempEl.offsetWidth;
+  const factor = tempEl.offsetWidth ? (baseline / tempEl.offsetWidth) : 0;
   parentEl.removeChild(tempEl);
-  const convertedUnit = factor * parseFloat(value);
-  cache.CSS[value + unit] = convertedUnit;
-  return convertedUnit;
+  decomposedValue.type === valueTypes.UNIT;
+  decomposedValue.number = factor * parseFloat(valueNumber);
+  decomposedValue.unit = unit;
+  cache.CSS[valueNumber + unit] = decomposedValue;
+  return decomposedValue;
 }

@@ -1,4 +1,4 @@
-const anime = require("../lib/anime.umd.js");
+import anime from '../src/anime.js';
 
 beforeEach(() => {
   // Set default styles since Jest doesn't seem to properly inherits styles from html when using getComputedStyle
@@ -21,12 +21,26 @@ beforeEach(() => {
   `;
 
   // Dom elements and SVG
+  // '.target-class' number of elements should be exactly 4 in order to test targets length dependent animations
   document.body.innerHTML = `
     <div id="target-id" class="target-class" data-index="0"></div>
     <div class="target-class with-width-attribute" width="200" data-index="1"></div>
-    <div class="target-class with-inline-styles" data-index="2" style="width: 200px"></div>
+    <div class="target-class with-inline-styles" data-index="2" style="width: 200px;"></div>
     <div class="target-class" data-index="3"></div>
     <div class="css-properties"></div>
+    <div class="with-inline-transforms" style="transform: translateX(10px)translateY(20px)"></div>
+    <div id="stagger">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div id="grid">
+      <div></div><div></div><div></div><div></div><div></div>
+      <div></div><div></div><div></div><div></div><div></div>
+      <div></div><div></div><div></div><div></div><div></div>
+    </div>
     <svg id="svg-element" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" viewBox="0 0 600 400">
       <filter id="displacementFilter">
         <feTurbulence type="turbulence" baseFrequency=".05" numOctaves="2" result="turbulence"></feTurbulence>
@@ -45,12 +59,16 @@ beforeEach(() => {
     <input type="number" id="input-number" name="Input number test" min="0" max="100" value="0">
   `;
 
-  // Object
+  // Objects
   global.testObject = {
     plainValue: 10,
     valueWithUnit: '10px',
     multiplePLainValues: '16 32 64 128',
     multipleValuesWithUnits: '16px 32em 64% 128ch'
+  }
+
+  global.anOtherTestObject = {
+    plainValue: 20,
   }
 
   // Makes anime accessible in global scope

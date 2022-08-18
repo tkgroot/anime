@@ -104,10 +104,12 @@ function getPath(path, percent) {
   const p = percent || 100;
   return function(property) {
     return {
+      isPath: true,
+      isTargetInsideSVG: false,
       property,
       el: pathEl,
       svg: getParentSvg(pathEl),
-      totalLength: getTotalLength(pathEl) * (p / 100)
+      totalLength: +(getTotalLength(pathEl)) * (p / 100)
     }
   }
 }
@@ -117,8 +119,9 @@ function getPathPoint(pathEl, progress, offset = 0) {
   return pathEl.getPointAtLength(length);
 }
 
-function getPathProgress(pathObject, progress, isPathTargetInsideSVG) {
+function getPathProgress(pathObject, progress) {
   const pathEl = pathObject.el;
+  const isPathTargetInsideSVG = pathObject.isTargetInsideSVG;
   const parentSvg = getParentSvg(pathEl, pathObject.svg);
   const p = getPathPoint(pathEl, progress, 0);
   const p0 = getPathPoint(pathEl, progress, -1);

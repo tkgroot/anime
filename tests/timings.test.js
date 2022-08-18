@@ -1,5 +1,5 @@
 describe('Timings', () => {
-  test('Default timings parameters', async resolve => {
+  test('Default timings parameters', resolve => {
     let currentTime = 0;
     const animation = anime({
       targets: '#target-id',
@@ -14,19 +14,19 @@ describe('Timings', () => {
     });
   });
 
-  test('Specified timings parameters', async resolve => {
+  test('Specified timings parameters', resolve => {
     let currentTime = 0;
     const animation = anime({
       targets: '#target-id',
       translateX: 100,
-      delay: 100,
-      duration: 200,
-      endDelay: 300,
+      delay: 10,
+      duration: 20,
+      endDelay: 30,
       update: a => {
         currentTime = a.currentTime;
       },
       complete: () => {
-        expect(currentTime).toEqual(600);
+        expect(currentTime).toEqual(60);
         resolve();
       },
     });
@@ -36,39 +36,39 @@ describe('Timings', () => {
     targets: '#target-id',
     translateX: {
       value: 50,
-      delay: () => 150,
-      duration: () => 100,
-      endDelay: () => 200
+      delay: () => 15,
+      duration: () => 10,
+      endDelay: () => 20
     },
     translateY: {
-      value: 350,
-      delay: 100,
-      duration: 100,
-      endDelay: 500
+      value: 35,
+      delay: 10,
+      duration: 10,
+      endDelay: 50
     },
     translateZ: {
-      value: 200,
-      delay: 350,
-      duration: 300,
-      endDelay: 400
+      value: 20,
+      delay: 35,
+      duration: 30,
+      endDelay: 40
     },
-    delay: () => 100,
-    duration: () => 100,
-    endDelay: () => 500
+    delay: () => 10,
+    duration: () => 10,
+    endDelay: () => 50
   };
 
   test('Delay must be the smallest delay of the all the animations', () => {
     const animation = anime(complexTimingsParams);
-    expect(animation.delay).toBe(100);
+    expect(animation.delay).toBe(10);
   });
 
   test('Duration must be the longest delay + duration of the all the animations', () => {
     const animation = anime(complexTimingsParams);
-    expect(animation.duration).toBe(1050);
+    expect(animation.duration).toBe(105);
   });
 
   test('EndDelay must be the smallest endDelay from the the longest animation', () => {
     const animation = anime(complexTimingsParams);
-    expect(animation.endDelay).toBe(400);
+    expect(animation.endDelay).toBe(40);
   });
 });

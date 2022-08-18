@@ -1,9 +1,10 @@
 describe('Directions', () => {
-  test('Forward', async resolve => {
-    const animation = anime({
+  test('Forward', resolve => {
+    anime({
       targets: '#target-id',
       translateX: 100,
       direction: 'normal',
+      duration: 10,
       complete: (a) => {
         expect(a.progress).toEqual(1);
         resolve();
@@ -11,11 +12,12 @@ describe('Directions', () => {
     });
   });
 
-  test('Reverse', async resolve => {
-    const animation = anime({
+  test('Reverse', resolve => {
+    anime({
       targets: '#target-id',
       translateX: 100,
       direction: 'reverse',
+      duration: 10,
       complete: (a) => {
         expect(a.progress).toEqual(0);
         resolve();
@@ -23,11 +25,12 @@ describe('Directions', () => {
     });
   });
 
-  test('Alternate', async resolve => {
-    const animation = anime({
+  test('Alternate', resolve => {
+    anime({
       targets: '#target-id',
       translateX: 100,
       direction: 'alternate',
+      duration: 10,
       loopComplete: (a) => {
         expect(a.progress).toEqual(a.remainingLoops ? 1 : 0);
       },
