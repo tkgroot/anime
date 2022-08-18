@@ -2233,17 +2233,17 @@ tl
   </div>
   <div class="demo-content offsets-demo">
     <div class="line">
-      <div class="label">no offset</div>
+      <div class="label">relative offset ('+=500')</div>
       <div class="square shadow"></div>
       <div class="square el"></div>
     </div>
     <div class="line">
-      <div class="label">relative offset ('-=600')</div>
+      <div class="label">relative offset ('-=250')</div>
       <div class="circle shadow"></div>
       <div class="circle el"></div>
     </div>
     <div class="line">
-      <div class="label">absolute offset (400)</div>
+      <div class="label">absolute offset (250)</div>
       <div class="triangle shadow"></div>
       <div class="triangle el"></div>
     </div>
@@ -2253,22 +2253,22 @@ tl
 // Create a timeline with default parameters
 var tl = anime.timeline({
   easing: 'easeOutExpo',
-  duration: 750
+  duration: 500
 });
 
 tl
 .add({
   targets: '.offsets-demo .el.square',
   translateX: 250,
-})
+}, '+=500') // relative offset, will starts at 500ms
 .add({
   targets: '.offsets-demo .el.circle',
   translateX: 250,
-}, '-=600') // relative offset
+}, '-=250') // relative offset, starts at 750ms ((500ms + 500ms) - 250ms)
 .add({
   targets: '.offsets-demo .el.triangle',
   translateX: 250,
-}, 400); // absolute offset
+}, 250); // absolute offset, starts at 250ms
 
 /*DEMO*/
 }

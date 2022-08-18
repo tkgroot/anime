@@ -251,7 +251,6 @@ export function setTargetsValue(targets, properties) {
         to: decomposedValue,
         progress: 1,
       });
-      console.log(originalValue, decomposedValue, recomposedValue, value);
       setAnimationValueFunctions[animType](target, property, recomposedValue, animatable.transforms, true);
     }
   });

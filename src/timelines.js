@@ -1,5 +1,6 @@
 import {
   defaultTweenSettings,
+  relativeValuesExecRgx,
 } from './consts.js';
 
 import {
@@ -27,7 +28,12 @@ import {
 function parseTimelineOffset(timelineOffset, timelineDuration) {
   if (is.und(timelineOffset)) return timelineDuration;
   if (is.num(timelineOffset)) return timelineOffset;
-  return getRelativeValue(timelineOffset, tlDuration); // NEEDS FIX
+  const operatorMatch = relativeValuesExecRgx.exec(timelineOffset);
+  if (operatorMatch) {
+    const parsedOffset = +timelineOffset.slice(2);
+    const operator = operatorMatch[0][0];
+    return getRelativeValue(timelineDuration, parsedOffset, operator); // NEEDS FIX
+  }
 }
 
 export function createTimeline(params = {}) {
