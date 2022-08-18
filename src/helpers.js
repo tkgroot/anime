@@ -17,10 +17,6 @@ export function selectString(str) {
   }
 }
 
-export function stringContains(str, text) {
-  return str.indexOf(text) > -1;
-}
-
 // Numbers functions
 
 export function clamp(val, min, max) {

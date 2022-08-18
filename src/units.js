@@ -10,15 +10,14 @@ import {
 import {
   is,
   clamp,
-  stringContains,
   arrayContains,
 } from './helpers.js';
 
 // Return an array [original value, operator (+=, -=, *=), value number, value unit];
 
 export function getTransformUnit(propName) {
-  if (stringContains(propName, 'translate') || propName === 'perspective') return 'px';
-  if (stringContains(propName, 'rotate') || stringContains(propName, 'skew')) return 'deg';
+  if (propName.includes('translate') || propName === 'perspective') return 'px';
+  if (propName.includes('rotate') || propName.includes('skew')) return 'deg';
 }
 
 const nonConvertableUnitsYet = ['', 'deg', 'rad', 'turn'];

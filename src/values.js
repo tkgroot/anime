@@ -16,7 +16,6 @@ import {
 
 import {
   is,
-  stringContains,
   arrayContains,
   round,
 } from './helpers.js';
