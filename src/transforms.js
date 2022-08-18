@@ -1,10 +1,10 @@
 import {
   transformsExecRgx,
+  validTransforms,
 } from './consts.js';
 
 import {
   is,
-  stringContains,
 } from './helpers.js';
 
 import {
@@ -25,7 +25,7 @@ export function getElementTransforms(el) {
 
 export function getTransformValue(animatable, propName) {
   const target = animatable.target;
-  const defaultVal = stringContains(propName, 'scale') ? 1 : 0 + getTransformUnit(propName);
+  const defaultVal = propName.includes(validTransforms[7]) ? 1 : 0 + getTransformUnit(propName);
   const value = getElementTransforms(target).get(propName) || defaultVal;
   animatable.transforms.list.set(propName, value);
   animatable.transforms.last = propName;
