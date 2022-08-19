@@ -14,10 +14,10 @@ import {
 
 export function sanitizePropertyName(propertyName, targetEl, animationType) {
   if (
-    (animationType === animationTypes.CSS) || 
+    animationType === animationTypes.CSS || 
     // Handle special cases where properties like "strokeDashoffset" needs to be set as "stroke-dashoffset"
     // but properties like "baseFrequency" should stay in lowerCamelCase
-    (animationType === animationTypes.ATTRIBUTE && (is.svg(targetEl) && (propertyName in targetEl.style)))
+    (animationType === animationTypes.ATTRIBUTE && (is.svg(targetEl) && propertyName in targetEl.style))
   ) {
     const cachedPropertyName = cache.propertyNames[propertyName];
     if (cachedPropertyName) {

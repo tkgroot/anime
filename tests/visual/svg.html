@@ -10,24 +10,22 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
       position: absolute;
       overflow: hidden;
       width: 100%;
       height: 100%;
     }
-    .anim {
+    .test {
       position: relative;
       width: 50%;
     }
-    .anim svg {
+    .test svg {
       position: relative;
       width: 100%;
-      border: 1px solid red;
+      border: 1px dotted #F96F82;
     }
-    .anim path {
-      stroke-width: 2;
-    }
-    .item {
+    #square {
       position: absolute;
       left: 0;
       top: 0;
@@ -40,9 +38,9 @@
   </style>
 </head>
 <body>
-  <div class="anim">
-    <div class="item"></div>
-    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" viewBox="0 0 600 400">
+  <div id="path-tests" class="test">
+    <div id="square"></div>
+    <svg preserveAspectRatio="xMidYMid slice" viewBox="0 0 600 400">
       <g fill="none" fill-rule="evenodd" stroke-width="2">
         <line id="line1" x1="51.5" x2="149.5" y1="51.5" y2="149.5" stroke="#F96F82" stroke-linecap="square"/>
         <line id="line2" x1="149.5" x2="51.5" y1="51.5" y2="149.5" stroke="#F96F82" stroke-linecap="square"/>
@@ -56,9 +54,23 @@
       </g>
     </svg>
   </div>
+  <div id="filters-tests" class="test">
+    <svg width="128" height="128" viewBox="0 0 128 128">
+      <filter id="displacementFilter">
+        <feTurbulence type="turbulence" numOctaves="2" baseFrequency="0" result="turbulence"/>
+        <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="1" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <polygon style="filter: url(#displacementFilter)" stroke="#FED28B" fill="transparent"/>
+    </svg>
+  </div>
   <script type="module">
     import anime from '../../src/anime.js';
     import { test, expect } from './assets/js/tests.js';
+
+    // Path tests
+
+    const squareEl = document.querySelector('#square');
+    const pathTestsEl = document.querySelector('#path-tests');
 
     const line1El = document.querySelector('#line1');
     const line2El = document.querySelector('#line2');
@@ -66,11 +78,15 @@
     const polygonEl = document.querySelector('#polygon');
     const polylineEl = document.querySelector('#polyline');
     const rectEl = document.querySelector('#rect');
+    const path1El = document.querySelector('#path-without-d-attribute-1');
+    const path2El = document.querySelector('#path-without-d-attribute-2');
 
     const dashOffsetAnimation = anime({
       targets: ['line', 'circle', 'polygon', 'polyline', 'rect'],
       strokeDashoffset: [anime.setDashoffset, 0],
       easing: 'easeInOutSine',
+      translateX: 100,
+      // opacity: 0, NEEDS FIX ?
       duration: 500,
       complete: () => {
         test('stroke-dasharray on line 1 element', () => {
@@ -111,35 +127,91 @@
     test('stroke-dashoffset on rect element', () => {
       return expect(rectEl.getAttribute('stroke-dashoffset')).toBe('356.0674743652344');
     });
-    anime.set('#path-without-d-attribute-1', {
-      d: 'M250 300c0-27.614 22.386-50 50-50s50 22.386 50 50v50h-50c-27.614 0-50-22.386-50-50z',
-    })
+
+    test('Setting a non existing attribute', () => {
+      return expect(path1El.getAttribute('d')).toBe(null);
+    });
+    anime.set(path1El, { d: 'M250 300c0-27.614 22.386-50 50-50s50 22.386 50 50v50h-50c-27.614 0-50-22.386-50-50z' });
+    test('Setting a value on a non existing attribute', () => {
+      return expect(path1El.getAttribute('d')).toBe('M250 300c0-27.614 22.386-50 50-50s50 22.386 50 50v50h-50c-27.614 0-50-22.386-50-50z');
+    });
+
+    test('Animating a non existing attribute', () => {
+      return expect(path2El.getAttribute('d')).toBe(null);
+    });
     const animateNonExistantAttribute = anime({
-      targets: '#path-without-d-attribute-2',
+      targets: path2El,
       d: 'M250 300c0-27.614 22.386-50 50-50s50 22.386 50 50v50h-50c-27.614 0-50-22.386-50-50z',
+      duration: 500,
       easing: 'easeInOutQuad',
       complete: () => {
-        const pathEl = anime.path('#path-without-d-attribute-2');
+        test('Animating a value on a non existing attribute', () => {
+          return expect(path2El.getAttribute('d')).toBe('M250 300c0-27.614 22.386-50 50-50s50 22.386 50 50v50h-50c-27.614 0-50-22.386-50-50z');
+        });
+        const pathEl = anime.path(path2El);
         const dashOffsetAnimation = anime({
-          targets: '#path-without-d-attribute-2',
+          targets: path2El,
           strokeDashoffset: [anime.setDashoffset, 0],
           easing: 'easeInOutSine',
-          duration: 1500,
-          direction: 'alternate',
-          loop: true
+          duration: 500,
+          complete: () => {
+            test('stroke-dasharray on path element', () => {
+              return expect(path2El.getAttribute('stroke-dasharray')).toBe('335.6526184082031');
+            });
+          }
+        });
+        test('stroke-dashoffset on path element', () => {
+          return expect(path2El.getAttribute('stroke-dashoffset')).toBe('335.6526184082031');
+        });
+
+        let pathsTestsRect = pathTestsEl.getBoundingClientRect();
+        let squareRect = squareEl.getBoundingClientRect();
+        test('Path animation not started', () => {
+          return expect(squareRect.left - pathsTestsRect.left).toBe(-15);
         });
         const pathAnimation = anime({
-          targets: '.item',
+          targets: squareEl,
           translateX: pathEl('x'),
           translateY: pathEl('y'),
           rotate: pathEl('angle'),
           easing: 'easeInOutSine',
-          duration: 1500,
-          direction: 'alternate',
-          loop: true
+          duration: 500,
+          complete: function() {
+            test('Path animation started', () => {
+              pathsTestsRect = pathTestsEl.getBoundingClientRect();
+              squareRect = squareEl.getBoundingClientRect();
+              return expect(squareRect.left - pathsTestsRect.left).toBeSuperiorTo(30);
+            });
+          }
         });
       }
     });
+
+    // Filters tests
+    const feTurbulenceEl = document.querySelector('#filters-tests feTurbulence');
+    const filterPolygonEl = document.querySelector('#filters-tests polygon');
+
+    console.log(typeof feTurbulenceEl, feTurbulenceEl instanceof SVGElement);
+    console.log(typeof filterPolygonEl, filterPolygonEl instanceof SVGElement);
+
+    const filterAnimation = anime({
+      targets: [filterPolygonEl, feTurbulenceEl, '#filters-tests feDisplacementMap'],
+      points: '64 128 8.574 96 8.574 32 64 0 119.426 32 119.426 96',
+      baseFrequency: .05,
+      scale: 15,
+      loop: true,
+      direction: 'alternate',
+      easing: 'easeInOutExpo'
+    });
+
+    test('Non stylistic SVG attribute should be declared in came case', () => {
+      return expect(feTurbulenceEl.hasAttribute('baseFrequency')).toBe(true);
+    });
+
+    test('Non stylistic SVG attribute should be declared in came case', () => {
+      return expect(feTurbulenceEl.hasAttribute('base-frequency')).toBe(false);
+    });
+
   </script>
 </body>
 </html>

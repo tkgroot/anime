@@ -470,7 +470,7 @@ anime({
   <div class="demo-content align-center svg-attributes-demo">
 <svg width="128" height="128" viewBox="0 0 128 128">
   <filter id="displacementFilter">
-    <feTurbulence type="turbulence" baseFrequency=".05" numOctaves="2" result="turbulence"/>
+    <feTurbulence type="turbulence" numOctaves="2" baseFrequency="0" result="turbulence"/>
     <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="15" xChannelSelector="R" yChannelSelector="G"/>
   </filter>
   <polygon points="64 68.64 8.574 100 63.446 67.68 64 4 64.554 67.68 119.426 100" style="filter: url(#displacementFilter)" fill="currentColor"/>
@@ -481,9 +481,11 @@ anime({
   var polyEl = document.querySelector('.svg-attributes-demo polygon');
   var feTurbulenceEl = document.querySelector('feTurbulence');
   var feDisplacementMap = document.querySelector('feDisplacementMap');
-  polyEl.setAttribute('points', '64 68.64 8.574 100 63.446 67.68 64 4 64.554 67.68 119.426 100');
-  feTurbulenceEl.setAttribute('baseFrequency', '.05');
-  feDisplacementMap.setAttribute('scale', '15');
+  // anime.set('.svg-attributes-demo polygon', { points: '64 68.64 8.574 100 63.446 67.68 64 4 64.554 67.68 119.426 100' });
+  // anime.set('feTurbulence', { baseFrequency: '64 68.64 8.574 100 63.446 67.68 64 4 64.554 67.68 119.426 100' });
+  // anime.set('feDisplacementMap', { scale: '15' });
+  console.log(polyEl.getAttribute('scale'), 'scale' in polyEl.style);
+  console.log(feTurbulenceEl.getAttribute('baseFrequency'), 'baseFrequency' in polyEl.style);
 /*DEMO*/
 anime({
   targets: ['.svg-attributes-demo polygon', 'feTurbulence', 'feDisplacementMap'],
