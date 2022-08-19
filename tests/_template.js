@@ -54,6 +54,7 @@ beforeEach(() => {
         <polyline id="polyline" style="filter: url(#displacementFilter)" stroke="#7BE6D6" points="63.053 345 43 283.815 95.5 246 148 283.815 127.947 345 63.5 345"/>
         <path id="path" stroke="#4E7EFC" d="M250 300c0-27.614 22.386-50 50-50s50 22.386 50 50v50h-50c-27.614 0-50-22.386-50-50z"/>
         <rect id="rect" width="100" height="100" x="451" y="251" stroke="#C987FE" rx="25"/>
+        <path id="path-wihout-d-attribute"/>
       </g>
     </svg>
     <input type="number" id="input-number" name="Input number test" min="0" max="100" value="0">

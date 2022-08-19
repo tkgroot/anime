@@ -51,7 +51,13 @@ anime.suspendWhenDocumentHidden = true;
 anime.running = activeInstances;
 anime.remove = removeAnimatablesFromActiveInstances;
 anime.get = getTargetValue;
-anime.set = setTargetsValue;
+anime.set = (targets, properties = {}) => {
+  properties.targets = targets;
+  properties.duration = 0;
+  const animation = animate(properties);
+  // animation.seek(animation.duration);
+  return animation;
+};
 anime.convertPx = convertValueUnit;
 anime.path = getPath;
 anime.setDashoffset = setDashoffset;

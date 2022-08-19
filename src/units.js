@@ -13,11 +13,9 @@ import {
   arrayContains,
 } from './helpers.js';
 
-// Return an array [original value, operator (+=, -=, *=), value number, value unit];
-
 export function getTransformUnit(propName) {
-  if (propName.includes('translate') || propName === 'perspective') return 'px';
   if (propName.includes('rotate') || propName.includes('skew')) return 'deg';
+  return 'px';
 }
 
 const nonConvertableUnitsYet = ['', 'deg', 'rad', 'turn'];
@@ -28,20 +26,28 @@ export function convertValueUnit(el, decomposedValue, unit) {
     return decomposedValue;
   }
   const valueNumber = decomposedValue.number;
-  const cached = cache.CSS[valueNumber + unit];
-  if (!is.und(cached)) return cached;
-  const baseline = 100;
-  const tempEl = document.createElement(el.tagName);
-  const parentNode = el.parentNode;
-  const parentEl = (parentNode && (parentNode !== document)) ? parentNode : document.body;
-  parentEl.appendChild(tempEl);
-  tempEl.style.position = 'absolute';
-  tempEl.style.width = baseline + unit;
-  const factor = tempEl.offsetWidth ? (baseline / tempEl.offsetWidth) : 0;
-  parentEl.removeChild(tempEl);
+  const valueUnit = decomposedValue.unit;
+  const cached = cache.CSS[valueNumber + valueUnit + unit];
+  if (!is.und(cached)) {
+    decomposedValue.number = cached;
+  } else {
+    const baseline = 100;
+    const tempEl = document.createElement(el.tagName);
+    const parentNode = el.parentNode;
+    const parentEl = (parentNode && (parentNode !== document)) ? parentNode : document.body;
+    parentEl.appendChild(tempEl);
+    tempEl.style.position = 'absolute';
+    tempEl.style.width = baseline + valueUnit;
+    const currentUnitWidth = tempEl.offsetWidth ? (tempEl.offsetWidth / 100) : 0;
+    tempEl.style.width = baseline + unit;
+    const newUnitWidth = tempEl.offsetWidth ? (tempEl.offsetWidth / 100) : 0;
+    const factor = tempEl.offsetWidth ? (currentUnitWidth / newUnitWidth) : 0;
+    parentEl.removeChild(tempEl);
+    const convertedValue = factor * valueNumber;
+    decomposedValue.number = convertedValue;
+    cache.CSS[valueNumber + valueUnit + unit] = convertedValue;
+  }
   decomposedValue.type === valueTypes.UNIT;
-  decomposedValue.number = factor * parseFloat(valueNumber);
   decomposedValue.unit = unit;
-  cache.CSS[valueNumber + unit] = decomposedValue;
   return decomposedValue;
 }

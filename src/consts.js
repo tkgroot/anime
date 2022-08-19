@@ -100,4 +100,3 @@ export const lowerCaseRgx = /([a-z])([A-Z])/g;
 export const lowerCaseRgxParam = '$1-$2';
 export const transformsExecRgx = /(\w+)\(([^)]*)\)/g;
 export const relativeValuesExecRgx = /^(\*=|\+=|-=)/;
-// export const whiteSpaceTestRgx = /\s/g;

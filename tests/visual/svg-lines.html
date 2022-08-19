@@ -49,7 +49,8 @@
         <circle id="circle" cx="300" cy="100" r="50" stroke="#FED28B"/>
         <polygon id="polygon" stroke="#D1FA9E" points="500 130.381 464.772 149 471.5 109.563 443 81.634 482.386 75.881 500 40 517.614 75.881 557 81.634 528.5 109.563 535.228 149"/>
         <polyline id="polyline" stroke="#7BE6D6" points="63.053 345 43 283.815 95.5 246 148 283.815 127.947 345 63.5 345"/>
-        <path id="path" stroke="#4E7EFC" d="M250 300c0-27.614 22.386-50 50-50s50 22.386 50 50v50h-50c-27.614 0-50-22.386-50-50z"/>
+        <!-- <path id="path" stroke="#4E7EFC" d="M250 300c0-27.614 22.386-50 50-50s50 22.386 50 50v50h-50c-27.614 0-50-22.386-50-50z"/> -->
+        <path id="path-without-d-attribute" stroke="#4E7EFC"/>
         <rect id="rect" width="100" height="100" x="451" y="251" stroke="#C987FE" rx="25"/>
       </g>
     </svg>
@@ -64,16 +65,26 @@
       direction: 'alternate',
       loop: true
     });
-    const pathEl = anime.path('#path');
-    const pathAnimation = anime({
-      targets: '.item',
-      translateX: pathEl('x'),
-      translateY: pathEl('y'),
-      rotate: pathEl('angle'),
-      easing: 'easeInOutSine',
-      duration: 1500,
-      direction: 'alternate',
-      loop: true
+    // anime.set('#path-without-d-attribute', {
+    //   d: 'M250 300c0-27.614 22.386-50 50-50s50 22.386 50 50v50h-50c-27.614 0-50-22.386-50-50z',
+    // })
+    const animateNonExistantAttribute = anime({
+      targets: '#path-without-d-attribute',
+      d: 'M250 300c0-27.614 22.386-50 50-50s50 22.386 50 50v50h-50c-27.614 0-50-22.386-50-50z',
+      easing: 'easeInOutQuad',
+      complete: () => {
+        const pathEl = anime.path('#path-without-d-attribute');
+        const pathAnimation = anime({
+          targets: '.item',
+          translateX: pathEl('x'),
+          translateY: pathEl('y'),
+          rotate: pathEl('angle'),
+          easing: 'easeInOutSine',
+          duration: 1500,
+          direction: 'alternate',
+          loop: true
+        });
+      }
     });
   </script>
 </body>

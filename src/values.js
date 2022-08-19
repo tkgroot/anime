@@ -6,8 +6,6 @@ import {
   openParenthesisString,
   closeParenthesisString,
   rgbaStrings,
-  lowerCaseRgx,
-  lowerCaseRgxParam,
   transformsExecRgx,
   relativeValuesExecRgx,
   digitWithExponentRgx,
@@ -24,6 +22,10 @@ import {
   convertValueUnit,
   getTransformUnit,
 } from './units.js';
+
+import {
+  sanitizePropertyName,
+} from './properties.js';
 
 import {
   getTransformValue,
@@ -46,21 +48,16 @@ export function getFunctionValue(functionValue, animatable) {
   return functionValue(animatable.target, animatable.id, animatable.total) || 0; // Fallback to 0 if the function results in undefined / NaN / null
 }
 
-function getCSSValue(el, prop, unit) {
-  const uppercasePropName = prop.replace(lowerCaseRgx, lowerCaseRgxParam).toLowerCase();
-  const value = el.style[prop] || getComputedStyle(el).getPropertyValue(uppercasePropName) || '0';
-  return unit ? convertValueUnit(el, value, unit) : value;
-}
-
 export function getAnimationType(el, prop) {
   if (is.obj(el)) {
     return animationTypes.OBJECT;
   } else if (is.dom(el)) {
-    if (!is.nil(el.getAttribute(prop))) return animationTypes.ATTRIBUTE; // Handle DOM and SVG attributes
+    if (!is.nil(el.getAttribute(prop)) || (is.svg(el) && prop in el.style)) return animationTypes.ATTRIBUTE; // Handle DOM and SVG attributes
+    // if (!is.nil(el.getAttribute(prop))) return animationTypes.ATTRIBUTE; // Handle DOM and SVG attributes
     if (arrayContains(validTransforms, prop)) return animationTypes.TRANSFORM; // Handle CSS Transform properties differently than CSS to allow individual animations
     if (prop in el.style) return animationTypes.CSS; // All other CSS properties
     if (!is.und(el[prop])) return animationTypes.OBJECT; // Handle DOM elements properies that can't be accessed using getAttribute()
-    return console.warn(`Can't animate property '${prop}' on DOM element '${el}'.`);
+    return console.warn(`Can't find property '${prop}' on target '${el}'.`);
   }
   return console.warn(`Target '${el}' can't be animated.`);
 }
@@ -72,7 +69,7 @@ export function getOriginalAnimatableValue(animatable, propName, animationType) 
     case animationTypes.OBJECT: return target[propName] || 0; // Fallaback to 0 if the property doesn't exist on the object.
     case animationTypes.ATTRIBUTE: return target.getAttribute(propName);
     case animationTypes.TRANSFORM: return getTransformValue(animatable, propName);
-    case animationTypes.CSS: return getCSSValue(target, propName);
+    case animationTypes.CSS: return target.style[propName] || getComputedStyle(target).getPropertyValue(propName);
   }
 }
 
@@ -128,7 +125,6 @@ export function decomposeValue(rawValue) {
     }
   }
 }
-
 
 function getNumberProgress(fromNumber, toNumber, progressValue, roundValue) {
   let value = fromNumber + (progressValue * (toNumber - fromNumber));
@@ -219,7 +215,6 @@ export function getTargetValue(target, propName, unit) {
     const animatable = animatables[0];
     let value = getOriginalAnimatableValue(animatable, propName);
     if (unit) {
-      // do unit conversion here
       const decomposedValue = decomposeValue(value);
       if (decomposedValue.type === valueTypes.NUMBER || decomposedValue.type === valueTypes.UNIT) {
         const convertedValue = convertValueUnit(animatable.target, decomposedValue, unit);
@@ -240,7 +235,8 @@ export function setTargetsValue(targets, properties) {
       const animType = getAnimationType(target, property);
       const value = getFunctionValue(properties[property], animatable);
       const decomposedValue = decomposeValue(value);
-      const originalValue = decomposeValue(getOriginalAnimatableValue(animatable, property, animType));
+      const propertyName = sanitizePropertyName(property, target, animType);
+      const originalValue = decomposeValue(getOriginalAnimatableValue(animatable, propertyName, animType));
       if (originalValue.type === valueTypes.UNIT && decomposedValue.type === valueTypes.NUMBER) {
         decomposedValue.type = valueTypes.UNIT;
         decomposedValue.unit = originalValue.unit;
@@ -250,7 +246,7 @@ export function setTargetsValue(targets, properties) {
         to: decomposedValue,
         progress: 1,
       });
-      setAnimationValueFunctions[animType](target, property, recomposedValue, animatable.transforms, true);
+      setAnimationValueFunctions[animType](target, propertyName, recomposedValue, animatable.transforms, true);
     }
   });
 }

@@ -3,6 +3,10 @@ import {
 } from './helpers.js';
 
 import {
+  sanitizePropertyName,
+} from './properties.js';
+
+import {
   convertKeyframesToTweens,
 } from './tweens.js';
 
@@ -11,14 +15,15 @@ import {
 } from './values.js';
 
 function createAnimation(animatable, keyframes) {
-  const propertyName = keyframes[0].propertyName;
-  const animType = getAnimationType(animatable.target, propertyName);
-  if (is.num(animType)) {
-    const tweens = convertKeyframesToTweens(keyframes, animatable, propertyName, animType);
+  const keyframesPropertyName = keyframes[0].propertyName;
+  const animationType = getAnimationType(animatable.target, keyframesPropertyName);
+  const propertyName = sanitizePropertyName(keyframesPropertyName, animatable.target, animationType);
+  if (is.num(animationType)) {
+    const tweens = convertKeyframesToTweens(keyframes, animatable, propertyName, animationType);
     const firstTween = tweens[0];
     const lastTween = tweens[tweens.length - 1];
     return {
-      type: animType,
+      type: animationType,
       property: propertyName,
       animatable: animatable,
       tweens: tweens,

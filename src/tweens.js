@@ -49,7 +49,7 @@ export function convertKeyframesToTweens(keyframes, animatable, propertyName, an
     const keyframe = keyframes[i];
     const tween = convertKeyframeToTween(keyframe, animatable);
     const tweenValue = tween.value;
-    const originalDecomposedValue = decomposeValue(getOriginalAnimatableValue(animatable, propertyName, animationType));
+    const originalValue = decomposeValue(getOriginalAnimatableValue(animatable, propertyName, animationType));
 
     let from, to;
 
@@ -65,9 +65,9 @@ export function convertKeyframesToTweens(keyframes, animatable, propertyName, an
             from.unit = prevTween.to.unit;
           }
         } else {
-          if (originalDecomposedValue.type === valueTypes.UNIT) {
+          if (originalValue.type === valueTypes.UNIT) {
             from.type = valueTypes.UNIT;
-            from.unit = originalDecomposedValue.unit;
+            from.unit = originalValue.unit;
           }
         }
       }
@@ -80,9 +80,9 @@ export function convertKeyframesToTweens(keyframes, animatable, propertyName, an
       if (prevTween) {
         from = {...prevTween.to};
       } else {
-        from = {...originalDecomposedValue};
+        from = {...originalValue};
         if (is.und(to)) {
-          to = {...originalDecomposedValue};
+          to = {...originalValue};
         }
       }
     }
@@ -90,13 +90,12 @@ export function convertKeyframesToTweens(keyframes, animatable, propertyName, an
     // Apply operators
 
     if (from.operator) {
-      from.number = getRelativeValue(!prevTween ? originalDecomposedValue.number : prevTween.to.number, from.number, from.operator);
+      from.number = getRelativeValue(!prevTween ? originalValue.number : prevTween.to.number, from.number, from.operator);
     }
 
     if (to.operator) {
       to.number = getRelativeValue(from.number, to.number, to.operator);
     }
-
 
     // Values omogenisation in cases of type difference between "from" and "to"
 
@@ -104,27 +103,35 @@ export function convertKeyframesToTweens(keyframes, animatable, propertyName, an
       if (from.type === valueTypes.COMPLEX || to.type === valueTypes.COMPLEX) {
         const complexValue = from.type === valueTypes.COMPLEX ? from : to;
         const notComplexValue = from.type === valueTypes.COMPLEX ? to : from;
-        notComplexValue.strings = complexValue.strings;
-        notComplexValue.numbers = [];
-        // Fallback to 0 for all "from" values
-        complexValue.numbers.forEach((val, i) => i ? notComplexValue.numbers[i] = 0 : notComplexValue.numbers[i] = notComplexValue.number);
         notComplexValue.type = valueTypes.COMPLEX;
+        notComplexValue.strings = complexValue.strings;
+        notComplexValue.numbers = [notComplexValue.number];
       } else if (from.type === valueTypes.UNIT && to.type === valueTypes.PATH) {
         to.unit = from.unit;
       } else if (from.type === valueTypes.UNIT || to.type === valueTypes.UNIT) {
         const unitValue = from.type === valueTypes.UNIT ? from : to;
         const notUnitValue = from.type === valueTypes.UNIT ? to : from;
-        notUnitValue.unit = unitValue.unit;
         notUnitValue.type = valueTypes.UNIT;
+        notUnitValue.unit = unitValue.unit;
+      } else if (from.type === valueTypes.COLOR || to.type === valueTypes.COLOR) {
+        const colorValue = from.type === valueTypes.COLOR ? from : to;
+        const notColorValue = from.type === valueTypes.COLOR ? to : from;
+        notColorValue.type = valueTypes.COLOR;
+        notColorValue.strings = colorValue.strings;
+        notColorValue.numbers = [0, 0, 0, 0];
       }
     }
 
     if (from.unit !== to.unit) {
-      // Need values unit conversion here
-      // from.unit = to.unit;
       const valueToConvert = to.unit ? from : to;
       const unitToConvertTo = to.unit ? to.unit : from.unit;
       convertValueUnit(animatable.target, valueToConvert, unitToConvertTo);
+    }
+
+    // Default to 0 for values 
+    if (to.numbers && from.numbers && (to.numbers.length !== from.numbers.length)) {
+      to.numbers.forEach((number, i) => from.numbers[i] = 0);
+      to.strings.forEach((string, i) => from.strings[i] = string);
     }
 
     if (to.type === valueTypes.PATH) {
