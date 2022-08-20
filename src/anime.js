@@ -50,11 +50,7 @@ anime.suspendWhenDocumentHidden = true;
 anime.running = activeInstances;
 anime.remove = removeAnimatablesFromActiveInstances;
 anime.get = getTargetValue;
-anime.set = (targets, properties = {}) => {
-  properties.targets = targets;
-  properties.duration = 0;
-  return animate(properties);
-};
+anime.set = (targets, props = {}) => { props.targets = targets; props.duration = 0; return animate(props); };
 anime.convertPx = convertValueUnit;
 anime.path = getPath;
 anime.setDashoffset = setDashoffset;
