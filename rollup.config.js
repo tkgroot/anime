@@ -37,7 +37,27 @@ export default [
     ],
     plugins: [
       replace(replaceOptions),
-      // notify()
+    ]
+  },
+  // ES6 UMD & Module minified
+  {
+    input: inputPath,
+    output: [
+      { file: pkg.files + '/anime.umd.min.js', format: 'umd', name: outputName, banner: banner('ES6 UMD') },
+      { file: pkg.files + '/anime.esm.min.js', format: 'esm', banner: banner('ES6 ESM') }
+    ],
+    plugins: [
+      replace(replaceOptions),
+      terser(),
+    ]
+  },
+  // ES5 
+  {
+    input: inputPath,
+    output: { file: pkg.files + '/anime.es5.js', format: 'iife', name: outputName, banner: banner('ES5 IIFE') },
+    plugins: [
+      replace(replaceOptions),
+      babel(babelOptions),
     ]
   },
   // ES5 Minified
@@ -48,22 +68,6 @@ export default [
       replace(replaceOptions),
       babel(babelOptions),
       terser(),
-      // uglify({
-      //   output: {
-      //     preamble: banner('ES5 IIFE minified')
-      //   }
-      // }),
-      // notify()
-    ]
-  },
-  // ES5 
-  {
-    input: inputPath,
-    output: { file: pkg.files + '/anime.es5.js', format: 'iife', name: outputName, banner: banner('ES5 IIFE') },
-    plugins: [
-      replace(replaceOptions),
-      babel(babelOptions),
-      // notify()
     ]
   },
 ];
