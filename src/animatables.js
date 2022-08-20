@@ -25,13 +25,13 @@ function parseTargets(targets) {
 
 export function getAnimatables(targets) {
   const parsed = parseTargets(targets);
-  return parsed.map((t, i) => {
+  return parsed.map((el, i) => {
     return {
-      target: t,
+      target: el,
       id: i,
       total: parsed.length,
       transforms: {
-        list: getElementTransforms(t),
+        list: getElementTransforms(el),
         last: null,
         string: emptyString
       }

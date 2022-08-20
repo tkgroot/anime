@@ -58,7 +58,7 @@
     <svg width="128" height="128" viewBox="0 0 128 128">
       <filter id="displacementFilter">
         <feTurbulence type="turbulence" numOctaves="2" baseFrequency="0" result="turbulence"/>
-        <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="1" xChannelSelector="R" yChannelSelector="G"/>
+        <feDisplacementMap in2="turbulence" in="SourceGraphic" xChannelSelector="R" yChannelSelector="G"/>
       </filter>
       <polygon style="filter: url(#displacementFilter)" stroke="#FED28B" fill="transparent"/>
     </svg>
@@ -82,11 +82,11 @@
     const path2El = document.querySelector('#path-without-d-attribute-2');
 
     const dashOffsetAnimation = anime({
-      targets: ['line', 'circle', 'polygon', 'polyline', 'rect'],
+      targets: ['line', 'circle', 'polygon', 'polyline', 'rect', 'path'],
       strokeDashoffset: [anime.setDashoffset, 0],
       easing: 'easeInOutSine',
-      translateX: 100,
-      // opacity: 0, NEEDS FIX ?
+      translateX: [-100, 0],
+      opacity: .5,
       duration: 500,
       complete: () => {
         test('stroke-dasharray on line 1 element', () => {
@@ -108,6 +108,9 @@
           return expect(rectEl.getAttribute('stroke-dasharray')).toBe('356.0674743652344');
         });
       }
+    });
+    test('Opacity animation should default to 1', () => {
+      return expect(line1El.style.opacity).toBe('1');
     });
     test('stroke-dashoffset on line 1 element', () => {
       return expect(line1.getAttribute('stroke-dashoffset')).toBe('138.59292602539062');
@@ -188,20 +191,36 @@
     });
 
     // Filters tests
-    const feTurbulenceEl = document.querySelector('#filters-tests feTurbulence');
     const filterPolygonEl = document.querySelector('#filters-tests polygon');
+    const feTurbulenceEl = document.querySelector('#filters-tests feTurbulence');
+    const feDisplacementMapEl = document.querySelector('#filters-tests feDisplacementMap');
 
-    console.log(typeof feTurbulenceEl, feTurbulenceEl instanceof SVGElement);
-    console.log(typeof filterPolygonEl, filterPolygonEl instanceof SVGElement);
-
-    const filterAnimation = anime({
-      targets: [filterPolygonEl, feTurbulenceEl, '#filters-tests feDisplacementMap'],
-      points: '64 128 8.574 96 8.574 32 64 0 119.426 32 119.426 96',
-      baseFrequency: .05,
-      scale: 15,
+    const polyginPointsAnimation = anime({
+      targets: [feTurbulenceEl, feDisplacementMapEl],
+      baseFrequency: [.05, 1],
+      scale: [15, 1],
       loop: true,
       direction: 'alternate',
       easing: 'easeInOutExpo'
+    });
+
+    test('Scale property should be set as an attribute on SVG filter elements', () => {
+      return expect(feDisplacementMapEl.getAttribute('scale')).toBe('15');
+    });
+
+    const filterAnimation = anime({
+      targets: filterPolygonEl,
+      points: [
+        '64 68.64 8.574 100 63.446 67.68 64 4 64.554 67.68 119.426 100',
+        '64 128 8.574 96 8.574 32 64 0 119.426 32 119.426 96'
+      ],
+      translateX: [-100, 0],
+      scale: [.5, 1],
+      easing: 'easeInOutExpo'
+    });
+
+    test('Scale property should be set as a CSS transform on non SVG filter elements', () => {
+      return expect(filterPolygonEl.style.transform).toBe('translateX(-100px) scale(0.5)');
     });
 
     test('Non stylistic SVG attribute should be declared in came case', () => {

@@ -77,7 +77,7 @@ function getParentSvgEl(el) {
 
 // SVG Responsive utils
 
-function getParentSvg(pathEl, svgData) {
+function getPathParentSvg(pathEl, svgData) {
   const svg = svgData || {};
   const parentSvgEl = svg.el || getParentSvgEl(pathEl);
   const rect = parentSvgEl.getBoundingClientRect();
@@ -108,7 +108,7 @@ function getPath(path, percent) {
       isTargetInsideSVG: false,
       property,
       el: pathEl,
-      svg: getParentSvg(pathEl),
+      svg: getPathParentSvg(pathEl),
       totalLength: +(getTotalLength(pathEl)) * (p / 100)
     }
   }
@@ -122,7 +122,7 @@ function getPathPoint(pathEl, progress, offset = 0) {
 function getPathProgress(pathObject, progress) {
   const pathEl = pathObject.el;
   const isPathTargetInsideSVG = pathObject.isTargetInsideSVG;
-  const parentSvg = getParentSvg(pathEl, pathObject.svg);
+  const parentSvg = getPathParentSvg(pathEl, pathObject.svg);
   const p = getPathPoint(pathEl, progress, 0);
   const p0 = getPathPoint(pathEl, progress, -1);
   const p1 = getPathPoint(pathEl, progress, +1);
@@ -132,6 +132,19 @@ function getPathProgress(pathObject, progress) {
     case 'x': return (p.x - parentSvg.x) * scaleX;
     case 'y': return (p.y - parentSvg.y) * scaleY;
     case 'angle': return Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / pi;
+  }
+}
+
+export function isValidSvgAttribute(el, propertyName) {
+  const elIsSvg = is.svg(el);
+  if (!elIsSvg) return;
+  if (propertyName === 'opacity') return; // Return false and to use CSS opacity animation instead (already better default values (opacity: 1 instead of 0))
+  if (propertyName in el.style || propertyName in el) {
+    if (propertyName === 'scale') {
+      const elParentNode = el.parentNode;
+      return elParentNode && elParentNode.tagName === 'filter'; // Only consider scale as a valid SVG attribute on filter element
+    }
+    return true;
   }
 }
 

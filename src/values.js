@@ -36,7 +36,8 @@ import {
 } from './animatables.js';
 
 import {
-  getPathProgress
+  getPathProgress,
+  isValidSvgAttribute,
 } from './svg.js';
 
 import {
@@ -52,8 +53,7 @@ export function getAnimationType(el, prop) {
   if (is.obj(el)) {
     return animationTypes.OBJECT;
   } else if (is.dom(el)) {
-    if (!is.nil(el.getAttribute(prop)) || (is.svg(el) && (prop in el.style || prop in el))) return animationTypes.ATTRIBUTE; // Handle DOM and SVG attributes
-    // if (!is.nil(el.getAttribute(prop))) return animationTypes.ATTRIBUTE; // Handle DOM and SVG attributes
+    if (!is.nil(el.getAttribute(prop)) || isValidSvgAttribute(el, prop)) return animationTypes.ATTRIBUTE; // Handle DOM and SVG attributes
     if (arrayContains(validTransforms, prop)) return animationTypes.TRANSFORM; // Handle CSS Transform properties differently than CSS to allow individual animations
     if (prop in el.style) return animationTypes.CSS; // All other CSS properties
     if (!is.und(el[prop])) return animationTypes.OBJECT; // Handle DOM elements properies that can't be accessed using getAttribute()
