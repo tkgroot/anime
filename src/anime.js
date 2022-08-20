@@ -1,7 +1,7 @@
 import {
   clamp,
   random,
-} from './helpers.js';
+} from './utils.js';
 
 import {
   parseEasings,
@@ -14,7 +14,6 @@ import {
 
 import {
   getTargetValue,
-  setTargetsValue,
 } from './values.js';
 
 import {
@@ -54,9 +53,7 @@ anime.get = getTargetValue;
 anime.set = (targets, properties = {}) => {
   properties.targets = targets;
   properties.duration = 0;
-  const animation = animate(properties);
-  // animation.seek(animation.duration);
-  return animation;
+  return animate(properties);
 };
 anime.convertPx = convertValueUnit;
 anime.path = getPath;

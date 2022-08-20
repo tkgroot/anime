@@ -7,7 +7,7 @@ import {
   replaceObjectProps,
   mergeObjects,
   is,
-} from './helpers.js';
+} from './utils.js';
 
 import {
   getRelativeValue,

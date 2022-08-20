@@ -6,7 +6,7 @@ import {
   clamp,
   is,
   applyArguments
-} from './helpers.js';
+} from './utils.js';
 
 import { cache } from './cache.js';
 

@@ -5,7 +5,7 @@ import {
 import {
   isBrowser,
   isDocumentHidden,
-} from './helpers.js';
+} from './utils.js';
 
 export const activeInstances = [];
 

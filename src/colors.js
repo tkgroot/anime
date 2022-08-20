@@ -9,7 +9,7 @@ import {
 import {
   round,
   is
-} from './helpers.js';
+} from './utils.js';
 
 // RGB / RGBA Color value string -> RGBA values array
 

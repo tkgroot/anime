@@ -16,7 +16,7 @@ import {
   is,
   arrayContains,
   round,
-} from './helpers.js';
+} from './utils.js';
 
 import {
   convertValueUnit,
@@ -207,8 +207,6 @@ export const setAnimationValueFunctions = [
   setTransformsAnimationValue,
 ]
 
-// NEEDS TESTING
-
 export function getTargetValue(target, propName, unit) {
   const animatables = getAnimatables(target);
   if (animatables) {
@@ -223,30 +221,4 @@ export function getTargetValue(target, propName, unit) {
     }
     return value;
   }
-}
-
-// NEEDS TESTING
-
-export function setTargetsValue(targets, properties) {
-  const animatables = getAnimatables(targets);
-  animatables.forEach(animatable => {
-    for (let property in properties) {
-      const target = animatable.target;
-      const animType = getAnimationType(target, property);
-      const value = getFunctionValue(properties[property], animatable);
-      const decomposedValue = decomposeValue(value);
-      const propertyName = sanitizePropertyName(property, target, animType);
-      const originalValue = decomposeValue(getOriginalAnimatableValue(animatable, propertyName, animType));
-      if (originalValue.type === valueTypes.UNIT && decomposedValue.type === valueTypes.NUMBER) {
-        decomposedValue.type = valueTypes.UNIT;
-        decomposedValue.unit = originalValue.unit;
-      }
-      const recomposedValue = recomposeValueFunctions[decomposedValue.type]({
-        from: originalValue,
-        to: decomposedValue,
-        progress: 1,
-      });
-      setAnimationValueFunctions[animType](target, propertyName, recomposedValue, animatable.transforms, true);
-    }
-  });
 }

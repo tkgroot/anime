@@ -1,6 +1,6 @@
 import {
   is
-} from './helpers.js';
+} from './utils.js';
 
 export function getTimingsFromAnimations(animations, tweenSettings) {
   const animationsLength = animations.length;

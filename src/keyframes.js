@@ -3,7 +3,7 @@ import {
   mergeObjects,
   flattenArray,
   filterArray,
-} from './helpers.js';
+} from './utils.js';
 
 import {
   springTestRgx,

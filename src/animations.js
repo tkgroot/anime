@@ -1,6 +1,6 @@
 import {
   is,
-} from './helpers.js';
+} from './utils.js';
 
 import {
   sanitizePropertyName,

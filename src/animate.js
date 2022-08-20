@@ -10,7 +10,7 @@ import {
   filterArray,
   replaceObjectProps,
   mergeObjects,
-} from './helpers.js';
+} from './utils.js';
 
 import {
   recomposeValueFunctions,

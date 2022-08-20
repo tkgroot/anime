@@ -8,7 +8,7 @@ import {
 
 import {
   is,
-} from './helpers.js';
+} from './utils.js';
 
 export function stagger(val, params = {}) {
   const direction = params.direction || 'normal';
