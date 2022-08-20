@@ -4,7 +4,7 @@ import {
 
 import {
   valueTypes,
-  tinyNumber,
+  minValue,
 } from './consts.js';
 
 import {

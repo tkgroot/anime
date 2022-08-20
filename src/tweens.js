@@ -1,6 +1,6 @@
 import {
   valueTypes,
-  tinyNumber,
+  minValue,
 } from './consts.js';
 
 import {
@@ -37,7 +37,7 @@ function convertKeyframeToTween(keyframe, animatable) {
     tween[p] = prop;
   }
   // Make sure duration is not equal to 0 to prevents NaN when (progress = 0 / duration = 0);
-  tween.duration = parseFloat(tween.duration) || tinyNumber;
+  tween.duration = parseFloat(tween.duration) || minValue;
   tween.delay = parseFloat(tween.delay);
   return tween;
 }

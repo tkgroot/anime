@@ -2,6 +2,7 @@ import {
   settings,
   defaultInstanceSettings,
   defaultTweenSettings,
+  minValue,
 } from './consts.js';
 
 import {
@@ -270,7 +271,11 @@ export function animate(params = {}) {
   instance.reset();
 
   if (instance.autoplay) {
-    instance.play();
+    if (instance.duration === minValue) {
+      instance.seek(minValue);
+    } else {
+      instance.play();
+    }
   }
 
   return instance;

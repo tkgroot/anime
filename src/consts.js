@@ -2,7 +2,7 @@
 
 export const noop = () => {};
 export const pi = Math.PI;
-export const tinyNumber = Number.MIN_VALUE;
+export const minValue = Number.MIN_VALUE;
 
 // Strings
 
