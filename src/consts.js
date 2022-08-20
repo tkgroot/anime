@@ -9,7 +9,8 @@ export const minValue = Number.MIN_VALUE;
 export const emptyString = '';
 export const openParenthesisString = '(';
 export const closeParenthesisString = ')';
-export const rgbaStrings = ['rgba(', ',', ',', ',', ')'];
+export const commaString = ',';
+export const rgbaString = 'rgba(';
 export const hexValuePrefix = '0x';
 
 // Default animation parameters

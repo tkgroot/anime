@@ -5,7 +5,8 @@ import {
   emptyString,
   openParenthesisString,
   closeParenthesisString,
-  rgbaStrings,
+  rgbaString,
+  commaString,
   transformsExecRgx,
   relativeValuesExecRgx,
   digitWithExponentRgx,
@@ -143,11 +144,11 @@ function recomposeUnitValue(tween) {
 function recomposeColorValue(tween) {
   const fn = tween.from.numbers;
   const tn = tween.to.numbers;
-  let value = rgbaStrings[0];
-  value += getNumberProgress(fn[0], tn[0], tween.progress, 1) + rgbaStrings[1];
-  value += getNumberProgress(fn[1], tn[1], tween.progress, 1) + rgbaStrings[2];
-  value += getNumberProgress(fn[2], tn[2], tween.progress, 1) + rgbaStrings[3];
-  value += getNumberProgress(fn[3], tn[3], tween.progress) + rgbaStrings[4];
+  let value = rgbaString;
+  value += getNumberProgress(fn[0], tn[0], tween.progress, 1) + commaString;
+  value += getNumberProgress(fn[1], tn[1], tween.progress, 1) + commaString;
+  value += getNumberProgress(fn[2], tn[2], tween.progress, 1) + commaString;
+  value += getNumberProgress(fn[3], tn[3], tween.progress) + closeParenthesisString;
   return value;
 }
 
