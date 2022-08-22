@@ -3,6 +3,19 @@
   --white: #F6F4F2;
   --red: #F64E4D;
   --green: #18FF74;
+  --red: #FF4B4B;
+  --orange: #FF8F42;
+  --lightorange: #FFC730;
+  --yellow: #F6FF56;
+  --citrus: #A4FF4F;
+  --green: #18FF74;
+  --darkgreen: #00D672;
+  --turquoise: #3CFFEC;
+  --skyblue: #61C3FF;
+  --kingblue: #5A87FF;
+  --lavender: #8453E3;
+  --purple: #C26EFF;
+  --pink: #FB89FB;
 }
 
 *, *:before, *:after {
@@ -33,12 +46,16 @@ body {
   color: var(--red);
 }
 
+.blue {
+  color: var(--skyblue);
+}
+
 .green {
   color: var(--green);
 }
 
-.dummy {
-  width: 100px;
-  height: 100px;
+.square {
+  width: 5rem;
+  height: 5rem;
   background-color: currentColor;
 }
