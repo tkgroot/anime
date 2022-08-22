@@ -194,11 +194,13 @@ function setCssAnimationValue(t, p, v) {
 }
 
 function setTransformsAnimationValue(t, p, v, transforms, needsRender) {
-  transforms.list.set(p, v);
+  transforms[p] = v;
   if (needsRender) {
-    transforms.string = emptyString;
-    transforms.list.forEach((value, prop) => transforms.string += `${prop}${openParenthesisString}${value}${closeParenthesisString}`);
-    return t.style.transform = transforms.string;
+    let string = emptyString;
+    for (let prop in transforms) {
+      string += `${prop}${openParenthesisString}${transforms[prop]}${closeParenthesisString}`;
+    }
+    return t.style.transform = string;
   }
 }
 

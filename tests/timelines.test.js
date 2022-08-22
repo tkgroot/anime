@@ -103,4 +103,30 @@ describe('Timelines', () => {
     expect(tl.children[2].timelineOffset).toBe(0);
     expect(tl.duration).toBe(60); // 50 + 10
   });
+
+  test('Timeline values', () => {
+    const targetEl = document.querySelector('#target-id');
+    const tl = anime.timeline({
+      targets: targetEl,
+      duration: 10,
+      easing: 'linear',
+    })
+    .add({ translateX: 100 })
+    .add({ translateX: 200 }, '-=5')
+    .add({ translateX: 300 }, '-=5');
+
+    tl.seek(10);
+    expect(tl.children[0].animations[0].currentValue).toBe('100px');
+    expect(tl.children[1].animations[0].currentValue).toBe('125px');
+    expect(tl.children[2].animations[0].currentValue).toBe('125px');
+    expect(targetEl.style.transform).toBe('translateX(125px)');
+    tl.seek(15);
+    expect(tl.children[0].animations[0].currentValue).toBe('100px');
+    expect(tl.children[1].animations[0].currentValue).toBe('200px');
+    expect(tl.children[2].animations[0].currentValue).toBe('212.5px');
+    expect(targetEl.style.transform).toBe('translateX(212.5px)');
+
+    tl.seek(tl.duration);
+    expect(targetEl.style.transform).toBe('translateX(300px)');
+  });
 });

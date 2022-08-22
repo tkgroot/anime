@@ -26,10 +26,7 @@ function registerAnimatable(target, i, total) {
     }
     if (is.dom(target)) {
       registeredAnimatable.isDOM = true;
-      registeredAnimatable.transforms = {
-        list: new Map(),
-        string: emptyString
-      }
+      registeredAnimatable.transforms = {};
     }
     if (is.svg(target)) registeredAnimatable.isSVG = true;
     animatablesMap.set(target, registeredAnimatable);

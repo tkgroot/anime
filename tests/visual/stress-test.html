@@ -63,15 +63,15 @@
   function animateParticle(particleEl, i, total) {
     // const angle = anime.random(-360, 360);
     const angle = (i / total) * 360;
-    const duration = 10000;
+    const duration = 2000;
     const delay = anime.random(0, duration);
     anime({
       targets: particleEl,
       rotate: [angle, angle],
       // opacity: [1, 0],
-      translateX: [200, 0],
-      translateY: [200, 0],
-      scale: [0, 2],
+      translateX: 200,
+      translateY: 200,
+      scale: [2, 0],
       easing: 'easeInOutQuad',
       delay: delay,
       duration: duration,

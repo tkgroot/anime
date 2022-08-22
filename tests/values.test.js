@@ -330,15 +330,17 @@ describe('Values', () => {
       rotateX: 360,
       rotateY: 360,
       rotateZ: 360,
-      skew: 360,
-      skewX: 360,
-      skewY: 360,
+      skew: 45,
+      skewX: 45,
+      skewY: 45,
       scale: 10,
       scaleX: 10,
       scaleY: 10,
       scaleZ: 10,
       perspective: 1000,
     });
+
+    animation.seek(animation.duration);
 
     // Translate
     expect(animation.animations[0].tweens[0].from.unit).toBe('px');
@@ -347,6 +349,9 @@ describe('Values', () => {
     expect(animation.animations[0].tweens[0].from.number).toBe(0);
     expect(animation.animations[1].tweens[0].from.number).toBe(0);
     expect(animation.animations[2].tweens[0].from.number).toBe(0);
+    expect(animation.animations[0].currentValue).toBe('100px');
+    expect(animation.animations[1].currentValue).toBe('100px');
+    expect(animation.animations[2].currentValue).toBe('100px');
     // Rotate
     expect(animation.animations[3].tweens[0].from.unit).toBe('deg');
     expect(animation.animations[4].tweens[0].from.unit).toBe('deg');
@@ -356,6 +361,10 @@ describe('Values', () => {
     expect(animation.animations[4].tweens[0].from.number).toBe(0);
     expect(animation.animations[5].tweens[0].from.number).toBe(0);
     expect(animation.animations[6].tweens[0].from.number).toBe(0);
+    expect(animation.animations[3].currentValue).toBe('360deg');
+    expect(animation.animations[4].currentValue).toBe('360deg');
+    expect(animation.animations[5].currentValue).toBe('360deg');
+    expect(animation.animations[6].currentValue).toBe('360deg');
     // Skew
     expect(animation.animations[7].tweens[0].from.unit).toBe('deg');
     expect(animation.animations[8].tweens[0].from.unit).toBe('deg');
@@ -363,6 +372,9 @@ describe('Values', () => {
     expect(animation.animations[7].tweens[0].from.number).toBe(0);
     expect(animation.animations[8].tweens[0].from.number).toBe(0);
     expect(animation.animations[9].tweens[0].from.number).toBe(0);
+    expect(animation.animations[7].currentValue).toBe('45deg');
+    expect(animation.animations[8].currentValue).toBe('45deg');
+    expect(animation.animations[9].currentValue).toBe('45deg');
     // Scale
     expect(animation.animations[10].tweens[0].from.unit).toBe(undefined);
     expect(animation.animations[11].tweens[0].from.unit).toBe(undefined);
@@ -372,9 +384,16 @@ describe('Values', () => {
     expect(animation.animations[11].tweens[0].from.number).toBe(1);
     expect(animation.animations[12].tweens[0].from.number).toBe(1);
     expect(animation.animations[13].tweens[0].from.number).toBe(1);
+    expect(animation.animations[10].currentValue).toBe(10);
+    expect(animation.animations[11].currentValue).toBe(10);
+    expect(animation.animations[12].currentValue).toBe(10);
+    expect(animation.animations[13].currentValue).toBe(10);
     // Perspective
     expect(animation.animations[14].tweens[0].from.unit).toBe('px');
     expect(animation.animations[14].tweens[0].from.number).toBe(0);
+
+    const targetEl = document.querySelector('#target-id');
+    expect(targetEl.style.transform).toBe('translateX(100px)translateY(100px)translateZ(100px)rotate(360deg)rotateX(360deg)rotateY(360deg)rotateZ(360deg)skew(45deg)skewX(45deg)skewY(45deg)scale(10)scaleX(10)scaleY(10)scaleZ(10)perspective(1000px)');
   });
 
   test('Values with white space', () => {
