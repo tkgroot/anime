@@ -46,6 +46,7 @@
   </div>
   <script type="module">
     import anime from '../../src/anime.js';
+    // import anime from './assets/anime.3.2.1.js';
     import { test, expect } from './assets/js/tests.js';
 
     function toogleAnimationRedBlue(a) {
@@ -69,7 +70,7 @@
       });
     }
 
-    const duration = 100;
+    const duration = 1000;
 
     const red = '#F64E4D';
     const blue = '#61C3FF';
@@ -130,9 +131,14 @@
     }, '-=' + duration * .5)
 
     const seekProgressEl = document.getElementById('progress-bar');
+    seekProgressEl.mousedown = function() {
+      tl.pause();
+    };
     seekProgressEl.oninput = function() {
       tl.seek(tl.duration * (seekProgressEl.value));
     };
+
+    console.log(tl);
 
     // test('stroke-dasharray on line 1 element', () => {
     //   return expect(line1.getAttribute('stroke-dasharray')).toBe('138.59292602539062');

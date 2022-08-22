@@ -50,11 +50,12 @@ export function getFunctionValue(functionValue, animatable) {
   return functionValue(animatable.target, animatable.id, animatable.total) || 0; // Fallback to 0 if the function results in undefined / NaN / null
 }
 
-export function getAnimationType(el, prop) {
-  if (is.obj(el)) {
+export function getAnimationType(animatable, prop) {
+  if (!animatable.isDOM) {
     return animationTypes.OBJECT;
-  } else if (is.dom(el)) {
-    if (!is.nil(el.getAttribute(prop)) || isValidSvgAttribute(el, prop)) return animationTypes.ATTRIBUTE; // Handle DOM and SVG attributes
+  } else {
+    const el = animatable.target;
+    if (!is.nil(el.getAttribute(prop)) || (animatable.isSVG && isValidSvgAttribute(el, prop))) return animationTypes.ATTRIBUTE; // Handle DOM and SVG attributes
     if (arrayContains(validTransforms, prop)) return animationTypes.TRANSFORM; // Handle CSS Transform properties differently than CSS to allow individual animations
     if (prop in el.style) return animationTypes.CSS; // All other CSS properties
     if (!is.und(el[prop])) return animationTypes.OBJECT; // Handle DOM elements properies that can't be accessed using getAttribute()
@@ -65,11 +66,11 @@ export function getAnimationType(el, prop) {
 
 export function getOriginalAnimatableValue(animatable, propName, animationType) {
   const target = animatable.target;
-  const animType = is.num(animationType) ? animationType : getAnimationType(target, propName);
+  const animType = is.num(animationType) ? animationType : getAnimationType(animatable, propName);
   switch (animType) {
     case animationTypes.OBJECT: return target[propName] || 0; // Fallaback to 0 if the property doesn't exist on the object.
     case animationTypes.ATTRIBUTE: return target.getAttribute(propName);
-    case animationTypes.TRANSFORM: return getTransformValue(animatable, propName);
+    case animationTypes.TRANSFORM: return getTransformValue(animatable, propName, true);
     case animationTypes.CSS: return target.style[propName] || getComputedStyle(target).getPropertyValue(propName);
   }
 }
@@ -192,9 +193,9 @@ function setCssAnimationValue(t, p, v) {
   return t.style[p] = v;
 }
 
-function setTransformsAnimationValue(t, p, v, transforms, manual) {
+function setTransformsAnimationValue(t, p, v, transforms, needsRender) {
   transforms.list.set(p, v);
-  if (p === transforms.last || manual) {
+  if (needsRender) {
     transforms.string = emptyString;
     transforms.list.forEach((value, prop) => transforms.string += `${prop}${openParenthesisString}${value}${closeParenthesisString}`);
     return t.style.transform = transforms.string;

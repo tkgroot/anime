@@ -126,7 +126,7 @@ export function animate(params = {}) {
       if (tweensLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
       tween.progress = tween.easing(clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration);
       tween.value = recomposeValueFunctions[tween.type](tween);
-      setAnimationValueFunctions[animation.type](animatable.target, animation.property, tween.value, animatable.transforms);
+      setAnimationValueFunctions[animation.type](animatable.target, animation.property, tween.value, animatable.transforms, animation.renderTransforms);
       animation.currentValue = tween.value;
       i++;
     }

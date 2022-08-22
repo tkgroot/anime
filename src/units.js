@@ -14,6 +14,7 @@ import {
 } from './utils.js';
 
 export function getTransformUnit(propName) {
+  if (propName.includes('scale')) return 0;
   if (propName.includes('rotate') || propName.includes('skew')) return 'deg';
   return 'px';
 }
