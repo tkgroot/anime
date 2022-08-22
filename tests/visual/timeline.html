@@ -50,23 +50,23 @@
     import { test, expect } from './assets/js/tests.js';
 
     function toogleAnimationRedBlue(a) {
-      a.animatables.forEach(animatable => {
-        animatable.target.classList.toggle('red');
-        animatable.target.classList.toggle('blue');
+      a.targets.forEach(target => {
+        target.classList.toggle('red');
+        target.classList.toggle('blue');
       });
     }
 
     function toogleAnimationBlueGreen(a) {
-      a.animatables.forEach(animatable => {
-        animatable.target.classList.toggle('blue');
-        animatable.target.classList.toggle('green');
+      a.targets.forEach(target => {
+        target.classList.toggle('blue');
+        target.classList.toggle('green');
       });
     }
 
     function toogleAnimationGreenRed(a) {
-      a.animatables.forEach(animatable => {
-        animatable.target.classList.toggle('green');
-        animatable.target.classList.toggle('red');
+      a.targets.forEach(target => {
+        target.classList.toggle('green');
+        target.classList.toggle('red');
       });
     }
 

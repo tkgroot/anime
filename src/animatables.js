@@ -3,6 +3,10 @@ import {
 } from './consts.js';
 
 import {
+  cache,
+} from './cache.js';
+
+import {
   is,
   flattenArray,
   filterArray,
@@ -14,20 +18,17 @@ import {
   activeInstances,
 } from './engine.js';
 
-const animatablesMap = new Map();
-
-function registerAnimatable(target) {
-  let registeredAnimatable = animatablesMap.get(target);
-  if (!registeredAnimatable) {
-    registeredAnimatable = { target: target };
-    if (is.dom(target)) {
-      registeredAnimatable.isDOM = true;
-      registeredAnimatable.transforms = {};
-    }
-    if (is.svg(target)) registeredAnimatable.isSVG = true;
-    animatablesMap.set(target, registeredAnimatable);
+function registerTarget(target) {
+  if (!is.dom(target)) return target;
+  let cachedTarget = cache.DOM.get(target);
+  if (!cachedTarget) {
+    cachedTarget = {
+      transforms: {},
+      isSVG: is.svg(target)
+    };
+    cache.DOM.set(target, cachedTarget);
   }
-  return registeredAnimatable;
+  return target;
 }
 
 function parseTargets(targets) {
@@ -38,14 +39,14 @@ function parseTargets(targets) {
 export function getAnimatables(targets) {
   const parsed = parseTargets(targets);
   const total = parsed.length;
-  return parsed.map(registerAnimatable);
+  return parsed.map(registerTarget);
 }
 
 // Remove targets from animation
 
 function removeAnimationsWithTargets(targetsArray, animations) {
   for (let i = animations.length; i--;) {
-    if (arrayContains(targetsArray, animations[i].animatable.target)) {
+    if (arrayContains(targetsArray, animations[i].target)) {
       animations.splice(i, 1);
     }
   }

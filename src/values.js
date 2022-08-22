@@ -14,6 +14,10 @@ import {
 } from './consts.js';
 
 import {
+  cache,
+} from './cache.js';
+
+import {
   is,
   arrayContains,
   round,
@@ -38,7 +42,7 @@ import {
 
 import {
   getPathProgress,
-  isValidSvgAttribute,
+  isValidSVGAttribute,
 } from './svg.js';
 
 import {
@@ -50,27 +54,26 @@ export function getFunctionValue(functionValue, target, index, total) {
   return functionValue(target, index, total) || 0; // Fallback to 0 if the function results in undefined / NaN / null
 }
 
-export function getAnimationType(animatable, prop) {
-  if (!animatable.isDOM) {
+export function getAnimationType(target, prop) {
+  const cachedDOMElement = cache.DOM.get(target);
+  if (!cachedDOMElement) {
     return animationTypes.OBJECT;
   } else {
-    const el = animatable.target;
-    if (!is.nil(el.getAttribute(prop)) || (animatable.isSVG && isValidSvgAttribute(el, prop))) return animationTypes.ATTRIBUTE; // Handle DOM and SVG attributes
+    if (!is.nil(target.getAttribute(prop)) || (cachedDOMElement.isSVG && isValidSVGAttribute(target, prop))) return animationTypes.ATTRIBUTE; // Handle DOM and SVG attributes
     if (arrayContains(validTransforms, prop)) return animationTypes.TRANSFORM; // Handle CSS Transform properties differently than CSS to allow individual animations
-    if (prop in el.style) return animationTypes.CSS; // All other CSS properties
-    if (!is.und(el[prop])) return animationTypes.OBJECT; // Handle DOM elements properies that can't be accessed using getAttribute()
-    return console.warn(`Can't find property '${prop}' on target '${el}'.`);
+    if (prop in target.style) return animationTypes.CSS; // All other CSS properties
+    if (!is.und(target[prop])) return animationTypes.OBJECT; // Handle DOM element properies that can't be accessed using getAttribute()
+    return console.warn(`Can't find property '${prop}' on target '${target}'.`);
   }
-  return console.warn(`Target '${el}' can't be animated.`);
+  return console.warn(`Target '${target}' can't be animated.`);
 }
 
-export function getOriginalAnimatableValue(animatable, propName, animationType) {
-  const target = animatable.target;
-  const animType = is.num(animationType) ? animationType : getAnimationType(animatable, propName);
+export function getOriginalAnimatableValue(target, propName, animationType) {
+  const animType = is.num(animationType) ? animationType : getAnimationType(target, propName);
   switch (animType) {
     case animationTypes.OBJECT: return target[propName] || 0; // Fallaback to 0 if the property doesn't exist on the object.
     case animationTypes.ATTRIBUTE: return target.getAttribute(propName);
-    case animationTypes.TRANSFORM: return getTransformValue(animatable, propName, true);
+    case animationTypes.TRANSFORM: return getTransformValue(target, propName, true);
     case animationTypes.CSS: return target.style[propName] || getComputedStyle(target).getPropertyValue(propName);
   }
 }
@@ -193,14 +196,15 @@ function setCssAnimationValue(t, p, v) {
   return t.style[p] = v;
 }
 
-function setTransformsAnimationValue(t, p, v, transforms, needsRender) {
-  transforms[p] = v;
+function setTransformsAnimationValue(t, p, v, needsRender) {
+  const cached = cache.DOM.get(t);
+  cached.transforms[p] = v;
   if (needsRender) {
-    let string = emptyString;
-    for (let prop in transforms) {
-      string += `${prop}${openParenthesisString}${transforms[prop]}${closeParenthesisString}`;
+    cached.transformString = emptyString;
+    for (let prop in cached.transforms) {
+      cached.transformString += `${prop}${openParenthesisString}${cached.transforms[prop]}${closeParenthesisString}`;
     }
-    return t.style.transform = string;
+    return t.style.transform = cached.transformString;
   }
 }
 
@@ -211,15 +215,15 @@ export const setAnimationValueFunctions = [
   setTransformsAnimationValue,
 ]
 
-export function getTargetValue(target, propName, unit) {
-  const animatables = getAnimatables(target);
-  if (animatables) {
-    const animatable = animatables[0];
-    let value = getOriginalAnimatableValue(animatable, propName);
+export function getTargetValue(targetSelector, propName, unit) {
+  const targets = getAnimatables(targetSelector);
+  if (targets) {
+    const target = targets[0];
+    let value = getOriginalAnimatableValue(target, propName);
     if (unit) {
       const decomposedValue = decomposeValue(value);
       if (decomposedValue.type === valueTypes.NUMBER || decomposedValue.type === valueTypes.UNIT) {
-        const convertedValue = convertValueUnit(animatable.target, decomposedValue, unit);
+        const convertedValue = convertValueUnit(target, decomposedValue, unit);
         value = convertedValue.number + convertedValue.unit;
       }
     }

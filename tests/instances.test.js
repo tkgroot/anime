@@ -18,7 +18,7 @@ describe('Instances', () => {
   test('Must have an array of animatables', () => {
     const instance01 = anime();
 
-    expect(instance01.animatables).toEqual(expect.any(Array));
+    expect(instance01.targets).toEqual(expect.any(Array));
   });
 
   test('Must have an array of animations', () => {

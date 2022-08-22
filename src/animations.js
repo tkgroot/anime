@@ -18,26 +18,26 @@ import {
   getAnimationType,
 } from './values.js';
 
-export function getAnimations(animatables, keyframes) {
+export function getAnimations(targets, keyframes) {
   const animations = [];
   let animationsIndex = 0;
-  for (let i = 0, targetsLength = animatables.length; i < targetsLength; i++) {
-    const animatable = animatables[i];
-    if (animatable) {
+  for (let i = 0, targetsLength = targets.length; i < targetsLength; i++) {
+    const target = targets[i];
+    if (target) {
       let lastAnimatableTransformAnimationIndex;
       for (let j = 0, keysLength = keyframes.length; j < keysLength; j++) {
         const animationKeyframes = keyframes[j];
         const animationKeyframesPropertyName = animationKeyframes[0].propertyName;
-        const animationType = getAnimationType(animatable, animationKeyframesPropertyName);
-        const propertyName = sanitizePropertyName(animationKeyframesPropertyName, animatable.target, animationType);
+        const animationType = getAnimationType(target, animationKeyframesPropertyName);
+        const propertyName = sanitizePropertyName(animationKeyframesPropertyName, target, animationType);
         if (is.num(animationType)) {
-          const tweens = convertKeyframesToTweens(animationKeyframes, animatable, propertyName, animationType, i, targetsLength);
+          const tweens = convertKeyframesToTweens(animationKeyframes, target, propertyName, animationType, i, targetsLength);
           const firstTween = tweens[0];
           const lastTween = tweens[tweens.length - 1];
           const animation = {
             type: animationType,
             property: propertyName,
-            animatable: animatable,
+            target: target,
             tweens: tweens,
             delay: firstTween.delay,
             duration: lastTween.end,

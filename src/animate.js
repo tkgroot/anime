@@ -24,6 +24,7 @@ import {
 
 import {
   getAnimatables,
+  removeAnimatablesFromInstance,
 } from './animatables.js';
 
 import {
@@ -38,23 +39,19 @@ import {
   getKeyframesFromProperties,
 } from './keyframes.js';
 
-import {
-  removeAnimatablesFromInstance,
-} from './animatables.js';
-
 let instancesId = 0;
 
 export function createInstance(params) {
   const instanceSettings = replaceObjectProps(defaultInstanceSettings, params);
   const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
   const properties = getKeyframesFromProperties(tweenSettings, params);
-  const animatables = getAnimatables(params.targets);
-  const animations = getAnimations(animatables, properties);
+  const targets = getAnimatables(params.targets);
+  const animations = getAnimations(targets, properties);
   const timings = getTimingsFromAnimations(animations, tweenSettings);
   return mergeObjects(instanceSettings, {
     id: instancesId++,
     children: [],
-    animatables: animatables,
+    targets: targets,
     animations: animations,
     delay: timings.delay,
     duration: timings.duration,
@@ -118,7 +115,7 @@ export function animate(params = {}) {
     const animationsLength = animations.length;
     while (i < animationsLength) {
       const animation = animations[i];
-      const animatable = animation.animatable;
+      const target = animation.target;
       const tweens = animation.tweens;
       const tweensLength = tweens.length - 1;
       let tween = tweens[tweensLength];
@@ -126,7 +123,7 @@ export function animate(params = {}) {
       if (tweensLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
       tween.progress = tween.easing(clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration);
       tween.value = recomposeValueFunctions[tween.type](tween);
-      setAnimationValueFunctions[animation.type](animatable.target, animation.property, tween.value, animatable.transforms, animation.renderTransforms);
+      setAnimationValueFunctions[animation.type](target, animation.property, tween.value, animation.renderTransforms);
       animation.currentValue = tween.value;
       i++;
     }

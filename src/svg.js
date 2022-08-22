@@ -135,7 +135,7 @@ function getPathProgress(pathObject, progress) {
   }
 }
 
-export function isValidSvgAttribute(el, propertyName) {
+export function isValidSVGAttribute(el, propertyName) {
   if (propertyName === 'opacity') return; // Return false and to use CSS opacity animation instead (already better default values (opacity: 1 instead of 0))
   if (propertyName in el.style || propertyName in el) {
     if (propertyName === 'scale') {

@@ -7,7 +7,7 @@ describe('Animatables', () => {
 
     const targetEl = document.querySelector('#target-id');
     expect(animation.animations.length).toBe(1);
-    expect(animation.animatables[0].target).toBe(targetEl);
+    expect(animation.targets[0]).toBe(targetEl);
   });
 
   test('Multiple elements from CSS selector', () => {
@@ -19,7 +19,7 @@ describe('Animatables', () => {
     const targetEls = document.querySelectorAll('.target-class');
     expect(animation.animations.length).toBe(4);
     targetEls.forEach((el, i) => {
-      expect(animation.animatables[i].target).toBe(el);
+      expect(animation.targets[i]).toBe(el);
     });
   });
 
@@ -31,7 +31,7 @@ describe('Animatables', () => {
     });
 
     expect(animation.animations.length).toBe(1);
-    expect(animation.animatables[0].target).toBe(targetEl);
+    expect(animation.targets[0]).toBe(targetEl);
   });
 
   test('Multiple elements from nodeList', () => {
@@ -43,7 +43,7 @@ describe('Animatables', () => {
 
     expect(animation.animations.length).toBe(4);
     targetEls.forEach((el, i) => {
-      expect(animation.animatables[i].target).toBe(el);
+      expect(animation.targets[i]).toBe(el);
     });
   });
 
@@ -54,7 +54,7 @@ describe('Animatables', () => {
     });
 
     expect(animation.animations.length).toBe(1);
-    expect(animation.animatables[0].target).toBe(testObject);
+    expect(animation.targets[0]).toBe(testObject);
   });
 
   test('Multiple elements from an Array of mixed CSS selectors', () => {
@@ -67,10 +67,10 @@ describe('Animatables', () => {
     const targetClassEls = document.querySelectorAll('.target-class');
     const targetDataEl = document.querySelector('div[data-index="0"]');
     expect(animation.animations.length).toBe(4);
-    expect(animation.animatables[0].target).toBe(targetIdEl);
-    expect(animation.animatables[0].target).toBe(targetDataEl);
+    expect(animation.targets[0]).toBe(targetIdEl);
+    expect(animation.targets[0]).toBe(targetDataEl);
     targetClassEls.forEach((el, i) => {
-      expect(animation.animatables[i].target).toBe(el);
+      expect(animation.targets[i]).toBe(el);
     });
   });
 
@@ -84,17 +84,17 @@ describe('Animatables', () => {
     const targetIdEl = document.querySelector('#target-id');
     const targetDataEl = document.querySelector('div[data-index="0"]');
     expect(animation.animations.length).toBe(5);
-    expect(animation.animatables[0].target).toBe(testObject);
-    expect(animation.animatables[1].target).toBe(targetIdEl);
-    expect(animation.animatables[1].target).toBe(targetDataEl);
-    expect(animation.animatables.length).toBe(5);
+    expect(animation.targets[0]).toBe(testObject);
+    expect(animation.targets[1]).toBe(targetIdEl);
+    expect(animation.targets[1]).toBe(targetDataEl);
+    expect(animation.targets.length).toBe(5);
   });
 
   test('Animations without targets', resolve => {
     const animation = anime({
       duration: 100,
       complete: () => {
-        expect(animation.animatables.length).toBe(0);
+        expect(animation.targets.length).toBe(0);
         expect(animation.animations.length).toBe(0);
         expect(animation.duration).toBe(100);
         resolve();

@@ -4,6 +4,10 @@ import {
 } from './consts.js';
 
 import {
+  cache,
+} from './cache.js';
+
+import {
   is,
 } from './utils.js';
 
@@ -42,14 +46,14 @@ function convertKeyframeToTween(keyframe, target, index, total) {
   return tween;
 }
 
-export function convertKeyframesToTweens(keyframes, animatable, propertyName, type, index, total) {
+export function convertKeyframesToTweens(keyframes, target, propertyName, type, index, total) {
   let prevTween;
   const tweens = [];
   for (let i = 0, l = keyframes.length; i < l; i++) {
     const keyframe = keyframes[i];
-    const tween = convertKeyframeToTween(keyframe, animatable.target, index, total);
+    const tween = convertKeyframeToTween(keyframe, target, index, total);
     const tweenValue = tween.value;
-    const originalValue = decomposeValue(getOriginalAnimatableValue(animatable, propertyName, type));
+    const originalValue = decomposeValue(getOriginalAnimatableValue(target, propertyName, type));
 
     let from, to;
 
@@ -125,7 +129,7 @@ export function convertKeyframesToTweens(keyframes, animatable, propertyName, ty
     if (from.unit !== to.unit) {
       const valueToConvert = to.unit ? from : to;
       const unitToConvertTo = to.unit ? to.unit : from.unit;
-      convertValueUnit(animatable.target, valueToConvert, unitToConvertTo);
+      convertValueUnit(target, valueToConvert, unitToConvertTo);
     }
 
     // Default to 0 for values 
@@ -135,7 +139,10 @@ export function convertKeyframesToTweens(keyframes, animatable, propertyName, ty
     }
 
     if (to.type === valueTypes.PATH) {
-      to.path.isTargetInsideSVG = is.svg(animatable.target);
+      const cached = cache.DOM.get(target);
+      if (cached) {
+        to.path.isTargetInsideSVG = cached.isSVG;
+      }
     }
 
     tween.from = from;

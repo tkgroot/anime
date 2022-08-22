@@ -1,4 +1,8 @@
 import {
+  cache,
+} from './cache.js';
+
+import {
   transformsExecRgx,
   validTransforms,
 } from './consts.js';
@@ -11,19 +15,20 @@ import {
   getTransformUnit,
 } from './units.js';
 
-export function getTransformValue(animatable, propName, clearCache) {
+export function getTransformValue(target, propName, clearCache) {
+  const cachedTarget = cache.DOM.get(target);
   if (clearCache) {
-    for (let key in animatable.transforms) {
-      delete animatable.transforms[key];
+    for (let key in cachedTarget.transforms) {
+      delete cachedTarget.transforms[key];
     }
-    const str = animatable.target.style.transform;
+    const str = target.style.transform;
     if (str) {
       let t;
       while (t = transformsExecRgx.exec(str)) {
-        animatable.transforms[t[1]] = t[2];
+        cachedTarget.transforms[t[1]] = t[2];
       }
     }
   }
-  const cachedValue = animatable.transforms[propName];
+  const cachedValue = cachedTarget.transforms[propName];
   return !is.und(cachedValue) ? cachedValue : (propName.includes(validTransforms[7]) ? 1 : 0) + getTransformUnit(propName);
 }
