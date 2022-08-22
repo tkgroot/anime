@@ -21,17 +21,17 @@ import {
 export function getAnimations(animatables, keyframes) {
   const animations = [];
   let animationsIndex = 0;
-  for (let a = 0, aLength = animatables.length; a < aLength; a++) {
-    const animatable = animatables[a];
+  for (let i = 0, targetsLength = animatables.length; i < targetsLength; i++) {
+    const animatable = animatables[i];
     if (animatable) {
       let lastAnimatableTransformAnimationIndex;
-      for (let p = 0, pLength = keyframes.length; p < pLength; p++) {
-        const animationKeyframes = keyframes[p];
+      for (let j = 0, keysLength = keyframes.length; j < keysLength; j++) {
+        const animationKeyframes = keyframes[j];
         const animationKeyframesPropertyName = animationKeyframes[0].propertyName;
         const animationType = getAnimationType(animatable, animationKeyframesPropertyName);
         const propertyName = sanitizePropertyName(animationKeyframesPropertyName, animatable.target, animationType);
         if (is.num(animationType)) {
-          const tweens = convertKeyframesToTweens(animationKeyframes, animatable, propertyName, animationType);
+          const tweens = convertKeyframesToTweens(animationKeyframes, animatable, propertyName, animationType, i, targetsLength);
           const firstTween = tweens[0];
           const lastTween = tweens[tweens.length - 1];
           const animation = {
@@ -85,7 +85,7 @@ export function getAnimations(animatables, keyframes) {
 //   for (let a = 0, aLength = animatables.length; a < aLength; a++) {
 //     const animatable = animatables[a];
 //     if (animatable) {
-//       for (let p = 0, pLength = animationsKeyframes.length; p < pLength; p++) {
+//       for (let p = 0, keysLength = animationsKeyframes.length; p < keysLength; p++) {
 //         const animation = createAnimation(animatable, animationsKeyframes[p]);
 //         if (animation) {
 //           animations.push(animation);

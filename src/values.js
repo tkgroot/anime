@@ -45,9 +45,9 @@ import {
   convertColorStringValuesToRgbaArray
 } from './colors.js';
 
-export function getFunctionValue(functionValue, animatable) {
+export function getFunctionValue(functionValue, target, index, total) {
   if (!is.fnc(functionValue)) return functionValue;
-  return functionValue(animatable.target, animatable.id, animatable.total) || 0; // Fallback to 0 if the function results in undefined / NaN / null
+  return functionValue(target, index, total) || 0; // Fallback to 0 if the function results in undefined / NaN / null
 }
 
 export function getAnimationType(animatable, prop) {

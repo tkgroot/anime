@@ -24,12 +24,12 @@ import {
 
 // Tweens
 
-function convertKeyframeToTween(keyframe, animatable) {
+function convertKeyframeToTween(keyframe, target, index, total) {
   const tween = {};
   for (let p in keyframe) {
-    let prop = getFunctionValue(keyframe[p], animatable);
+    let prop = getFunctionValue(keyframe[p], target, index, total);
     if (is.arr(prop)) {
-      prop = prop.map(v => getFunctionValue(v, animatable));
+      prop = prop.map(v => getFunctionValue(v, target, index, total));
       if (prop.length === 1) {
         prop = prop[0];
       }
@@ -42,14 +42,14 @@ function convertKeyframeToTween(keyframe, animatable) {
   return tween;
 }
 
-export function convertKeyframesToTweens(keyframes, animatable, propertyName, animationType) {
+export function convertKeyframesToTweens(keyframes, animatable, propertyName, type, index, total) {
   let prevTween;
   const tweens = [];
   for (let i = 0, l = keyframes.length; i < l; i++) {
     const keyframe = keyframes[i];
-    const tween = convertKeyframeToTween(keyframe, animatable);
+    const tween = convertKeyframeToTween(keyframe, animatable.target, index, total);
     const tweenValue = tween.value;
-    const originalValue = decomposeValue(getOriginalAnimatableValue(animatable, propertyName, animationType));
+    const originalValue = decomposeValue(getOriginalAnimatableValue(animatable, propertyName, type));
 
     let from, to;
 

@@ -16,14 +16,10 @@ import {
 
 const animatablesMap = new Map();
 
-function registerAnimatable(target, i, total) {
+function registerAnimatable(target) {
   let registeredAnimatable = animatablesMap.get(target);
   if (!registeredAnimatable) {
-    registeredAnimatable = {
-      target: target,
-      id: i,
-      total: total
-    }
+    registeredAnimatable = { target: target };
     if (is.dom(target)) {
       registeredAnimatable.isDOM = true;
       registeredAnimatable.transforms = {};
@@ -42,9 +38,7 @@ function parseTargets(targets) {
 export function getAnimatables(targets) {
   const parsed = parseTargets(targets);
   const total = parsed.length;
-  return parsed.map((target, i) => {
-    return registerAnimatable(target, i, total);
-  });
+  return parsed.map(registerAnimatable);
 }
 
 // Remove targets from animation
