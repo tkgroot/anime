@@ -459,11 +459,11 @@ anime({
       </tr>
       <tr>
         <td><code>scale</code></td>
-        <td><code>1</code></td>
+        <td><code>15</code></td>
       </tr>
       <tr>
         <td><code>baseFrequency</code></td>
-        <td><code>0</code></td>
+        <td><code>.5</code></td>
       </tr>
     </table>
   </div>
@@ -471,27 +471,28 @@ anime({
 <svg width="128" height="128" viewBox="0 0 128 128">
   <filter id="displacementFilter">
     <feTurbulence type="turbulence" numOctaves="2" baseFrequency="0" result="turbulence"/>
-    <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="15" xChannelSelector="R" yChannelSelector="G"/>
+    <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="1" xChannelSelector="R" yChannelSelector="G"/>
   </filter>
-  <polygon points="64 68.64 8.574 100 63.446 67.68 64 4 64.554 67.68 119.426 100" style="filter: url(#displacementFilter)" fill="currentColor"/>
+  <polygon points="64 128 8.574 96 8.574 32 64 0 119.426 32 119.426 96" style="filter: url(#displacementFilter)" fill="currentColor"/>
 </svg>
   </div>
   <script>var svgAttr = function() {
   // Needed to reset demo
-  var polyEl = document.querySelector('.svg-attributes-demo polygon');
-  var feTurbulenceEl = document.querySelector('feTurbulence');
-  var feDisplacementMap = document.querySelector('feDisplacementMap');
-  // anime.set('.svg-attributes-demo polygon', { points: '64 68.64 8.574 100 63.446 67.68 64 4 64.554 67.68 119.426 100' });
-  // anime.set('feTurbulence', { baseFrequency: '64 68.64 8.574 100 63.446 67.68 64 4 64.554 67.68 119.426 100' });
-  // anime.set('feDisplacementMap', { scale: '15' });
-  console.log(polyEl.getAttribute('scale'), 'scale' in polyEl.style);
-  console.log(feTurbulenceEl.getAttribute('baseFrequency'), 'baseFrequency' in polyEl.style);
+  anime.set('.svg-attributes-demo polygon', {points: '64 128 8.574 96 8.574 32 64 0 119.426 32 119.426 96'});
+  anime.set('feTurbulence', {baseFrequency: '0'});
+  anime.set('feDisplacementMap', {scale: '1'});
 /*DEMO*/
 anime({
-  targets: ['.svg-attributes-demo polygon', 'feTurbulence', 'feDisplacementMap'],
-  points: '64 128 8.574 96 8.574 32 64 0 119.426 32 119.426 96',
-  baseFrequency: 0,
-  scale: 1,
+  targets: ['feTurbulence', 'feDisplacementMap'],
+  baseFrequency: .05,
+  scale: 15,
+  loop: true,
+  direction: 'alternate',
+  easing: 'easeInOutExpo'
+});
+anime({
+  targets: '.svg-attributes-demo polygon',
+  points: '64 68.64 8.574 100 63.446 67.68 64 4 64.554 67.68 119.426 100',
   loop: true,
   direction: 'alternate',
   easing: 'easeInOutExpo'
