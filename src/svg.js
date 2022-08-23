@@ -5,6 +5,7 @@ import {
 import {
   selectString,
   is,
+  round,
 } from './utils.js';
 
 // getTotalLength() equivalent for circle, rect, polyline, polygon and line shapes
@@ -50,13 +51,20 @@ function getPolygonLength(el) {
 
 function getTotalLength(el) {
   if (el.getTotalLength) return el.getTotalLength();
-  switch(el.tagName.toLowerCase()) {
-    case 'circle': return getCircleLength(el);
-    case 'rect': return getRectLength(el);
-    case 'line': return getLineLength(el);
-    case 'polyline': return getPolylineLength(el);
-    case 'polygon': return getPolygonLength(el);
+  const tagName = el.tagName.toLowerCase();
+  let totalLength;
+  if (tagName == 'circle') {
+    totalLength = getCircleLength(el);
+  } else if (tagName == 'rect') {
+    totalLength = getRectLength(el);
+  } else if (tagName == 'line') {
+    totalLength = getLineLength(el);
+  } else if (tagName == 'polyline') {
+    totalLength = getPolylineLength(el);
+  } else if (tagName == 'polygon') {
+    totalLength = getPolygonLength(el);
   }
+  return totalLength;
 }
 
 function setDashoffset(el) {
@@ -119,8 +127,9 @@ function getPathPoint(pathEl, progress, offset = 0) {
   return pathEl.getPointAtLength(length);
 }
 
-function getPathProgress(pathObject, progress) {
+function getPathProgress(pathObject, progress, roundValue) {
   const pathEl = pathObject.el;
+  const pathProperty = pathObject.property;
   const isPathTargetInsideSVG = pathObject.isTargetInsideSVG;
   const parentSvg = getPathParentSvg(pathEl, pathObject.svg);
   const p = getPathPoint(pathEl, progress, 0);
@@ -128,11 +137,15 @@ function getPathProgress(pathObject, progress) {
   const p1 = getPathPoint(pathEl, progress, +1);
   const scaleX = isPathTargetInsideSVG ? 1 : parentSvg.w / parentSvg.vW;
   const scaleY = isPathTargetInsideSVG ? 1 : parentSvg.h / parentSvg.vH;
-  switch (pathObject.property) {
-    case 'x': return (p.x - parentSvg.x) * scaleX;
-    case 'y': return (p.y - parentSvg.y) * scaleY;
-    case 'angle': return Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / pi;
+  let value;
+  if (pathProperty == 'x') {
+    value = (p.x - parentSvg.x) * scaleX;
+  } else if (pathProperty == 'y') {
+    value = (p.y - parentSvg.y) * scaleY;
+  } else if (pathProperty == 'angle') {
+    value = Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / pi;
   }
+  return !roundValue ? value : round(value, roundValue);
 }
 
 export function isValidSVGAttribute(el, propertyName) {

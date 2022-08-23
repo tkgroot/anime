@@ -16,7 +16,7 @@ import {
 function convertPropertyValueToTweens(propertyName, propertyValue, tweenSettings) {
   let value = propertyValue;
   const settings = {...tweenSettings};
-  settings.propertyName = propertyName;
+  settings.property = propertyName;
   // Override duration if easing is a spring
   if (springTestRgx.test(settings.easing)) {
     settings.duration = spring(settings.easing);

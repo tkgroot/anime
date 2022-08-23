@@ -2,20 +2,29 @@ import {
   settings,
   defaultInstanceSettings,
   defaultTweenSettings,
+  animationTypes,
+  valueTypes,
   minValue,
+  rgbaString,
+  commaString,
+  openParenthesisString,
+  closeParenthesisString,
+  closeParenthesisWithSpaceString,
+  emptyString,
+  transformsFragmentStrings,
 } from './consts.js';
 
 import {
+  cache,
+} from './cache.js';
+
+import {
   clamp,
+  round,
   filterArray,
   replaceObjectProps,
   mergeObjects,
 } from './utils.js';
-
-import {
-  recomposeValueFunctions,
-  setAnimationValueFunctions,
-} from './values.js';
 
 import {
   startEngine,
@@ -23,13 +32,21 @@ import {
 } from './engine.js';
 
 import {
+  getAnimations,
+} from './animations.js';
+
+import {
+  getTweenProgress,
+} from './tweens.js';
+
+import {
+  getPathProgress,
+} from './svg.js';
+
+import {
   getAnimatables,
   removeAnimatablesFromInstance,
 } from './animatables.js';
-
-import {
-  getAnimations,
-} from './animations.js';
 
 import {
   getTimingsFromAnimations,
@@ -116,15 +133,67 @@ export function animate(params = {}) {
     while (i < animationsLength) {
       const animation = animations[i];
       const target = animation.target;
+      const animType = animation.type;
       const tweens = animation.tweens;
       const tweensLength = tweens.length - 1;
       let tween = tweens[tweensLength];
       // Only check for keyframes if there is more than one tween
       if (tweensLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
-      tween.progress = tween.easing(clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration);
-      tween.value = recomposeValueFunctions[tween.type](tween);
-      setAnimationValueFunctions[animation.type](target, animation.property, tween.value, animation.renderTransforms);
-      animation.currentValue = tween.value;
+      const tweenProgress = tween.easing(clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration);
+      const tweenProperty = tween.property;
+      const tweenType = tween.type;
+      const tweenRound = tween.round;
+      const tweenFrom = tween.from;
+      const tweenTo = tween.to;
+
+      let value;
+
+      if (tweenType == valueTypes.NUMBER) {
+        value = getTweenProgress(tweenFrom.number, tweenTo.number, tweenProgress, tweenRound);
+      } else if (tweenType == valueTypes.UNIT) {
+        value = getTweenProgress(tweenFrom.number, tweenTo.number, tweenProgress, tweenRound) + tweenTo.unit;
+      } else if (tweenType == valueTypes.COLOR) {
+        const fn = tweenFrom.numbers;
+        const tn = tweenTo.numbers;
+        value = rgbaString;
+        value += getTweenProgress(fn[0], tn[0], tweenProgress, 1) + commaString;
+        value += getTweenProgress(fn[1], tn[1], tweenProgress, 1) + commaString;
+        value += getTweenProgress(fn[2], tn[2], tweenProgress, 1) + commaString;
+        value += getTweenProgress(fn[3], tn[3], tweenProgress) + closeParenthesisString;
+      } else if (tweenType == valueTypes.PATH) {
+        value = getPathProgress(tweenTo.path, tweenProgress * tweenTo.number, tweenRound) + tweenTo.unit;
+      } else if (tweenType == valueTypes.COMPLEX) {
+        value = tweenTo.strings[0];
+        for (let j = 0, l = tweenTo.numbers.length; j < l; j++) {
+          const number = getTweenProgress(tweenFrom.numbers[j], tweenTo.numbers[j], tweenProgress, tweenRound);
+          const nextString = tweenTo.strings[j + 1];
+          if (!nextString) {
+            value += number;
+          } else {
+            value += number + nextString;
+          }
+        }
+      }
+
+      if (animType == animationTypes.OBJECT) {
+        target[tweenProperty] = value;
+      } else if (animType == animationTypes.TRANSFORM) {
+        const cached = cache.DOM.get(target);
+        const cachedTransforms = cached.transforms;
+        cachedTransforms[tweenProperty] = value;
+        if (animation.renderTransforms) {
+          cached.transformString = emptyString;
+          for (let key in cachedTransforms) {
+            cached.transformString += transformsFragmentStrings[key]+cachedTransforms[key]+closeParenthesisWithSpaceString;
+          }
+          target.style.transform = cached.transformString;
+        }
+      } else if (animType == animationTypes.CSS) {
+        target.style[tweenProperty] = value;
+      } else if (animType == animationTypes.ATTRIBUTE) {
+        target.setAttribute(tweenProperty, value);
+      }
+      animation.currentValue = value;
       i++;
     }
   }

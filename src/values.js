@@ -3,11 +3,6 @@ import {
   animationTypes,
   valueTypes,
   emptyString,
-  openParenthesisString,
-  closeParenthesisString,
-  rgbaString,
-  commaString,
-  transformsExecRgx,
   relativeValuesExecRgx,
   digitWithExponentRgx,
   unitsExecRgx,
@@ -20,17 +15,11 @@ import {
 import {
   is,
   arrayContains,
-  round,
 } from './utils.js';
 
 import {
   convertValueUnit,
-  getTransformUnit,
 } from './units.js';
-
-import {
-  sanitizePropertyName,
-} from './properties.js';
 
 import {
   getTransformValue,
@@ -41,7 +30,6 @@ import {
 } from './animatables.js';
 
 import {
-  getPathProgress,
   isValidSVGAttribute,
 } from './svg.js';
 
@@ -130,90 +118,6 @@ export function decomposeValue(rawValue) {
     }
   }
 }
-
-function getNumberProgress(fromNumber, toNumber, progressValue, roundValue) {
-  let value = fromNumber + (progressValue * (toNumber - fromNumber));
-  if (roundValue) return round(value, roundValue);
-  return value;
-}
-
-function recomposeNumberValue(tween) {
-  return getNumberProgress(tween.from.number, tween.to.number, tween.progress, tween.round);
-}
-
-function recomposeUnitValue(tween) {
-  return getNumberProgress(tween.from.number, tween.to.number, tween.progress, tween.round) + tween.to.unit;
-}
-
-function recomposeColorValue(tween) {
-  const fn = tween.from.numbers;
-  const tn = tween.to.numbers;
-  let value = rgbaString;
-  value += getNumberProgress(fn[0], tn[0], tween.progress, 1) + commaString;
-  value += getNumberProgress(fn[1], tn[1], tween.progress, 1) + commaString;
-  value += getNumberProgress(fn[2], tn[2], tween.progress, 1) + commaString;
-  value += getNumberProgress(fn[3], tn[3], tween.progress) + closeParenthesisString;
-  return value;
-}
-
-function recomposePathValue(tween) {
-  let value = getPathProgress(tween.to.path, tween.progress * tween.to.number) + tween.to.unit;
-  if (tween.round) return round(value, tween.round);
-  return value;
-}
-
-function recomposeComplexValue(tween) {
-  let value = tween.to.strings[0];
-  for (let i = 0, l = tween.to.numbers.length; i < l; i++) {
-    const number = getNumberProgress(tween.from.numbers[i], tween.to.numbers[i], tween.progress, tween.round);
-    const nextString = tween.to.strings[i + 1];
-    if (!nextString) {
-      value += number;
-    } else {
-      value += number + nextString;
-    }
-  }
-  return value;
-}
-
-export const recomposeValueFunctions = [
-  recomposeNumberValue,
-  recomposeUnitValue,
-  recomposeColorValue,
-  recomposePathValue,
-  recomposeComplexValue,
-]
-
-function setObjectAnimationValue(t, p, v) {
-  return t[p] = v;
-}
-
-function setAttributeAnimationValue(t, p, v) {
-  return t.setAttribute(p, v);
-}
-
-function setCssAnimationValue(t, p, v) {
-  return t.style[p] = v;
-}
-
-function setTransformsAnimationValue(t, p, v, needsRender) {
-  const cached = cache.DOM.get(t);
-  cached.transforms[p] = v;
-  if (needsRender) {
-    cached.transformString = emptyString;
-    for (let prop in cached.transforms) {
-      cached.transformString += `${prop}${openParenthesisString}${cached.transforms[prop]}${closeParenthesisString}`;
-    }
-    return t.style.transform = cached.transformString;
-  }
-}
-
-export const setAnimationValueFunctions = [
-  setObjectAnimationValue,
-  setAttributeAnimationValue,
-  setCssAnimationValue,
-  setTransformsAnimationValue,
-]
 
 export function getTargetValue(targetSelector, propName, unit) {
   const targets = getAnimatables(targetSelector);

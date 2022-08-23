@@ -9,6 +9,7 @@ export const minValue = Number.MIN_VALUE;
 export const emptyString = '';
 export const openParenthesisString = '(';
 export const closeParenthesisString = ')';
+export const closeParenthesisWithSpaceString = ') ';
 export const commaString = ',';
 export const rgbaString = 'rgba(';
 export const hexValuePrefix = '0x';
@@ -83,6 +84,8 @@ export const validTransforms = [
   'matrix',
   'matrix3d',
 ];
+
+export const transformsFragmentStrings = validTransforms.reduce((a, v) => ({ ...a, [v]: v + openParenthesisString}), {});
 
 // Regex
 

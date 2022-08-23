@@ -27,16 +27,15 @@ export function getAnimations(targets, keyframes) {
       let lastAnimatableTransformAnimationIndex;
       for (let j = 0, keysLength = keyframes.length; j < keysLength; j++) {
         const animationKeyframes = keyframes[j];
-        const animationKeyframesPropertyName = animationKeyframes[0].propertyName;
+        const animationKeyframesPropertyName = animationKeyframes[0].property;
         const animationType = getAnimationType(target, animationKeyframesPropertyName);
-        const propertyName = sanitizePropertyName(animationKeyframesPropertyName, target, animationType);
+        const tweenPropertyName = sanitizePropertyName(animationKeyframesPropertyName, target, animationType);
         if (is.num(animationType)) {
-          const tweens = convertKeyframesToTweens(animationKeyframes, target, propertyName, animationType, i, targetsLength);
+          const tweens = convertKeyframesToTweens(animationKeyframes, target, tweenPropertyName, animationType, i, targetsLength);
           const firstTween = tweens[0];
           const lastTween = tweens[tweens.length - 1];
           const animation = {
             type: animationType,
-            property: propertyName,
             target: target,
             tweens: tweens,
             delay: firstTween.delay,
@@ -58,40 +57,3 @@ export function getAnimations(targets, keyframes) {
   }
   return animations;
 }
-
-// function createAnimation(animatable, keyframes) {
-//   const keyframesPropertyName = keyframes[0].propertyName;
-//   const animationType = getAnimationType(animatable, keyframesPropertyName);
-//   const propertyName = sanitizePropertyName(keyframesPropertyName, animatable.target, animationType);
-//   if (is.num(animationType)) {
-//     const tweens = convertKeyframesToTweens(keyframes, animatable, propertyName, animationType);
-//     const firstTween = tweens[0];
-//     const lastTween = tweens[tweens.length - 1];
-//     return {
-//       type: animationType,
-//       property: propertyName,
-//       animatable: animatable,
-//       tweens: tweens,
-//       delay: firstTween.delay,
-//       duration: lastTween.end,
-//       endDelay: lastTween.endDelay,
-//       timelineOffset: 0
-//     }
-//   }
-// }
-
-// export function getAnimations(animatables, animationsKeyframes) {
-//   const animations = [];
-//   for (let a = 0, aLength = animatables.length; a < aLength; a++) {
-//     const animatable = animatables[a];
-//     if (animatable) {
-//       for (let p = 0, keysLength = animationsKeyframes.length; p < keysLength; p++) {
-//         const animation = createAnimation(animatable, animationsKeyframes[p]);
-//         if (animation) {
-//           animations.push(animation);
-//         }
-//       }
-//     }
-//   }
-//   return animations;
-// }

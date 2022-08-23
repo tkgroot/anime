@@ -9,6 +9,7 @@ import {
 
 import {
   is,
+  round,
 } from './utils.js';
 
 import {
@@ -145,16 +146,21 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, type, 
       }
     }
 
+    tween.type = to.type;
+    tween.property = propertyName;
     tween.from = from;
     tween.to = to;
-    tween.type = to.type;
     tween.start = prevTween ? prevTween.end : 0;
     tween.end = tween.start + tween.delay + tween.duration + tween.endDelay;
     tween.easing = parseEasings(tween.easing, tween.duration);
     tween.progress = 0;
-    tween.value = null;
     prevTween = tween;
     tweens.push(tween);
   }
   return tweens;
+}
+
+export function getTweenProgress(fromNumber, toNumber, progressValue, roundValue) {
+  let value = fromNumber + (progressValue * (toNumber - fromNumber));
+  return !roundValue ? value : round(value, roundValue);
 }
