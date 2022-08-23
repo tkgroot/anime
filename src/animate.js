@@ -49,7 +49,7 @@ import {
 } from './animatables.js';
 
 import {
-  getTimingsFromAnimations,
+  getTimingsFromAnimationsOrInstances,
 } from './timings.js';
 
 import {
@@ -64,7 +64,7 @@ export function createInstance(params) {
   const properties = getKeyframesFromProperties(tweenSettings, params);
   const targets = getAnimatables(params.targets);
   const animations = getAnimations(targets, properties);
-  const timings = getTimingsFromAnimations(animations, tweenSettings);
+  const timings = getTimingsFromAnimationsOrInstances(animations, tweenSettings);
   return mergeObjects(instanceSettings, {
     id: instancesId++,
     children: [],

@@ -40,8 +40,7 @@ export function getAnimations(targets, keyframes) {
             tweens: tweens,
             delay: firstTween.delay,
             duration: lastTween.end,
-            endDelay: lastTween.endDelay,
-            timelineOffset: 0
+            endDelay: lastTween.endDelay
           }
           if (animationType === animationTypes.TRANSFORM) {
             lastAnimatableTransformAnimationIndex = animationsIndex;
