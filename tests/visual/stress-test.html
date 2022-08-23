@@ -15,7 +15,12 @@
       height: 100%;
     }
     #particles {
-      backface-visibility: hidden;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
     .particle {
       position: absolute;
@@ -63,23 +68,23 @@
   function animateParticle(particleEl, i, total) {
     // const angle = anime.random(-360, 360);
     const angle = (i / total) * 360;
-    const duration = 2000;
+    const duration = 3000;
     const delay = anime.random(0, duration);
     anime({
       targets: particleEl,
       rotate: [angle, angle],
       // opacity: [1, 0],
-      translateX: 200,
-      translateY: 200,
-      scale: [2, 0],
-      easing: 'easeInOutQuad',
+      translateX: 1200,
+      translateY: 800,
+      scale: [0.05, 2],
+      easing: 'easeInCubic',
       delay: delay,
       duration: duration,
       loop: true,
     });
   }
 
-  for (let i = 0, l = 2000; i < l; i++) {
+  for (let i = 0, l = 1500; i < l; i++) {
     const particleEl = createParticule();
     particlesEl.appendChild(particleEl);
     // anime.set(particleEl, {rotate: anime.random(-360, 360)});
