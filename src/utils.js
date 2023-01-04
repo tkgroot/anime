@@ -78,10 +78,6 @@ export function toArray(o) {
   return [o];
 }
 
-export function arrayContains(arr, val) {
-  return arr.some(a => a === val);
-}
-
 // Objects
 
 export function replaceObjectProps(o1, o2) {

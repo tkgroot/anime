@@ -229,7 +229,7 @@ const penner = (() => {
       const a = minMax(amplitude, 1, 10);
       const p = minMax(period, .1, 2);
       return t => {
-        return (t === 0 || t === 1) ? t : 
+        return (t === 0 || t === 1) ? t :
           -a * Math.pow(2, 10 * (t - 1)) * Math.sin((((t - 1) - (p / (Math.PI * 2) * Math.asin(1 / a))) * (Math.PI * 2)) / p);
       }
     }
@@ -245,9 +245,9 @@ const penner = (() => {
     const easeIn = functionEasings[name];
     eases['easeIn' + name] = easeIn;
     eases['easeOut' + name] = (a, b) => t => 1 - easeIn(a, b)(1 - t);
-    eases['easeInOut' + name] = (a, b) => t => t < 0.5 ? easeIn(a, b)(t * 2) / 2 : 
+    eases['easeInOut' + name] = (a, b) => t => t < 0.5 ? easeIn(a, b)(t * 2) / 2 :
       1 - easeIn(a, b)(t * -2 + 2) / 2;
-    eases['easeOutIn' + name] = (a, b) => t => t < 0.5 ? (1 - easeIn(a, b)(1 - t * 2)) / 2 : 
+    eases['easeOutIn' + name] = (a, b) => t => t < 0.5 ? (1 - easeIn(a, b)(1 - t * 2)) / 2 :
       (easeIn(a, b)(t * 2 - 1) + 1) / 2;
   });
 
@@ -305,10 +305,6 @@ function toArray(o) {
   if (is.str(o)) o = selectString(o) || o;
   if (o instanceof NodeList || o instanceof HTMLCollection) return [].slice.call(o);
   return [o];
-}
-
-function arrayContains(arr, val) {
-  return arr.some(a => a === val);
 }
 
 // Objects
@@ -406,7 +402,7 @@ function getAttribute(el, prop) {
 
 function convertPxToUnit(el, value, unit) {
   const valueUnit = getUnit(value);
-  if (arrayContains([unit, 'deg', 'rad', 'turn'], valueUnit)) return value;
+  if ([unit, 'deg', 'rad', 'turn'].includes(valueUnit)) return value;
   const cached = cache.CSS[value + unit];
   if (!is.und(cached)) return cached;
   const baseline = 100;
@@ -432,7 +428,7 @@ function getCSSValue(el, prop, unit) {
 
 function getAnimationType(el, prop) {
   if (is.dom(el) && !is.inp(el) && (!is.nil(getAttribute(el, prop)) || (is.svg(el) && el[prop]))) return 'attribute';
-  if (is.dom(el) && arrayContains(validTransforms, prop)) return 'transform';
+  if (is.dom(el) && validTransforms.includes(prop)) return 'transform';
   if (is.dom(el) && (prop !== 'transform' && getCSSValue(el, prop))) return 'css';
   if (el[prop] != null) return 'object';
 }
@@ -504,7 +500,7 @@ function getRectLength(el) {
 
 function getLineLength(el) {
   return getDistance(
-    {x: getAttribute(el, 'x1'), y: getAttribute(el, 'y1')}, 
+    {x: getAttribute(el, 'x1'), y: getAttribute(el, 'y1')},
     {x: getAttribute(el, 'x2'), y: getAttribute(el, 'y2')}
   );
 }
@@ -1159,7 +1155,7 @@ function anime(params = {}) {
 
 function removeTargetsFromAnimations(targetsArray, animations) {
   for (let a = animations.length; a--;) {
-    if (arrayContains(targetsArray, animations[a].animatable.target)) {
+    if (targetsArray.includes(animations[a].animatable.target)) {
       animations.splice(a, 1);
     }
   }

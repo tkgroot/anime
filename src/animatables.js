@@ -10,7 +10,6 @@ import {
   is,
   flattenArray,
   filterArray,
-  arrayContains,
   toArray,
 } from './utils.js';
 
@@ -46,7 +45,7 @@ export function getAnimatables(targets) {
 
 function removeAnimationsWithTargets(targetsArray, animations) {
   for (let i = animations.length; i--;) {
-    if (arrayContains(targetsArray, animations[i].target)) {
+    if (targetsArray.includes(animations[i].target)) {
       animations.splice(i, 1);
     }
   }

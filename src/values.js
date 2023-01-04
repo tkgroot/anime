@@ -14,7 +14,6 @@ import {
 
 import {
   is,
-  arrayContains,
 } from './utils.js';
 
 import {
@@ -48,7 +47,7 @@ export function getAnimationType(target, prop) {
     return animationTypes.OBJECT;
   } else {
     if (!is.nil(target.getAttribute(prop)) || (cachedDOMElement.isSVG && isValidSVGAttribute(target, prop))) return animationTypes.ATTRIBUTE; // Handle DOM and SVG attributes
-    if (arrayContains(validTransforms, prop)) return animationTypes.TRANSFORM; // Handle CSS Transform properties differently than CSS to allow individual animations
+    if (validTransforms.includes(prop)) return animationTypes.TRANSFORM; // Handle CSS Transform properties differently than CSS to allow individual animations
     if (prop in target.style) return animationTypes.CSS; // All other CSS properties
     if (!is.und(target[prop])) return animationTypes.OBJECT; // Handle DOM element properies that can't be accessed using getAttribute()
     return console.warn(`Can't find property '${prop}' on target '${target}'.`);

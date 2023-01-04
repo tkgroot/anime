@@ -10,7 +10,6 @@ import {
 import {
   is,
   clamp,
-  arrayContains,
 } from './utils.js';
 
 export function getTransformUnit(propName) {
@@ -23,7 +22,7 @@ const nonConvertableUnitsYet = ['', 'deg', 'rad', 'turn'];
 
 export function convertValueUnit(el, decomposedValue, unit) {
   nonConvertableUnitsYet[0] = unit;
-  if (decomposedValue.type === valueTypes.UNIT && arrayContains(nonConvertableUnitsYet, decomposedValue.unit)) {
+  if (decomposedValue.type === valueTypes.UNIT && nonConvertableUnitsYet.includes(decomposedValue.unit)) {
     return decomposedValue;
   }
   const valueNumber = decomposedValue.number;
